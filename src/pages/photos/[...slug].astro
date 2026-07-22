@@ -1,0 +1,47 @@
+---
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import SectionLayout from "@/components/layout/SectionLayout.astro";
+import { getSection } from "@/lib/sections";
+
+export const getStaticPaths = (async () => {
+  const entries = await getCollection("photos");
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const section = getSection("photos")!;
+---
+
+<SectionLayout
+  section={section}
+  title={entry.data.title}
+  description={entry.data.description || section.desc}
+>
+  <article class="prose" slot="header">
+    <span class="section-kicker">{section.number} · {section.title}</span>
+    <h1>{entry.data.title}</h1>
+    <div class="entry-meta">
+      <time datetime={entry.data.date.toISOString()}>
+        {entry.data.date.toLocaleDateString("zh-CN")}
+      </time>
+      {entry.data.tags?.map((tag) => <span class="tag">{tag}</span>)}
+      {entry.data.status && <span class="tag">{entry.data.status}</span>}
+    </div>
+  </article>
+
+  <article class="prose">
+    <Content />
+    {entry.data.link && (
+      <p>
+        <a href={entry.data.link} target="_blank" rel="noreferrer">
+          外部链接 →
+        </a>
+      </p>
+    )}
+  </article>
+</SectionLayout>

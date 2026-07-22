@@ -1,0 +1,13 @@
+---
+import { getCollection } from "astro:content";
+import SectionLayout from "@/components/layout/SectionLayout.astro";
+import EntryList from "@/components/layout/EntryList.astro";
+import { getSection } from "@/lib/sections";
+
+const section = getSection("blog")!;
+const entries = await getCollection("blog");
+---
+
+<SectionLayout section={section}>
+  <EntryList entries={entries} />
+</SectionLayout>

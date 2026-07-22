@@ -1,0 +1,199 @@
+---
+import BaseLayout from "@/components/layout/BaseLayout.astro";
+import "@/styles/journal.css";
+import { greetingByHour } from "@/lib/sections";
+
+const initialGreeting = greetingByHour();
+---
+
+<BaseLayout
+  title="baozi.space — 中华一番包子铺"
+  description="打开一本属于包子的手账，在纸张、照片、标签和手写记录之间认识他的文章、想法、摄影、酒、书、音乐和 AI 创作。"
+  bodyClass="home-body"
+>
+  <div class="book-stage is-closed" id="book-stage">
+    <div class="book-closed" id="book-closed" aria-hidden="false">
+      <div class="book-cover">
+        <span class="cover-line cover-line-top"></span>
+        <span class="cover-title">中华一番</span>
+        <span class="cover-subtitle">包子铺</span>
+        <span class="cover-line cover-line-bottom"></span>
+      </div>
+    </div>
+
+    <div class="book-open" id="book-open" aria-hidden="true">
+      <div class="page-spread" id="page-spread">
+        <div class="page page-left" id="page-left">
+          <div class="paper-texture"></div>
+
+          <div class="site-mark" aria-hidden="true">baozi.space</div>
+
+          <div class="greeting" id="greeting">
+            <span class="greeting-time" id="greeting-time">{initialGreeting}</span>，欢迎光临中华一番包子铺
+          </div>
+
+          <p class="intro-note">
+            这里不是博客，也不是商店。<br />
+            是一本会不断变厚的数字手账。
+          </p>
+
+          <a href="/blog" class="scrap scrap-blog" data-section="blog">
+            <span class="scrap-bg"></span>
+            <span class="scrap-icon" aria-hidden="true">✍️</span>
+            <span class="scrap-label">Blog</span>
+            <span class="scrap-hint">文章记录</span>
+          </a>
+
+          <div class="scrap scrap-thought draggable" data-section="thoughts" tabindex="0" role="link" aria-label="Thoughts 栏目">
+            <div class="sticky-note sticky-yellow">
+              <p>今日想法：<br />把网页当成房间来布置。</p>
+              <span class="sticky-date">07.22</span>
+            </div>
+            <a class="scrap-hit" href="/thoughts">Thoughts</a>
+          </div>
+
+          <a href="/photos" class="scrap scrap-photos" data-section="photos">
+            <span class="photo-frame">
+              <span class="photo-icon" aria-hidden="true">📷</span>
+              <span class="photo-caption">A-1</span>
+            </span>
+            <span class="scrap-label">Photos</span>
+          </a>
+
+          <a href="/drinks" class="scrap scrap-drinks" data-section="drinks">
+            <span class="drink-can">
+              <span class="drink-label">小猫三只</span>
+            </span>
+            <span class="scrap-label">Drinks</span>
+          </a>
+
+          <span class="deco deco-arrow" aria-hidden="true">→</span>
+          <span class="deco deco-circle" aria-hidden="true"></span>
+        </div>
+
+        <div class="page-seam" aria-hidden="true"></div>
+
+        <div class="page page-right" id="page-right">
+          <div class="paper-texture"></div>
+
+          <a href="/about" class="scrap scrap-about" data-section="about">
+            <span class="polaroid">
+              <span class="polaroid-icon" aria-hidden="true">🙂</span>
+              <span class="polaroid-caption">baozi</span>
+            </span>
+            <span class="scrap-label">About Me</span>
+          </a>
+
+          <a href="/books" class="scrap scrap-books" data-section="books">
+            <span class="shelf" aria-hidden="true">
+              <span class="shelf-book shelf-book-1"></span>
+              <span class="shelf-book shelf-book-2"></span>
+              <span class="shelf-book shelf-book-3"></span>
+            </span>
+            <span class="scrap-label">Books</span>
+          </a>
+
+          <a href="/music" class="scrap scrap-music" data-section="music">
+            <span class="vinyl" aria-hidden="true">
+              <span class="vinyl-grooves"></span>
+              <span class="vinyl-label">♪</span>
+            </span>
+            <span class="scrap-label">Music</span>
+          </a>
+
+          <a href="/ai-works" class="scrap scrap-ai" data-section="ai-works">
+            <span class="robot">
+              <span class="robot-head" aria-hidden="true">🤖</span>
+              <span class="robot-name">包子</span>
+            </span>
+            <span class="scrap-label">AI Works</span>
+          </a>
+
+          <div class="scrap scrap-tape draggable" data-section="tape" tabindex="0">
+            <div class="sticky-note sticky-pink">
+              <p>待整理：照片、酒标、唱片清单。</p>
+            </div>
+          </div>
+
+          <span class="deco deco-highlight" aria-hidden="true">important!</span>
+          <span class="deco deco-bracket" aria-hidden="true">{ }</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-overlay" id="section-overlay" aria-hidden="true">
+      <div class="section-card">
+        <span class="section-number" id="section-number">01</span>
+        <h2 class="section-title" id="section-title">Blog</h2>
+        <p class="section-desc" id="section-desc">完整文章、教程与专题。</p>
+        <div class="section-actions">
+          <a class="section-enter" id="section-enter" href="/blog">进入栏目 →</a>
+          <button class="section-back" id="section-back" type="button">← 留在首页</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="replay-btn" id="replay-btn" type="button" aria-label="重新播放打开动效">
+    ↻ 重新打开
+  </button>
+
+  <script is:inline src="/scripts/journal.js"></script>
+</BaseLayout>
+
+<style is:global>
+  body.home-body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  html:has(body.home-body) {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .site-mark {
+    position: absolute;
+    top: 1.4rem;
+    left: 3rem;
+    z-index: 1;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: lowercase;
+    color: var(--ink-lighter);
+  }
+
+  .scrap-hit {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .section-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  .section-enter {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 0.9rem;
+  }
+
+  .section-enter:hover {
+    opacity: 0.9;
+  }
+</style>

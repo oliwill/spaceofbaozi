@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+.bun/
+package-lock.json
+pnpm-lock.yaml
+
+# build
+dist/
+.astro/
+.cache/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# editor / OS
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# local tooling
+.chrome-concept-profile/
+.agents/
+.od-skills/
+
+# large demo screenshots stay local-optional
+demo/screenshots/*.png

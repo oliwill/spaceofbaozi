@@ -1,0 +1,230 @@
+:root {
+  --paper: #fefefe;
+  --paper-shadow: #f2f2f2;
+  --grid-dot: #e0e0e0;
+  --ink: #2a2a2a;
+  --ink-light: #666;
+  --ink-lighter: #999;
+  --mist-blue: #6b8cae;
+  --moss: #6b8f71;
+  --brick: #b86a5a;
+  --accent-yellow: #fef3c7;
+  --accent-pink: #fce7f3;
+  --accent-blue: #dbeafe;
+  --accent-green: #d1fae5;
+  --accent-coral: #ffddd8;
+  --accent-lavender: #ede9fe;
+  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-hand: "Zeyada", cursive;
+  --radius: 1.2rem;
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lift: 0 12px 28px rgba(0, 0, 0, 0.12);
+  --page-bg: #f7f7f5;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--page-bg);
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font: inherit;
+}
+
+/* Section / content pages — continuous journal feel */
+.section-body {
+  min-height: 100vh;
+  background-image: radial-gradient(circle, var(--grid-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-color: var(--paper);
+}
+
+.section-shell {
+  width: min(920px, calc(100% - 2.5rem));
+  margin: 0 auto;
+  padding: 2.5rem 0 4rem;
+}
+
+.section-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.brand-mark {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-light);
+}
+
+.brand-mark strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.back-home {
+  font-size: 0.9rem;
+  color: var(--mist-blue);
+  border-bottom: 1px dashed rgba(107, 140, 174, 0.5);
+  padding-bottom: 1px;
+}
+
+.back-home:hover {
+  color: var(--ink);
+}
+
+.section-header {
+  margin-bottom: 2rem;
+}
+
+.section-kicker {
+  display: inline-block;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brick);
+  margin-bottom: 0.5rem;
+}
+
+.section-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.section-header p {
+  margin: 0;
+  color: var(--ink-light);
+  max-width: 36rem;
+}
+
+.entry-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.entry-card {
+  display: block;
+  padding: 1.1rem 1.2rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 0.9rem;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.entry-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.entry-card h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.85rem;
+  font-size: 0.82rem;
+  color: var(--ink-lighter);
+  margin-bottom: 0.4rem;
+}
+
+.entry-card p {
+  margin: 0;
+  color: var(--ink-light);
+  font-size: 0.95rem;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--accent-blue);
+  color: #3b5b7a;
+  font-size: 0.75rem;
+}
+
+.empty-state {
+  padding: 2rem 1.25rem;
+  border: 1px dashed rgba(0, 0, 0, 0.12);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--ink-light);
+}
+
+.empty-state strong {
+  color: var(--ink);
+}
+
+.prose {
+  max-width: 42rem;
+}
+
+.prose h1 {
+  font-size: clamp(1.7rem, 3.5vw, 2.2rem);
+  margin: 0 0 0.75rem;
+}
+
+.prose .entry-meta {
+  margin-bottom: 1.5rem;
+}
+
+.prose :where(p, ul, ol) {
+  margin: 0 0 1rem;
+  color: var(--ink);
+}
+
+.prose :where(ul, ol) {
+  padding-left: 1.25rem;
+}
+
+.prose a {
+  color: var(--mist-blue);
+  border-bottom: 1px solid rgba(107, 140, 174, 0.35);
+}
+
+.prose a:hover {
+  color: var(--brick);
+}
+
+.footer-note {
+  margin-top: 3rem;
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  color: var(--ink-lighter);
+  transform: rotate(-1deg);
+}

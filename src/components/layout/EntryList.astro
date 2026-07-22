@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry, CollectionKey } from "astro:content";
+
+interface Props {
+  entries: CollectionEntry<CollectionKey>[];
+  emptyHint?: string;
+}
+
+const {
+  entries,
+  emptyHint = "这一页还在等待真实内容。你可以用 Markdown 往对应 content 目录里加条目。",
+} = Astro.props;
+
+const sorted = [...entries]
+  .filter((e) => !("draft" in e.data && e.data.draft))
+  .sort((a, b) => +b.data.date - +a.data.date);
+---
+
+{
+  sorted.length === 0 ? (
+    <div class="empty-state">
+      <p>
+        <strong>手账这一页暂时空白。</strong>
+      </p>
+      <p>{emptyHint}</p>
+    </div>
+  ) : (
+    <ul class="entry-list">
+      {sorted.map((entry) => (
+        <li>
+          <a class="entry-card" href={`/${entry.collection}/${entry.id}`}>
+            <div class="entry-meta">
+              <time datetime={entry.data.date.toISOString()}>
+                {entry.data.date.toLocaleDateString("zh-CN")}
+              </time>
+              {entry.data.tags?.slice(0, 3).map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+            <h2>{entry.data.title}</h2>
+            {entry.data.description && <p>{entry.data.description}</p>}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

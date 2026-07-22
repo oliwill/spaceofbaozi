@@ -1,0 +1,23 @@
+{
+  "name": "baozi-space",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "baozi.space — 中华一番包子铺 · 数字手账个人网站",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1 --port 4321",
+    "build": "astro build",
+    "preview": "astro preview --host 127.0.0.1 --port 4321",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^5.12.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

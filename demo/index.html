@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fefefe" />
+    <meta
+      name="description"
+      content="baozi.space — 一个关于创造、记录与好奇心的个人网站。"
+    />
+    <title>baozi.space — 中华一番包子铺</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Zeyada&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="book-stage is-closed" id="book-stage">
+      <!-- 合上的手账 -->
+      <div class="book-closed" id="book-closed" aria-hidden="false">
+        <div class="book-cover">
+          <span class="cover-line cover-line-top"></span>
+          <span class="cover-title">中华一番</span>
+          <span class="cover-subtitle">包子铺</span>
+          <span class="cover-line cover-line-bottom"></span>
+        </div>
+      </div>
+
+      <!-- 打开的手账 -->
+      <div class="book-open" id="book-open" aria-hidden="true">
+        <div class="page-spread" id="page-spread">
+          <!-- 左页 -->
+          <div class="page page-left" id="page-left">
+            <div class="paper-texture"></div>
+
+            <div class="greeting" id="greeting">
+              <span class="greeting-time" id="greeting-time">早上好</span
+              >，欢迎光临中华一番包子铺
+            </div>
+
+            <p class="intro-note">
+              这里不是博客，也不是商店。<br />
+              是一本会不断变厚的数字手账。
+            </p>
+
+            <!-- 栏目入口：Blog -->
+            <a
+              href="#blog"
+              class="scrap scrap-blog"
+              data-section="blog"
+              draggable="false"
+            >
+              <span class="scrap-bg"></span>
+              <span class="scrap-icon">✍️</span>
+              <span class="scrap-label">Blog</span>
+              <span class="scrap-hint">文章记录</span>
+            </a>
+
+            <!-- 栏目入口：Thoughts -->
+            <div class="scrap scrap-thought draggable" data-section="thoughts">
+              <div class="sticky-note sticky-yellow">
+                <p>今日想法：<br />把网页当成房间来布置。</p>
+                <span class="sticky-date">07.22</span>
+              </div>
+            </div>
+
+            <!-- 栏目入口：Photos -->
+            <a
+              href="#photos"
+              class="scrap scrap-photos"
+              data-section="photos"
+              draggable="false"
+            >
+              <span class="photo-frame">
+                <span class="photo-icon">📷</span>
+                <span class="photo-caption">A-1</span>
+              </span>
+              <span class="scrap-label">Photos</span>
+            </a>
+
+            <!-- 栏目入口：Drinks -->
+            <a
+              href="#drinks"
+              class="scrap scrap-drinks"
+              data-section="drinks"
+              draggable="false"
+            >
+              <span class="drink-can">
+                <span class="drink-label">小猫三只</span>
+              </span>
+              <span class="scrap-label">Drinks</span>
+            </a>
+
+            <!-- 装饰：箭头 -->
+            <span class="deco deco-arrow" aria-hidden="true">→</span>
+            <span class="deco deco-circle" aria-hidden="true"></span>
+          </div>
+
+          <!-- 中缝 -->
+          <div class="page-seam" aria-hidden="true"></div>
+
+          <!-- 右页 -->
+          <div class="page page-right" id="page-right">
+            <div class="paper-texture"></div>
+
+            <!-- 栏目入口：About Me -->
+            <a
+              href="#about"
+              class="scrap scrap-about"
+              data-section="about"
+              draggable="false"
+            >
+              <span class="polaroid">
+                <span class="polaroid-icon">🙂</span>
+                <span class="polaroid-caption">baozi</span>
+              </span>
+              <span class="scrap-label">About Me</span>
+            </a>
+
+            <!-- 栏目入口：Books -->
+            <a
+              href="#books"
+              class="scrap scrap-books"
+              data-section="books"
+              draggable="false"
+            >
+              <span class="shelf">
+                <span class="shelf-book shelf-book-1"></span>
+                <span class="shelf-book shelf-book-2"></span>
+                <span class="shelf-book shelf-book-3"></span>
+              </span>
+              <span class="scrap-label">Books</span>
+            </a>
+
+            <!-- 栏目入口：Music -->
+            <a
+              href="#music"
+              class="scrap scrap-music"
+              data-section="music"
+              draggable="false"
+            >
+              <span class="vinyl">
+                <span class="vinyl-grooves"></span>
+                <span class="vinyl-label">♪</span>
+              </span>
+              <span class="scrap-label">Music</span>
+            </a>
+
+            <!-- 栏目入口：AI Works -->
+            <a
+              href="#ai-works"
+              class="scrap scrap-ai"
+              data-section="ai-works"
+              draggable="false"
+            >
+              <span class="robot">
+                <span class="robot-head">🤖</span>
+                <span class="robot-name">包子</span>
+              </span>
+              <span class="scrap-label">AI Works</span>
+            </a>
+
+            <!-- 装饰：便签 -->
+            <div class="scrap scrap-tape draggable" data-section="tape">
+              <div class="sticky-note sticky-pink">
+                <p>待整理：照片、酒标、唱片清单。</p>
+              </div>
+            </div>
+
+            <span class="deco deco-highlight" aria-hidden="true">important!</span>
+            <span class="deco deco-bracket" aria-hidden="true">{ }</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 栏目标题过渡页 -->
+      <div class="section-overlay" id="section-overlay" aria-hidden="true">
+        <div class="section-card">
+          <span class="section-number" id="section-number">01</span>
+          <h2 class="section-title" id="section-title">Blog</h2>
+          <p class="section-desc" id="section-desc">完整文章、教程与专题。</p>
+          <button class="section-back" id="section-back" type="button">
+            ← 返回首页
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button class="replay-btn" id="replay-btn" type="button" aria-label="重新播放打开动效">
+      ↻ 重新打开
+    </button>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

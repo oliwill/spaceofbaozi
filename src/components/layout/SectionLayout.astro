@@ -1,0 +1,39 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { type SectionMeta } from "@/lib/sections";
+
+interface Props {
+  section: SectionMeta;
+  title?: string;
+  description?: string;
+}
+
+const { section, title, description } = Astro.props;
+const pageTitle = title
+  ? `${title} · ${section.title} · baozi.space`
+  : `${section.title} · baozi.space`;
+const pageDesc = description ?? section.desc;
+---
+
+<BaseLayout title={pageTitle} description={pageDesc} bodyClass="section-body">
+  <div class="section-shell">
+    <header class="section-topbar">
+      <a class="brand-mark" href="/">
+        <strong>baozi.space</strong> · 中华一番包子铺
+      </a>
+      <a class="back-home" href="/">← 返回手账首页</a>
+    </header>
+
+    <slot name="header">
+      <div class="section-header">
+        <span class="section-kicker">{section.number} · {section.zh}</span>
+        <h1>{section.title}</h1>
+        <p>{section.desc}</p>
+      </div>
+    </slot>
+
+    <slot />
+
+    <p class="footer-note">继续往下翻，这本手账还会更厚。</p>
+  </div>
+</BaseLayout>
