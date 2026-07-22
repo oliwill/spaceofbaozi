@@ -28,3 +28,9 @@ Thumbs.db
 
 # large demo screenshots stay local-optional
 demo/screenshots/*.png
+
+# local temp
+.tmp-*.html
+install*.log
+build*.log
+
