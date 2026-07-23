@@ -31,3 +31,4 @@ build*.log
 
 # large demo screenshots stay local-optional
 demo/screenshots/*.png
+fonts-src/
