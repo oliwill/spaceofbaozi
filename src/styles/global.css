@@ -1,25 +1,41 @@
+@font-face {
+  font-family: "SlideXiaXing";
+  src: url("https://cdn.jsdelivr.net/npm/@fontpkg/slidexiaxing@1.0.0/%E6%BC%94%E7%A4%BA%E5%A4%8F%E8%A1%8C%E6%A5%B7.ttf")
+    format("truetype");
+  font-display: swap;
+}
+
 :root {
-  --paper: #fefefe;
-  --paper-shadow: #f2f2f2;
-  --grid-dot: #e0e0e0;
-  --ink: #2a2a2a;
-  --ink-light: #666;
-  --ink-lighter: #999;
+  --paper: #fdfdfc;
+  --grid-dot: #d3d3cf;
+  --ink: #2b2620;
+  --ink-light: #565049;
+  --ink-lighter: #8b857b;
   --mist-blue: #6b8cae;
   --moss: #6b8f71;
   --brick: #b86a5a;
-  --accent-yellow: #fef3c7;
-  --accent-pink: #fce7f3;
-  --accent-blue: #dbeafe;
+  --vermilion: #c14a36;
+  --accent-yellow: #ffe9a8;
+  --accent-pink: #ffd9e3;
+  --accent-blue: #cfe3f7;
   --accent-green: #d1fae5;
   --accent-coral: #ffddd8;
-  --accent-lavender: #ede9fe;
-  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-hand: "Zeyada", cursive;
+  --accent-lavender: #e6def7;
+  /* 正文：霞鹜文楷 */
+  --font-body: "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
+  /* 英文手写：Caveat */
+  --font-hand: "Caveat", cursive;
+  /* 手写标题：演示夏行楷 */
+  --font-hand-cn: "SlideXiaXing", "PingFang SC", cursive;
+  /* 标签 / UI：Zen Maru Gothic */
+  --font-label: "Zen Maru Gothic", "PingFang SC", sans-serif;
+  /* 时间 / 编号：IBM Plex Mono */
+  --font-mono: "IBM Plex Mono", monospace;
   --radius: 1.2rem;
-  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-lift: 0 12px 28px rgba(0, 0, 0, 0.12);
-  --page-bg: #f7f7f5;
+  --shadow-soft: 0 2px 6px rgba(40, 32, 24, 0.1);
+  --shadow-lift: 0 14px 32px rgba(40, 32, 24, 0.16);
+  --sticker-outline: 0 0 0 4px #ffffff;
+  --page-bg: #f0efeb;
 }
 
 *,

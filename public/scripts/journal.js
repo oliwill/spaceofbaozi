@@ -17,6 +17,7 @@
   const bookOpen = document.getElementById("book-open");
   const pageSpread = document.getElementById("page-spread");
   const greetingTime = document.getElementById("greeting-time");
+  const dateStamp = document.getElementById("date-stamp");
   const replayBtn = document.getElementById("replay-btn");
   const overlay = document.getElementById("section-overlay");
   const sectionNumber = document.getElementById("section-number");
@@ -38,6 +39,13 @@
     else if (hour >= 14 && hour < 18) text = "下午好";
     else if (hour >= 18 && hour < 22) text = "晚上好";
     greetingTime.textContent = text;
+
+    if (dateStamp) {
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      dateStamp.textContent = `${now.getFullYear()} · ${mm} · ${dd}`;
+    }
   }
 
   function openBook() {

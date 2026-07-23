@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/components/layout/BaseLayout.astro";
+import "@/styles/neat-annotations.css";
 import "@/styles/journal.css";
 import { greetingByHour } from "@/lib/sections";
 
@@ -12,17 +13,18 @@ const initialGreeting = greetingByHour();
   bodyClass="home-body"
 >
   <div class="book-stage is-closed" id="book-stage">
+    <!-- 合上的手账：FREITAG F26 AGENDA -->
     <div class="book-closed" id="book-closed" aria-hidden="false">
       <div class="book-cover">
-        <span class="cover-line cover-line-top"></span>
         <span class="cover-title">中华一番</span>
         <span class="cover-subtitle">包子铺</span>
-        <span class="cover-line cover-line-bottom"></span>
       </div>
     </div>
 
+    <!-- 打开的手账 -->
     <div class="book-open" id="book-open" aria-hidden="true">
       <div class="page-spread" id="page-spread">
+        <!-- 左页 -->
         <div class="page page-left" id="page-left">
           <div class="paper-texture"></div>
 
@@ -32,95 +34,143 @@ const initialGreeting = greetingByHour();
             <span class="greeting-time" id="greeting-time">{initialGreeting}</span>，欢迎光临中华一番包子铺
           </div>
 
+          <span class="date-stamp" id="date-stamp" aria-hidden="true">2026 · 07 · 23</span>
+
           <p class="intro-note">
             这里不是博客，也不是商店。<br />
-            是一本会不断变厚的数字手账。
+            是一本会不断变厚的<br />
+            数字手账。
           </p>
 
-          <a href="/blog" class="scrap scrap-blog" data-section="blog">
-            <span class="scrap-bg"></span>
-            <span class="scrap-icon" aria-hidden="true">✍️</span>
-            <span class="scrap-label">Blog</span>
-            <span class="scrap-hint">文章记录</span>
+          <!-- 圈画：圈住酒罐 -->
+          <span class="deco deco-circle" aria-hidden="true"></span>
+
+          <!-- 栏目入口：Drinks -->
+          <a href="/drinks" class="scrap scrap-drinks" data-section="drinks">
+            <span class="sticker sticker-can">
+              <span class="drink-can">
+                <span class="drink-label">小猫三只</span>
+              </span>
+            </span>
+            <span class="scrap-label">Drinks</span>
+            <span class="scrap-hint">伊势角屋 · 喝过的酒</span>
           </a>
 
+          <!-- 栏目入口：Blog（手绘批注由 neat-annotations 提供） -->
+          <a
+            href="/blog"
+            class="scrap scrap-blog ann ann-n ann-no-mark"
+            data-note="最近更新"
+            style="--ann-color: #c14a36"
+            data-section="blog"
+          >
+            <span class="scrap-bg"><span class="scrap-icon" aria-hidden="true">✎</span></span>
+            <span class="scrap-label">Blog</span>
+            <span class="scrap-hint">长文与专题</span>
+          </a>
+
+          <!-- 栏目入口：Thoughts -->
           <div class="scrap scrap-thought draggable" data-section="thoughts" tabindex="0" role="link" aria-label="Thoughts 栏目">
             <div class="sticky-note sticky-yellow">
               <p>今日想法：<br />把网页当成房间来布置。</p>
               <span class="sticky-date">07.22</span>
             </div>
+            <span class="scrap-label" aria-hidden="true">Thoughts</span>
             <a class="scrap-hit" href="/thoughts">Thoughts</a>
           </div>
 
+          <!-- 栏目入口：Photos -->
           <a href="/photos" class="scrap scrap-photos" data-section="photos">
-            <span class="photo-frame">
-              <span class="photo-icon" aria-hidden="true">📷</span>
-              <span class="photo-caption">A-1</span>
+            <span class="sticker sticker-camera">
+              <span class="camera-emoji" aria-hidden="true">📷</span>
+              <span class="camera-caption">Canon A-1</span>
             </span>
             <span class="scrap-label">Photos</span>
+            <span class="scrap-hint">胶片与生活</span>
           </a>
 
-          <a href="/drinks" class="scrap scrap-drinks" data-section="drinks">
-            <span class="drink-can">
-              <span class="drink-label">小猫三只</span>
-            </span>
-            <span class="scrap-label">Drinks</span>
-          </a>
-
-          <span class="deco deco-arrow" aria-hidden="true">→</span>
-          <span class="deco deco-circle" aria-hidden="true"></span>
+          <span class="deco deco-note" aria-hidden="true">记录中 →</span>
         </div>
 
+        <!-- 中缝 -->
         <div class="page-seam" aria-hidden="true"></div>
 
+        <!-- 右页 -->
         <div class="page page-right" id="page-right">
           <div class="paper-texture"></div>
 
+          <span class="deco deco-highlight ann ann-amber">important!</span>
+
+          <!-- 栏目入口：About Me -->
           <a href="/about" class="scrap scrap-about" data-section="about">
             <span class="polaroid">
+              <span class="tape-strip" aria-hidden="true"></span>
               <span class="polaroid-icon" aria-hidden="true">🙂</span>
               <span class="polaroid-caption">baozi</span>
             </span>
             <span class="scrap-label">About Me</span>
+            <span class="scrap-hint">你好，我是包子</span>
           </a>
 
-          <a href="/books" class="scrap scrap-books" data-section="books">
-            <span class="shelf" aria-hidden="true">
-              <span class="shelf-book shelf-book-1"></span>
-              <span class="shelf-book shelf-book-2"></span>
-              <span class="shelf-book shelf-book-3"></span>
-            </span>
-            <span class="scrap-label">Books</span>
-          </a>
-
-          <a href="/music" class="scrap scrap-music" data-section="music">
-            <span class="vinyl" aria-hidden="true">
-              <span class="vinyl-grooves"></span>
-              <span class="vinyl-label">♪</span>
-            </span>
-            <span class="scrap-label">Music</span>
-          </a>
-
-          <a href="/ai-works" class="scrap scrap-ai" data-section="ai-works">
-            <span class="robot">
-              <span class="robot-head" aria-hidden="true">🤖</span>
-              <span class="robot-name">包子</span>
-            </span>
-            <span class="scrap-label">AI Works</span>
-          </a>
-
+          <!-- 装饰便签：待整理 -->
           <div class="scrap scrap-tape draggable" data-section="tape" tabindex="0">
             <div class="sticky-note sticky-pink">
+              <span class="tape-strip" aria-hidden="true"></span>
               <p>待整理：照片、酒标、唱片清单。</p>
             </div>
           </div>
 
-          <span class="deco deco-highlight" aria-hidden="true">important!</span>
+          <!-- 栏目入口：Books -->
+          <a
+            href="/books"
+            class="scrap scrap-books ann ann-e ann-green ann-no-mark"
+            data-note="六月读完的"
+            data-section="books"
+          >
+            <span class="sticker sticker-shelf">
+              <span class="shelf" aria-hidden="true">
+                <span class="shelf-book shelf-book-1"></span>
+                <span class="shelf-book shelf-book-2"></span>
+                <span class="shelf-book shelf-book-3"></span>
+              </span>
+            </span>
+            <span class="scrap-label">Books</span>
+            <span class="scrap-hint">在读与读过</span>
+          </a>
+
+          <!-- 栏目入口：Music -->
+          <a
+            href="/music"
+            class="scrap scrap-music ann ann-e ann-purple ann-no-mark"
+            data-note="循环中 ↻"
+            data-section="music"
+          >
+            <span class="sticker sticker-vinyl">
+              <span class="vinyl" aria-hidden="true">
+                <span class="vinyl-grooves"></span>
+                <span class="vinyl-label">♪</span>
+              </span>
+            </span>
+            <span class="scrap-label">Music</span>
+            <span class="scrap-hint">最近在听</span>
+          </a>
+
+          <!-- 栏目入口：AI Works -->
+          <a href="/ai-works" class="scrap scrap-ai" data-section="ai-works">
+            <span class="sticker sticker-robot">
+              <span class="robot-emoji" aria-hidden="true">🤖</span>
+              <span class="robot-name">包子</span>
+            </span>
+            <span class="scrap-label">AI Works</span>
+            <span class="scrap-hint">生成实验</span>
+          </a>
+
           <span class="deco deco-bracket" aria-hidden="true">{ }</span>
         </div>
       </div>
     </div>
 
+    <!-- 栏目标题过渡页 -->
     <div class="section-overlay" id="section-overlay" aria-hidden="true">
       <div class="section-card">
         <span class="section-number" id="section-number">01</span>
@@ -140,60 +190,3 @@ const initialGreeting = greetingByHour();
 
   <script is:inline src="/scripts/journal.js"></script>
 </BaseLayout>
-
-<style is:global>
-  body.home-body {
-    height: 100%;
-    overflow: hidden;
-  }
-
-  html:has(body.home-body) {
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .site-mark {
-    position: absolute;
-    top: 1.4rem;
-    left: 3rem;
-    z-index: 1;
-    font-size: 0.72rem;
-    letter-spacing: 0.16em;
-    text-transform: lowercase;
-    color: var(--ink-lighter);
-  }
-
-  .scrap-hit {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  .section-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    justify-content: center;
-    margin-top: 0.5rem;
-  }
-
-  .section-enter {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.55rem 1rem;
-    border-radius: 999px;
-    background: var(--ink);
-    color: #fff;
-    font-size: 0.9rem;
-  }
-
-  .section-enter:hover {
-    opacity: 0.9;
-  }
-</style>
