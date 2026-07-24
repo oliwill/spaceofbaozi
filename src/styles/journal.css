@@ -227,14 +227,18 @@ body.home-body {
   z-index: 6;
 }
 
-.entry:hover :where(.paper-scrap, .sticky-note, .paper-tag, .entry-photos-body) {
+.entry:hover :where(.paper-scrap, .sticky-note, .paper-tag, .entry-camera) {
   translate: 0 -4px;
+}
+
+/* 矩形阴影只给纸片类；相机走 img drop-shadow，避免透出矩形底 */
+.entry:hover :where(.paper-scrap, .sticky-note, .paper-tag) {
   box-shadow:
     0 6px 14px rgba(40, 32, 24, 0.14),
     0 16px 30px rgba(40, 32, 24, 0.16);
 }
 
-.entry :where(.paper-scrap, .sticky-note, .paper-tag, .entry-photos-body) {
+.entry :where(.paper-scrap, .sticky-note, .paper-tag, .entry-camera) {
   transition:
     translate 0.22s ease,
     box-shadow 0.22s ease;
@@ -328,37 +332,37 @@ body.home-body {
   color: var(--ink-light);
 }
 
-/* --- Photos：文字标签 + 手绘圈画 --- */
+/* --- Photos：佳能 A-1 相机（Mode B 用户选定，CSS 落影） --- */
 .entry-photos {
-  left: 418px;
-  top: 472px;
-  rotate: -1deg;
+  left: 400px;
+  top: 424px;
+  rotate: 2deg;
 }
 
-.entry-photos-body {
-  position: relative;
-  display: inline-block;
-  padding: 16px 34px;
+.entry-camera {
+  display: block;
+  width: 344px;
   text-align: center;
-  border-radius: 50%;
 }
 
-.entry-photos .entry-big {
-  font-size: 3.2rem;
+.entry-camera img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(40, 32, 24, 0.14));
+  transition: filter 0.22s ease;
 }
 
-.entry-photos .entry-sub {
+.entry-photos:hover .entry-camera img {
+  filter: drop-shadow(0 10px 20px rgba(40, 32, 24, 0.2));
+}
+
+.camera-caption {
+  display: block;
   margin-top: 4px;
-}
-
-.scribble-circle {
-  position: absolute;
-  inset: -14px -24px;
-  width: calc(100% + 48px);
-  height: calc(100% + 28px);
-  color: var(--mist-blue);
-  opacity: 0.85;
-  pointer-events: none;
+  font-family: var(--font-hand);
+  font-size: 1.6rem;
+  color: var(--ink-light);
 }
 
 /* --- About：小纸签 --- */
@@ -426,8 +430,8 @@ body.home-body {
 
 .deco-arrow {
   position: absolute;
-  left: 726px;
-  top: 322px;
+  left: 690px;
+  top: 336px;
   color: var(--brick);
   opacity: 0.75;
   rotate: 6deg;
@@ -546,8 +550,14 @@ body.home-body {
     text-align: center;
   }
 
-  .entry-photos-body {
+  .entry-camera {
+    width: 100%;
     min-height: 44px;
+  }
+
+  .entry-camera img {
+    max-width: 280px;
+    margin: 0 auto;
   }
 
   .entry-big {
@@ -599,7 +609,7 @@ body.home-body {
   .js .book-stage.is-open .settle,
   .book-stage.is-open .book-closed,
   .entry-note,
-  .entry :where(.paper-scrap, .sticky-note, .paper-tag, .entry-photos-body) {
+  .entry :where(.paper-scrap, .sticky-note, .paper-tag, .entry-camera) {
     transition: none;
   }
 }

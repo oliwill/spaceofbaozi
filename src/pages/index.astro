@@ -95,7 +95,7 @@ const about = getSection("about")!;
             stroke-linejoin="round"></path>
         </svg>
 
-        <!-- Photos：文字标签 + 手绘圈画 -->
+        <!-- Photos：佳能 A-1 胶片相机 -->
         <a
           href={photos.href}
           class="entry entry-photos settle"
@@ -105,22 +105,14 @@ const about = getSection("about")!;
           <span class="entry-note" aria-hidden="true"
             >{photos.number} · {photos.title} · {photos.zh}</span
           >
-          <span class="entry-photos-body">
-            <span class="entry-big">Photos</span>
-            <span class="entry-sub">胶片与生活</span>
-            <svg class="scribble-circle" viewBox="0 0 260 120" aria-hidden="true">
-              <ellipse
-                cx="130"
-                cy="60"
-                rx="122"
-                ry="52"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-dasharray="760 40"
-                transform="rotate(-2 130 60)"></ellipse>
-            </svg>
+          <span class="entry-camera">
+            <img
+              src="/assets/home/camera@B.webp"
+              alt="包子的佳能 A-1 胶片相机"
+              width="1100"
+              height="666"
+            />
+            <span class="camera-caption">Photos · 胶片与生活</span>
           </span>
         </a>
 
