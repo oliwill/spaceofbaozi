@@ -32,3 +32,6 @@ build*.log
 # large demo screenshots stay local-optional
 demo/screenshots/*.png
 fonts-src/
+
+# local asset masters (raw photos + cutout PNG masters stay off-repo)
+assets-master/
