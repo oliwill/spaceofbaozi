@@ -2,9 +2,13 @@
 import BaseLayout from "@/components/layout/BaseLayout.astro";
 import "@/styles/neat-annotations.css";
 import "@/styles/journal.css";
-import { greetingByHour } from "@/lib/sections";
+import { getSection, greetingByHour } from "@/lib/sections";
 
 const initialGreeting = greetingByHour();
+const blog = getSection("blog")!;
+const thoughts = getSection("thoughts")!;
+const photos = getSection("photos")!;
+const about = getSection("about")!;
 ---
 
 <BaseLayout
@@ -12,173 +16,146 @@ const initialGreeting = greetingByHour();
   description="打开一本属于包子的手账，在纸张、照片、标签和手写记录之间认识他的文章、想法、摄影、酒、书、音乐和 AI 创作。"
   bodyClass="home-body"
 >
-  <div class="book-stage is-closed" id="book-stage">
-    <!-- 合上的手账：FREITAG F26 AGENDA -->
-    <div class="book-closed" id="book-closed" aria-hidden="false">
-      <div class="book-cover">
-        <span class="cover-title">中华一番</span>
-        <span class="cover-subtitle">包子铺</span>
-      </div>
-    </div>
+  <script is:inline>
+    document.documentElement.classList.add("js");
+  </script>
 
-    <!-- 打开的手账 -->
-    <div class="book-open" id="book-open" aria-hidden="true">
-      <div class="page-spread" id="page-spread">
-        <!-- 左页 -->
-        <div class="page page-left" id="page-left">
-          <div class="paper-texture"></div>
-
-          <div class="site-mark" aria-hidden="true">baozi.space</div>
-
-          <div class="greeting" id="greeting">
-            <span class="greeting-time" id="greeting-time">{initialGreeting}</span>，欢迎光临中华一番包子铺
-          </div>
-
-          <span class="date-stamp" id="date-stamp" aria-hidden="true">2026 · 07 · 23</span>
-
+  <div class="book-stage" id="book-stage">
+    <div class="scale-wrap">
+      <!-- 打开的手账：单页平铺网点纸（默认可见，无 JS 降级路径） -->
+      <main class="paper" id="paper">
+        <header class="greeting-block settle" style="--d: 0ms">
+          <p class="greeting">
+            <span id="greeting-time">{initialGreeting}</span>，欢迎光临中华一番包子铺
+          </p>
           <p class="intro-note">
             这里不是博客，也不是商店。<br />
-            是一本会不断变厚的<br />
-            数字手账。
+            是一本会不断变厚的数字手账。
           </p>
+        </header>
 
-          <!-- 圈画：圈住酒罐 -->
-          <span class="deco deco-circle" aria-hidden="true"></span>
+        <span class="date-stamp settle" id="date-stamp" style="--d: 60ms" aria-hidden="true"
+          >2026 · 07 · 24</span
+        >
+        <span class="site-mark settle" style="--d: 60ms" aria-hidden="true">baozi.space</span>
 
-          <!-- 栏目入口：Drinks -->
-          <a href="/drinks" class="scrap scrap-drinks" data-section="drinks">
-            <span class="sticker sticker-can">
-              <span class="drink-can">
-                <span class="drink-label">小猫三只</span>
-              </span>
-            </span>
-            <span class="scrap-label">Drinks</span>
-            <span class="scrap-hint">伊势角屋 · 喝过的酒</span>
-          </a>
+        <!-- 主锚点：Blog -->
+        <a href={blog.href} class="entry entry-blog settle" style="--d: 120ms" data-entry="blog">
+          <span class="entry-note" aria-hidden="true">{blog.number} · {blog.title} · {blog.zh}</span>
+          <span class="paper-scrap">
+            <span class="tape tape-top" aria-hidden="true"></span>
+            <span class="entry-big">Blog</span>
+            <span class="entry-sub">文章记录 · 长文与专题</span>
+          </span>
+        </a>
 
-          <!-- 栏目入口：Blog（手绘批注由 neat-annotations 提供） -->
-          <a
-            href="/blog"
-            class="scrap scrap-blog ann ann-n ann-no-mark"
-            data-note="最近更新"
-            style="--ann-color: #c14a36"
-            data-section="blog"
+        <!-- Thoughts：便利贴 -->
+        <a
+          href={thoughts.href}
+          class="entry entry-thoughts settle"
+          style="--d: 180ms"
+          data-entry="thoughts"
+        >
+          <span class="entry-note" aria-hidden="true"
+            >{thoughts.number} · {thoughts.title} · {thoughts.zh}</span
           >
-            <span class="scrap-bg"><span class="scrap-icon" aria-hidden="true">✎</span></span>
-            <span class="scrap-label">Blog</span>
-            <span class="scrap-hint">长文与专题</span>
-          </a>
+          <span class="sticky-note">
+            <span class="sticky-quote">今日想法：<br />把网页当成房间来布置。</span>
+            <span class="sticky-label">Thoughts</span>
+          </span>
+        </a>
 
-          <!-- 栏目入口：Thoughts -->
-          <div class="scrap scrap-thought draggable" data-section="thoughts" tabindex="0" role="link" aria-label="Thoughts 栏目">
-            <div class="sticky-note sticky-yellow">
-              <p>今日想法：<br />把网页当成房间来布置。</p>
-              <span class="sticky-date">07.22</span>
-            </div>
-            <span class="scrap-label" aria-hidden="true">Thoughts</span>
-            <a class="scrap-hit" href="/thoughts">Thoughts</a>
-          </div>
-
-          <!-- 栏目入口：Photos -->
-          <a href="/photos" class="scrap scrap-photos" data-section="photos">
-            <span class="sticker sticker-camera">
-              <span class="camera-emoji" aria-hidden="true">📷</span>
-              <span class="camera-caption">Canon A-1</span>
-            </span>
-            <span class="scrap-label">Photos</span>
-            <span class="scrap-hint">胶片与生活</span>
-          </a>
-
-          <span class="deco deco-note" aria-hidden="true">记录中 →</span>
+        <!-- 装饰：可拖动纸签 -->
+        <div
+          class="deco-tag draggable settle"
+          style="--d: 240ms"
+          id="deco-tag"
+          role="img"
+          aria-label="装饰纸签：待整理清单"
+        >
+          <span class="tape tape-top" aria-hidden="true"></span>
+          <p>待整理：照片、酒标、唱片清单。</p>
         </div>
 
-        <!-- 中缝 -->
-        <div class="page-seam" aria-hidden="true"></div>
+        <!-- 装饰：手绘箭头（指向 Photos） -->
+        <svg
+          class="deco-arrow settle"
+          style="--d: 300ms"
+          width="150"
+          height="110"
+          viewBox="0 0 150 110"
+          aria-hidden="true"
+        >
+          <path
+            d="M132 14 C 96 30, 66 52, 38 84 M 38 84 l -3 -16 M 38 84 l 15 -6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
 
-        <!-- 右页 -->
-        <div class="page page-right" id="page-right">
-          <div class="paper-texture"></div>
-
-          <span class="deco deco-highlight ann ann-amber">important!</span>
-
-          <!-- 栏目入口：About Me -->
-          <a href="/about" class="scrap scrap-about" data-section="about">
-            <span class="polaroid">
-              <span class="tape-strip" aria-hidden="true"></span>
-              <span class="polaroid-icon" aria-hidden="true">🙂</span>
-              <span class="polaroid-caption">baozi</span>
-            </span>
-            <span class="scrap-label">About Me</span>
-            <span class="scrap-hint">你好，我是包子</span>
-          </a>
-
-          <!-- 装饰便签：待整理 -->
-          <div class="scrap scrap-tape draggable" data-section="tape" tabindex="0">
-            <div class="sticky-note sticky-pink">
-              <span class="tape-strip" aria-hidden="true"></span>
-              <p>待整理：照片、酒标、唱片清单。</p>
-            </div>
-          </div>
-
-          <!-- 栏目入口：Books -->
-          <a
-            href="/books"
-            class="scrap scrap-books ann ann-e ann-green ann-no-mark"
-            data-note="六月读完的"
-            data-section="books"
+        <!-- Photos：文字标签 + 手绘圈画 -->
+        <a
+          href={photos.href}
+          class="entry entry-photos settle"
+          style="--d: 320ms"
+          data-entry="photos"
+        >
+          <span class="entry-note" aria-hidden="true"
+            >{photos.number} · {photos.title} · {photos.zh}</span
           >
-            <span class="sticker sticker-shelf">
-              <span class="shelf" aria-hidden="true">
-                <span class="shelf-book shelf-book-1"></span>
-                <span class="shelf-book shelf-book-2"></span>
-                <span class="shelf-book shelf-book-3"></span>
-              </span>
-            </span>
-            <span class="scrap-label">Books</span>
-            <span class="scrap-hint">在读与读过</span>
-          </a>
+          <span class="entry-photos-body">
+            <span class="entry-big">Photos</span>
+            <span class="entry-sub">胶片与生活</span>
+            <svg class="scribble-circle" viewBox="0 0 260 120" aria-hidden="true">
+              <ellipse
+                cx="130"
+                cy="60"
+                rx="122"
+                ry="52"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-dasharray="760 40"
+                transform="rotate(-2 130 60)"></ellipse>
+            </svg>
+          </span>
+        </a>
 
-          <!-- 栏目入口：Music -->
-          <a
-            href="/music"
-            class="scrap scrap-music ann ann-e ann-purple ann-no-mark"
-            data-note="循环中 ↻"
-            data-section="music"
+        <span class="deco-scribble settle" style="--d: 360ms" aria-hidden="true">记录中 →</span>
+
+        <!-- About：小纸签 -->
+        <a
+          href={about.href}
+          class="entry entry-about settle"
+          style="--d: 380ms"
+          data-entry="about"
+        >
+          <span class="entry-note" aria-hidden="true"
+            >{about.number} · {about.title} · {about.zh}</span
           >
-            <span class="sticker sticker-vinyl">
-              <span class="vinyl" aria-hidden="true">
-                <span class="vinyl-grooves"></span>
-                <span class="vinyl-label">♪</span>
-              </span>
-            </span>
-            <span class="scrap-label">Music</span>
-            <span class="scrap-hint">最近在听</span>
-          </a>
+          <span class="paper-tag">
+            <span class="tape tape-top" aria-hidden="true"></span>
+            <span class="entry-big">About</span>
+            <span class="entry-sub">你好，我是包子</span>
+          </span>
+        </a>
+      </main>
 
-          <!-- 栏目入口：AI Works -->
-          <a href="/ai-works" class="scrap scrap-ai" data-section="ai-works">
-            <span class="sticker sticker-robot">
-              <span class="robot-emoji" aria-hidden="true">🤖</span>
-              <span class="robot-name">包子</span>
-            </span>
-            <span class="scrap-label">AI Works</span>
-            <span class="scrap-hint">生成实验</span>
-          </a>
-
-          <span class="deco deco-bracket" aria-hidden="true">{ }</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 栏目标题过渡页 -->
-    <div class="section-overlay" id="section-overlay" aria-hidden="true">
-      <div class="section-card">
-        <span class="section-number" id="section-number">01</span>
-        <h2 class="section-title" id="section-title">Blog</h2>
-        <p class="section-desc" id="section-desc">完整文章、教程与专题。</p>
-        <div class="section-actions">
-          <a class="section-enter" id="section-enter" href="/blog">进入栏目 →</a>
-          <button class="section-back" id="section-back" type="button">← 留在首页</button>
+      <!-- 合上的手账封面（JS 就绪后才接管开本；无 JS 时保持隐藏） -->
+      <div class="book-closed" id="book-closed" aria-hidden="true">
+        <div class="book-cover">
+          <img
+            class="cover-img"
+            src="/assets/home/cover@A.webp"
+            alt="合上的手账封面"
+            width="728"
+            height="929"
+          />
+          <span class="cover-title">中华一番</span>
+          <span class="cover-subtitle">包子铺</span>
         </div>
       </div>
     </div>
