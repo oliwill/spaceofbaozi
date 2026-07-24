@@ -191,6 +191,14 @@ button {
   font-size: 0.95rem;
 }
 
+.entry-cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+}
+
 .tag {
   display: inline-block;
   padding: 0.1rem 0.45rem;
@@ -241,6 +249,51 @@ button {
 
 .prose a:hover {
   color: var(--brick);
+}
+
+/* 正文图片：默认朴素居中（PicGo 粘贴的 ![alt](url) 即此效果） */
+.prose img {
+  margin: 1.5rem auto;
+  border-radius: 10px;
+  box-shadow: var(--shadow-soft);
+}
+
+/* 拍立得风：markdown 里写原生 HTML <figure class="photo-frame"> */
+.prose .photo-frame {
+  margin: 2rem auto;
+  padding: 0.75rem 0.75rem 0.4rem;
+  max-width: 30rem;
+  background: #fff;
+  box-shadow: var(--shadow-lift);
+  transform: rotate(-1deg);
+}
+
+.prose .photo-frame img {
+  margin: 0;
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.prose .photo-frame figcaption {
+  margin-top: 0.4rem;
+  text-align: center;
+  font-family: var(--font-hand-cn);
+  font-size: 1.05rem;
+  color: var(--ink-light);
+}
+
+/* 多图网格：<div class="photo-grid"> 包若干 <img> */
+.prose .photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.prose .photo-grid img {
+  margin: 0;
+  height: 100%;
+  object-fit: cover;
 }
 
 .footer-note {

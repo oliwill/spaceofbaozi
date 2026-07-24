@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview --host 127.0.0.1 --port 4321",
     "check": "astro check",
-    "fonts:subset": "node scripts/subset-fonts.mjs"
+    "fonts:subset": "node scripts/subset-fonts.mjs",
+    "publish": "node scripts/subset-fonts.mjs && git add -A && git commit -m \"content: update\" && git push"
   },
   "dependencies": {
     "astro": "^5.12.0"

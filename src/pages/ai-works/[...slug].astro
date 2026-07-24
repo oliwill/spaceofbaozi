@@ -5,7 +5,7 @@ import SectionLayout from "@/components/layout/SectionLayout.astro";
 import { getSection } from "@/lib/sections";
 
 export const getStaticPaths = (async () => {
-  const entries = await getCollection("ai-works");
+  const entries = await getCollection("ai-works", ({ data }) => !data.draft);
   return entries.map((entry) => ({
     params: { slug: entry.id },
     props: { entry },

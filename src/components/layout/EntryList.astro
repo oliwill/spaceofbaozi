@@ -29,6 +29,14 @@ const sorted = [...entries]
       {sorted.map((entry) => (
         <li>
           <a class="entry-card" href={`/${entry.collection}/${entry.id}`}>
+            {entry.data.cover && (
+              <img
+                class="entry-cover"
+                src={entry.data.cover}
+                alt={entry.data.title}
+                loading="lazy"
+              />
+            )}
             <div class="entry-meta">
               <time datetime={entry.data.date.toISOString()}>
                 {entry.data.date.toLocaleDateString("zh-CN")}
