@@ -42,7 +42,7 @@ const sorted = [...entries]
                 {entry.data.date.toLocaleDateString("zh-CN")}
               </time>
               {entry.data.tags?.slice(0, 3).map((tag) => (
-                <span class="tag">{tag}</span>
+                <span class="tag">#{tag}</span>
               ))}
             </div>
             <h2>{entry.data.title}</h2>

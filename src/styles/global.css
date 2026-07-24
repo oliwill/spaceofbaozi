@@ -127,18 +127,28 @@ button {
 
 .section-kicker {
   display: inline-block;
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--brick);
-  margin-bottom: 0.5rem;
+  padding: 2px 9px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--vermilion);
+  border: 1.5px solid var(--vermilion);
+  border-radius: 6px;
+  rotate: -1.5deg;
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+  margin-bottom: 0.75rem;
 }
 
 .section-header h1 {
-  margin: 0 0 0.5rem;
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  margin: 0 0 0.6rem;
+  font-family: var(--font-hand);
+  font-size: clamp(2.6rem, 6vw, 3.6rem);
+  font-weight: 600;
+  line-height: 1.1;
+  text-decoration: underline wavy rgba(193, 74, 54, 0.4);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 10px;
 }
 
 .section-header p {
@@ -156,18 +166,47 @@ button {
 }
 
 .entry-card {
+  position: relative;
   display: block;
   padding: 1.1rem 1.2rem;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 0.9rem;
-  box-shadow: var(--shadow-soft);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #ffffff;
+  border-radius: 3px;
+  box-shadow:
+    0 2px 6px rgba(40, 32, 24, 0.1),
+    0 8px 18px rgba(40, 32, 24, 0.08);
+  transition:
+    rotate 0.2s ease,
+    translate 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.entry-list li:nth-child(odd) .entry-card {
+  rotate: -0.4deg;
+}
+
+.entry-list li:nth-child(even) .entry-card {
+  rotate: 0.5deg;
+}
+
+/* 每第三张贴一小段胶带 */
+.entry-list li:nth-child(3n + 1) .entry-card::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 30px;
+  width: 62px;
+  height: 20px;
+  background: rgba(214, 202, 168, 0.55);
+  box-shadow: 0 1px 2px rgba(40, 32, 24, 0.08);
+  rotate: -3deg;
 }
 
 .entry-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  rotate: 0deg;
+  translate: 0 -3px;
+  box-shadow:
+    0 6px 14px rgba(40, 32, 24, 0.14),
+    0 16px 30px rgba(40, 32, 24, 0.16);
 }
 
 .entry-card h2 {
@@ -199,13 +238,34 @@ button {
   margin-bottom: 0.6rem;
 }
 
+/* #标签：手写批注式，不用胶囊 */
 .tag {
   display: inline-block;
-  padding: 0.1rem 0.45rem;
-  border-radius: 999px;
-  background: var(--accent-blue);
-  color: #3b5b7a;
-  font-size: 0.75rem;
+  color: var(--mist-blue);
+  font-size: 0.8rem;
+}
+
+/* 详情页日期印章 */
+.date-chip {
+  display: inline-block;
+  padding: 2px 9px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--vermilion);
+  border: 1.5px solid var(--vermilion);
+  border-radius: 6px;
+  rotate: 2deg;
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+}
+
+.prose .entry-meta {
+  align-items: center;
+}
+
+.prose .link-out a {
+  border-bottom-style: dashed;
 }
 
 .empty-state {
@@ -217,6 +277,8 @@ button {
 }
 
 .empty-state strong {
+  font-family: var(--font-hand-cn);
+  font-size: 1.25rem;
   color: var(--ink);
 }
 
