@@ -14,16 +14,25 @@ import { join, extname } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 
-// name: 输出文件名；src: fonts-src/ 里的全量字体
+// name: 输出文件名；src: fonts-src/ 里的全量字体；scanDirs: 扫描目录
+//   SlideXiaXing（手写标题）只用于站点骨架/首页/组件，不覆盖文章正文，
+//   避免长文把展示字体的子集撑爆；文章内手写图注缺字时回退系统字体。
+//   LXGW WenKai（正文）必须覆盖全部内容字符。
 // 来源：
 //   SlideXiaXing.ttf      — https://www.npmjs.com/package/@fontpkg/slidexiaxing（演示夏行楷，免费商用）
 //   LXGWWenKai-Regular.ttf — https://github.com/lxgw/LxgwWenKai/releases（OFL）
 const FONTS = [
-  { name: "slide-xiaxing", src: "fonts-src/SlideXiaXing.ttf" },
-  { name: "lxgw-wenkai", src: "fonts-src/LXGWWenKai-Regular.ttf" },
+  {
+    name: "slide-xiaxing",
+    src: "fonts-src/SlideXiaXing.ttf",
+    scanDirs: ["src/pages", "src/components", "src/lib", "public/scripts"],
+  },
+  {
+    name: "lxgw-wenkai",
+    src: "fonts-src/LXGWWenKai-Regular.ttf",
+    scanDirs: ["src", "public/scripts"],
+  },
 ];
-
-const SCAN_DIRS = ["src", "public/scripts"];
 const SCAN_EXTS = new Set([".astro", ".md", ".mdx", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".json"]);
 
 // 安全字符集：可打印 ASCII + 常用中文标点/符号（防止扫描遗漏运行时拼接的字符）
@@ -43,10 +52,10 @@ function* walk(dir) {
   }
 }
 
-function collectChars() {
+function collectChars(scanDirs) {
   const chars = new Set(SAFETY);
   for (let cp = 0x20; cp <= 0x7e; cp++) chars.add(String.fromCodePoint(cp));
-  for (const dir of SCAN_DIRS) {
+  for (const dir of scanDirs) {
     for (const file of walk(join(ROOT, dir))) {
       for (const ch of readFileSync(file, "utf8")) chars.add(ch);
     }
@@ -74,9 +83,10 @@ function subset(font, charsFile) {
 }
 
 mkdirSync(join(ROOT, "public/fonts"), { recursive: true });
-const chars = collectChars();
-const charsFile = "fonts-src/_chars.txt";
-writeFileSync(join(ROOT, charsFile), chars, "utf8");
-console.log(`collected ${[...chars].length} unique chars`);
-
-for (const font of FONTS) subset(font, charsFile);
+for (const font of FONTS) {
+  const chars = collectChars(font.scanDirs);
+  const charsFile = `fonts-src/_chars-${font.name}.txt`;
+  writeFileSync(join(ROOT, charsFile), chars, "utf8");
+  console.log(`${font.name}: collected ${[...chars].length} unique chars`);
+  subset(font, charsFile);
+}

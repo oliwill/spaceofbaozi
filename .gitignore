@@ -35,3 +35,6 @@ fonts-src/
 
 # local asset masters (raw photos + cutout PNG masters stay off-repo)
 assets-master/
+
+# Gridea export archive (migrated into src/content, kept locally)
+bcb2a403-e02e-49b5-b603-404f2faf49d7-posts/
