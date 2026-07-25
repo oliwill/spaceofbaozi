@@ -50,7 +50,6 @@ body.home-body {
   background-color: var(--paper);
   background-image: radial-gradient(var(--grid-dot) 1.2px, transparent 1.2px);
   background-size: 26px 26px;
-  border-radius: 10px;
   box-shadow:
     0 2px 6px rgba(40, 32, 24, 0.08),
     0 28px 64px rgba(40, 32, 24, 0.16);
@@ -676,20 +675,80 @@ body.home-body {
   pointer-events: none;
 }
 
-/* 新贴纸：AirPods / Kodak 钥匙扣（替换右侧洗衣机） */
-.deco-airpods {
-  left: 1022px;
-  top: 396px;
-  height: 150px;
-  width: auto;
-  rotate: -5deg;
+/* AirPods / Kodak：静态图降级，准备就绪后由 Sticker Forge 接管 */
+.deco-peel {
+  position: absolute;
+  left: 1000px;
+  top: 376px;
+  width: 160px;
+  height: 210px;
+  z-index: 4;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.peel-fallback,
+.peel-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.peel-fallback {
+  object-fit: contain;
   filter: drop-shadow(0 2px 6px rgba(40, 32, 24, 0.1));
+  transition: opacity 0.2s ease;
+}
+
+.peel-canvas {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.deco-peel.is-ready .peel-canvas {
+  opacity: 1;
+}
+
+.deco-peel.is-ready .peel-fallback {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.peel-hint {
+  position: absolute;
+  right: -18px;
+  bottom: -20px;
+  width: max-content;
+  font-family: var(--font-hand-cn);
+  font-size: 0.82rem;
+  color: var(--brick);
+  opacity: 0;
+  rotate: 5deg;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.deco-peel:hover .peel-hint,
+.deco-peel.is-peeling .peel-hint,
+.deco-peel.has-peeled .peel-hint {
+  opacity: 0.9;
+}
+
+.deco-peel.is-ready {
+  cursor: grab;
+}
+
+.deco-peel.is-peeling {
+  cursor: grabbing;
 }
 
 /* 嘉乐完整矩形作品（替换右下 Michelin） */
 .deco-jiale {
   left: 1080px;
-  top: 574px;
+  top: 610px;
   width: 86px;
   height: auto;
   rotate: 5deg;
@@ -869,6 +928,7 @@ body.home-body {
   .deco-arrow,
   .deco-scribble,
   .deco-img,
+  .deco-peel,
   .mini-cal,
   .red-note,
   .red-circle {

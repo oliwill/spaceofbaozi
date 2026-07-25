@@ -1,0 +1,3 @@
+Source: https://github.com/CatsJuice/sticker-forge
+Commit: 6c15bcf01dc157f9e74f6486c973b92e4f59e5dd
+License: MIT

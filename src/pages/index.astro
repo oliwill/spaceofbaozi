@@ -248,16 +248,28 @@ const calCells = buildCalendar(now);
           </span>
         </a>
 
-        <!-- 装饰贴纸与玩偶（不可点击） -->
-        <img
-          class="deco-img deco-airpods settle"
+        <!-- 可掀开的贴纸：静态图是无 JS/WebGL 降级 -->
+        <div
+          class="deco-peel deco-airpods settle"
           style="--d: 320ms"
-          src="/assets/home/deco-sticker-airpods@C.webp"
-          alt="Kodak Charmera 钥匙扣与透明随身盒贴纸"
-          width="499"
-          height="650"
-          loading="lazy"
-        />
+          data-peel-sticker
+          data-source="/assets/home/deco-sticker-airpods@C.webp"
+        >
+          <img
+            class="peel-fallback"
+            src="/assets/home/deco-sticker-airpods@C.webp"
+            alt="Kodak Charmera 钥匙扣与透明随身盒贴纸"
+            width="499"
+            height="650"
+            loading="lazy"
+          />
+          <sticker-forge
+            class="peel-canvas"
+            role="img"
+            aria-label="可从边缘掀开的 Kodak Charmera 贴纸"
+          ></sticker-forge>
+          <span class="peel-hint" aria-hidden="true">↙ 从边缘掀开</span>
+        </div>
         <img
           class="deco-img deco-jiale settle"
           style="--d: 380ms"
@@ -331,5 +343,6 @@ const calCells = buildCalendar(now);
     ↻ 重新打开
   </button>
 
+  <script type="module" src="/scripts/peel-sticker.js"></script>
   <script is:inline src="/scripts/journal.js"></script>
 </BaseLayout>
