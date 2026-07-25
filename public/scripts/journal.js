@@ -12,6 +12,7 @@
   const dhMonth = document.getElementById("dh-month");
   const mcTitle = document.getElementById("mc-title");
   const mcGrid = document.getElementById("mc-grid");
+  const bookClosed = document.getElementById("book-closed");
   const replayBtn = document.getElementById("replay-btn");
 
   if (!stage || !paper) return;
@@ -60,23 +61,47 @@
   }
 
   /* ===== 开本 ===== */
-  function openBook() {
-    if (prefersReducedMotion) {
-      stage.classList.add("is-open");
-      paper.inert = false;
-      return;
+  function openBook(focusAfter = false) {
+    if (stage.classList.contains("is-open")) return;
+    stage.classList.add("is-open");
+    paper.inert = false;
+    if (bookClosed) {
+      bookClosed.inert = true;
+      bookClosed.setAttribute("aria-hidden", "true");
     }
-    // 短暂停顿让封面被看见，再翻开（总时长 ≤ 900ms 由 CSS 过渡保证）
-    window.setTimeout(() => {
-      stage.classList.add("is-open");
-      paper.inert = false;
-    }, 220);
+    if (focusAfter) {
+      window.setTimeout(() => {
+        paper.querySelector(".entry")?.focus({ preventScroll: true });
+      }, prefersReducedMotion ? 0 : 950);
+    }
+  }
+
+  function closeBook() {
+    stage.classList.remove("is-open");
+    paper.inert = true;
+    if (bookClosed) {
+      bookClosed.inert = false;
+      bookClosed.setAttribute("aria-hidden", "false");
+    }
   }
 
   function replay() {
-    stage.classList.remove("is-open");
-    paper.inert = true;
-    window.setTimeout(openBook, prefersReducedMotion ? 0 : 380);
+    closeBook();
+    bookClosed?.focus({ preventScroll: true });
+  }
+
+  function initCover() {
+    if (prefersReducedMotion) {
+      openBook();
+      return;
+    }
+    closeBook();
+    stage.addEventListener("click", () => openBook());
+    bookClosed?.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      openBook(true);
+    });
   }
 
   /* ===== 两步进入：触屏首 tap 浮现批注，次 tap 进入 ===== */
@@ -170,10 +195,8 @@
   function init() {
     setGreeting();
     setDateHeader();
-    // JS 接管开本：先合上（inert），再翻开；无 JS 时页面保持打开态可导航
-    paper.inert = true;
-    stage.classList.remove("is-open");
-    openBook();
+    // 无 JS 时页面保持打开态；有 JS 时等待点击/Enter/Space 翻开
+    initCover();
     initTwoStep();
     initDraggable();
     if (replayBtn) replayBtn.addEventListener("click", replay);

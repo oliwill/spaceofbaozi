@@ -70,28 +70,58 @@ body.home-body {
     translate 0.5s ease var(--d, 0ms);
 }
 
-/* ===== 合上的封面（无 JS 时保持隐藏） ===== */
+/* 合上时隐藏内页，点击翻开后再显露纸张 */
+.js .book-stage:not(.is-open) .paper {
+  opacity: 0;
+}
+
+.js .paper {
+  transition: opacity 0.18s ease;
+}
+
+/* ===== 合上的封面（无 JS 时保持隐藏；与首页同一物理尺度） ===== */
 .book-closed {
   display: none;
-  place-self: center;
-  z-index: 10;
-  transform-origin: left center;
 }
 
 .js .book-closed {
-  display: block;
+  position: relative;
+  display: grid;
+  place-items: center;
+  place-self: stretch;
+  z-index: 10;
+  cursor: pointer;
 }
 
+.js .book-closed:focus-visible {
+  outline: 2px dashed var(--brick);
+  outline-offset: -10px;
+}
+
+/* 封面高度 = 纸张高度：开本前后尺度连续 */
 .book-cover {
   position: relative;
-  width: 400px;
+  width: 627px;
+  height: 800px;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+}
+
+.cover-face {
+  position: absolute;
+  inset: 0;
   backface-visibility: hidden;
+}
+
+.cover-back {
+  transform: rotateY(180deg);
 }
 
 .cover-img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
   filter: drop-shadow(0 18px 40px rgba(40, 32, 24, 0.3));
 }
 
@@ -104,7 +134,7 @@ body.home-body {
   text-align: center;
   white-space: nowrap;
   font-family: var(--font-hand-cn);
-  font-size: 2.1rem;
+  font-size: 3rem;
   color: #fdfdfc;
   letter-spacing: 0.08em;
   text-shadow: 0 1px 3px rgba(40, 32, 24, 0.35);
@@ -114,25 +144,50 @@ body.home-body {
 .cover-subtitle {
   position: absolute;
   left: 50%;
-  top: calc(30% + 58px);
+  top: calc(30% + 82px);
   width: 46%;
   text-align: center;
   white-space: nowrap;
   font-family: var(--font-hand-cn);
-  font-size: 1.25rem;
+  font-size: 1.8rem;
   color: rgba(253, 253, 252, 0.88);
   letter-spacing: 0.24em;
   rotate: -1.5deg;
 }
 
+/* 翻开：绕左书脊旋转，中途露出封底，随后整体淡出 */
+.book-stage.is-open .book-cover {
+  transform: rotateY(-160deg);
+  transition: transform 0.9s cubic-bezier(0.55, 0.06, 0.35, 1);
+}
+
 .book-stage.is-open .book-closed {
-  transform: rotateY(-118deg);
   opacity: 0;
   visibility: hidden;
+  cursor: default;
   transition:
-    transform 0.8s cubic-bezier(0.55, 0.06, 0.35, 1),
-    opacity 0.28s ease 0.5s,
-    visibility 0s 0.85s;
+    opacity 0.3s ease 0.6s,
+    visibility 0s 1s;
+}
+
+.open-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 44px;
+  translate: -50% 0;
+  font-family: var(--font-hand-cn);
+  font-size: 1.05rem;
+  color: rgba(253, 253, 252, 0.94);
+  text-shadow: 0 1px 4px rgba(40, 32, 24, 0.5);
+  z-index: 20;
+  animation: hint-pulse 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes hint-pulse {
+  0%,
+  100% { opacity: 0.45; }
+  50% { opacity: 1; }
 }
 
 /* ===== 欢迎区 ===== */
@@ -353,18 +408,18 @@ body.home-body {
   z-index: 6;
 }
 
-.entry:hover :where(.paper-scrap, .sticky-note, .paper-tag, .entry-camera) {
+.entry:hover :where(.paper-scrap, .sticky-note, .about-photo, .entry-camera) {
   translate: 0 -4px;
 }
 
 /* 矩形阴影只给纸片类；相机走 img drop-shadow，避免透出矩形底 */
-.entry:hover :where(.paper-scrap, .sticky-note, .paper-tag) {
+.entry:hover :where(.paper-scrap, .sticky-note, .about-photo) {
   box-shadow:
     0 6px 14px rgba(40, 32, 24, 0.14),
     0 16px 30px rgba(40, 32, 24, 0.16);
 }
 
-.entry :where(.paper-scrap, .sticky-note, .paper-tag, .entry-camera) {
+.entry :where(.paper-scrap, .sticky-note, .about-photo, .entry-camera) {
   transition:
     translate 0.22s ease,
     box-shadow 0.22s ease;
@@ -507,31 +562,45 @@ body.home-body {
   color: var(--ink-light);
 }
 
-/* --- About：小纸签 + 红笔圈画 --- */
+/* --- About：完整矩形作品 + 拍立得式纸框 --- */
 .entry-about {
-  left: 800px;
-  top: 556px;
-  rotate: 1.5deg;
+  left: 780px;
+  top: 510px;
+  rotate: 1deg;
 }
 
-.paper-tag {
+.about-photo {
   position: relative;
   display: block;
-  width: 232px;
-  padding: 20px 20px 14px;
+  width: 286px;
+  padding: 8px 8px 12px;
   background: #ffffff;
   border-radius: 3px;
   box-shadow:
     0 2px 6px rgba(40, 32, 24, 0.1),
-    0 8px 18px rgba(40, 32, 24, 0.1);
+    0 10px 22px rgba(40, 32, 24, 0.12);
 }
 
-.paper-tag .entry-big {
-  font-size: 2.2rem;
+.about-photo > img {
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
 }
 
-.paper-tag .entry-sub {
-  margin-top: 8px;
+.about-caption {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 6px 0;
+}
+
+.about-caption .entry-big {
+  font-size: 2rem;
+}
+
+.about-caption .entry-sub {
+  margin-top: 0;
+  font-size: 0.85rem;
 }
 
 /* 红笔圈画：圈住 About 纸签 */
@@ -607,23 +676,25 @@ body.home-body {
   pointer-events: none;
 }
 
-/* Mode C：保留原 die-cut 边，极轻落影 */
-.deco-washer {
-  left: 1006px;
-  top: 420px;
-  height: 118px;
+/* 新贴纸：AirPods / Kodak 钥匙扣（替换右侧洗衣机） */
+.deco-airpods {
+  left: 1022px;
+  top: 396px;
+  height: 150px;
   width: auto;
   rotate: -5deg;
   filter: drop-shadow(0 2px 6px rgba(40, 32, 24, 0.1));
 }
 
-.deco-michelin {
-  left: 1062px;
-  top: 610px;
-  width: 100px;
+/* 嘉乐完整矩形作品（替换右下 Michelin） */
+.deco-jiale {
+  left: 1080px;
+  top: 574px;
+  width: 86px;
   height: auto;
-  rotate: 6deg;
-  filter: drop-shadow(0 2px 6px rgba(40, 32, 24, 0.1));
+  rotate: 5deg;
+  border: 5px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(40, 32, 24, 0.14);
 }
 
 /* Mode I（母版实际带 die-cut 白边，按 C 类观感配极轻落影） */
@@ -678,6 +749,16 @@ body.home-body {
   border: 1px solid rgba(40, 32, 24, 0.16);
   border-radius: 999px;
   cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.book-stage.is-open ~ .replay-btn {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .replay-btn:hover {
@@ -729,10 +810,6 @@ body.home-body {
     font-size: 1.6rem;
   }
 
-  .date-stamp {
-    align-self: flex-end;
-    rotate: 3deg;
-  }
 
   .site-mark {
     order: 20;
@@ -755,7 +832,7 @@ body.home-body {
 
   .paper-scrap,
   .sticky-note,
-  .paper-tag {
+  .about-photo {
     width: 100%;
     min-height: 44px;
     box-sizing: border-box;
@@ -783,7 +860,7 @@ body.home-body {
     font-size: 2.6rem;
   }
 
-  .paper-tag .entry-big {
+  .about-photo .entry-big {
     font-size: 2rem;
   }
 
@@ -807,23 +884,41 @@ body.home-body {
     gap: 12px 24px;
   }
 
-  /* 开本在移动端简化为封面淡出 */
+  /* 开本在移动端覆盖视口并简化为淡出 */
+  .js .book-closed {
+    position: fixed;
+    inset: 0;
+    background: var(--page-bg);
+    z-index: 30;
+  }
+
   .book-cover {
-    width: min(66vw, 300px);
-    margin: 12vh auto 0;
+    width: min(88vw, 420px);
+    height: auto;
+    aspect-ratio: 728 / 929;
+  }
+
+  .open-hint {
+    bottom: 64px;
+    color: var(--ink-light);
+    text-shadow: none;
   }
 
   .cover-title {
-    font-size: 1.7rem;
+    font-size: 1.9rem;
   }
 
   .cover-subtitle {
-    top: calc(30% + 48px);
-    font-size: 1.05rem;
+    top: calc(30% + 54px);
+    font-size: 1.15rem;
+  }
+
+  .book-stage.is-open .book-cover {
+    transform: none;
+    transition: none;
   }
 
   .book-stage.is-open .book-closed {
-    transform: none;
     transition:
       opacity 0.4s ease,
       visibility 0s 0.45s;
@@ -839,10 +934,15 @@ body.home-body {
 @media (prefers-reduced-motion: reduce) {
   .js .settle,
   .js .book-stage.is-open .settle,
+  .book-stage.is-open .book-cover,
   .book-stage.is-open .book-closed,
   .entry-note,
-  .entry :where(.paper-scrap, .sticky-note, .paper-tag, .entry-camera) {
+  .entry :where(.paper-scrap, .sticky-note, .about-photo, .entry-camera) {
     transition: none;
+  }
+
+  .open-hint {
+    animation: none;
   }
 }
 

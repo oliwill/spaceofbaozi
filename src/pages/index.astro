@@ -221,42 +221,49 @@ const calCells = buildCalendar(now);
           <span class="entry-note" aria-hidden="true"
             >{about.number} · {about.title} · {about.zh}</span
           >
-          <span class="paper-tag">
-            <span class="tape tape-top" aria-hidden="true"></span>
-            <span class="entry-big">About</span>
-            <span class="entry-sub">你好，我是包子</span>
-            <svg class="red-circle" viewBox="0 0 300 130" aria-hidden="true">
+          <span class="about-photo">
+            <img
+              src="/assets/home/baozi@A.webp"
+              alt="烟花下向夜空挥手的包子插画"
+              width="1000"
+              height="563"
+            />
+            <span class="about-caption">
+              <span class="entry-big">About</span>
+              <span class="entry-sub">你好，我是包子</span>
+            </span>
+            <svg class="red-circle" viewBox="0 0 340 230" aria-hidden="true">
               <ellipse
-                cx="150"
-                cy="65"
-                rx="142"
-                ry="58"
+                cx="170"
+                cy="115"
+                rx="162"
+                ry="104"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="3"
                 stroke-linecap="round"
-                stroke-dasharray="840 60"
-                transform="rotate(-1.5 150 65)"></ellipse>
+                stroke-dasharray="980 70"
+                transform="rotate(-1.5 170 115)"></ellipse>
             </svg>
           </span>
         </a>
 
         <!-- 装饰贴纸与玩偶（不可点击） -->
         <img
-          class="deco-img deco-washer settle"
+          class="deco-img deco-airpods settle"
           style="--d: 320ms"
-          src="/assets/home/deco-sticker-washer@C.webp"
-          alt="洗衣机造型贴纸"
-          width="531"
-          height="600"
+          src="/assets/home/deco-sticker-airpods@C.webp"
+          alt="Kodak Charmera 钥匙扣与透明随身盒贴纸"
+          width="499"
+          height="650"
           loading="lazy"
         />
         <img
-          class="deco-img deco-michelin settle"
+          class="deco-img deco-jiale settle"
           style="--d: 380ms"
-          src="/assets/home/deco-sticker-michelin@C.webp"
-          alt="米其林 2025 贴纸"
-          width="400"
+          src="/assets/home/deco-jiale01.webp"
+          alt="戴皇冠的嘉乐在蓝色花丛中的插画"
+          width="450"
           height="600"
           loading="lazy"
         />
@@ -292,18 +299,30 @@ const calCells = buildCalendar(now);
       </main>
 
       <!-- 合上的手账封面（JS 就绪后才接管开本；无 JS 时保持隐藏） -->
-      <div class="book-closed" id="book-closed" aria-hidden="true">
+      <div class="book-closed" id="book-closed" role="button" tabindex="0" aria-label="打开手账">
         <div class="book-cover">
-          <img
-            class="cover-img"
-            src="/assets/home/cover@A.webp"
-            alt="合上的手账封面"
-            width="728"
-            height="929"
-          />
-          <span class="cover-title">中华一番</span>
-          <span class="cover-subtitle">包子铺</span>
+          <div class="cover-face cover-front">
+            <img
+              class="cover-img"
+              src="/assets/home/cover@A.webp"
+              alt="手账封面：中华一番包子铺"
+              width="728"
+              height="929"
+            />
+            <span class="cover-title">中华一番</span>
+            <span class="cover-subtitle">包子铺</span>
+          </div>
+          <div class="cover-face cover-back" aria-hidden="true">
+            <img
+              class="cover-img"
+              src="/assets/home/cover@B.webp"
+              alt=""
+              width="730"
+              height="936"
+            />
+          </div>
         </div>
+        <span class="open-hint">点击任意处，翻开手账</span>
       </div>
     </div>
   </div>
