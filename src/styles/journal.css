@@ -139,46 +139,172 @@ body.home-body {
 .greeting-block {
   position: absolute;
   left: 64px;
-  top: 52px;
-  max-width: 460px;
+  top: 146px;
+  max-width: 560px;
 }
 
 .greeting {
   margin: 0;
   font-family: var(--font-hand-cn);
-  font-size: 2rem;
+  font-size: 1.75rem;
   color: var(--ink);
 }
 
 .intro-note {
-  margin: 14px 0 0;
-  font-size: 0.95rem;
-  line-height: 1.9;
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  line-height: 1.8;
   color: var(--ink-light);
 }
 
-.date-stamp {
+/* ===== 最近更新：手写记录行 ===== */
+.records {
   position: absolute;
-  left: 640px;
-  top: 58px;
-  padding: 6px 12px;
+  left: 64px;
+  top: 292px;
+  width: 336px;
+}
+
+.rec-title {
+  margin: 0 0 6px;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--brick);
+  border-bottom: 1.5px solid rgba(184, 106, 90, 0.4);
+  padding-bottom: 4px;
+}
+
+.rec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rec-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+.rec-check {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--ink-lighter);
+  border-radius: 1px;
+  translate: 0 1px;
+}
+
+.rec-line time {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-lighter);
+}
+
+.rec-line a {
+  color: var(--ink);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rec-line a:hover {
+  color: var(--brick);
+  text-decoration: underline wavy rgba(193, 74, 54, 0.5);
+  text-underline-offset: 4px;
+}
+
+/* ===== 页首：日期头 + 小月历 ===== */
+.date-header {
+  position: absolute;
+  left: 64px;
+  top: 42px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.dh-num {
+  font-family: var(--font-hand);
+  font-size: 3.6rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.dh-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dh-weekday {
+  font-family: var(--font-hand);
+  font-size: 1.3rem;
+  color: var(--ink-light);
+}
+
+.dh-month {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-lighter);
+}
+
+.mini-cal {
+  position: absolute;
+  left: 992px;
+  top: 40px;
+  width: 168px;
+  rotate: 1deg;
+}
+
+.mc-title {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-lighter);
+  margin-bottom: 4px;
+}
+
+.mc-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+
+.mc-w,
+.mc-d {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-align: center;
+  line-height: 1.7;
+  color: var(--ink-lighter);
+}
+
+.mc-d {
+  color: var(--ink-light);
+}
+
+.mc-today {
   color: var(--vermilion);
-  border: 2px solid var(--vermilion);
-  border-radius: 6px;
-  rotate: 5deg;
-  mix-blend-mode: multiply;
-  opacity: 0.85;
+  border: 1.5px solid var(--vermilion);
+  border-radius: 50%;
+  line-height: 1.5;
 }
 
 .site-mark {
   position: absolute;
-  left: 1062px;
-  top: 48px;
+  left: 1080px;
+  top: 752px;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: var(--ink-lighter);
 }
 
@@ -257,10 +383,10 @@ body.home-body {
   rotate: -2deg;
 }
 
-/* --- 主锚点：Blog（撕边纸片，视觉面积 ~28%） --- */
+/* --- 主锚点：Blog（撕边纸片） --- */
 .entry-blog {
-  left: 92px;
-  top: 228px;
+  left: 420px;
+  top: 286px;
   rotate: -2deg;
 }
 
@@ -274,8 +400,8 @@ body.home-body {
 .paper-scrap {
   position: relative;
   display: block;
-  width: 344px;
-  padding: 36px 32px 28px;
+  width: 292px;
+  padding: 30px 26px 22px;
   background: #ffffff;
   border-radius: 3px;
   box-shadow:
@@ -300,9 +426,25 @@ body.home-body {
 
 /* --- Thoughts：便利贴 --- */
 .entry-thoughts {
-  left: 620px;
-  top: 106px;
+  left: 756px;
+  top: 148px;
   rotate: 2.5deg;
+}
+
+/* 红笔批注 */
+.red-note {
+  position: absolute;
+  font-family: var(--font-hand-cn);
+  font-size: 1.1rem;
+  color: var(--vermilion);
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+}
+
+.red-note-sticky {
+  left: 970px;
+  top: 200px;
+  rotate: 6deg;
 }
 
 .sticky-note {
@@ -334,14 +476,14 @@ body.home-body {
 
 /* --- Photos：佳能 A-1 相机（Mode B 用户选定，CSS 落影） --- */
 .entry-photos {
-  left: 400px;
-  top: 424px;
+  left: 420px;
+  top: 478px;
   rotate: 2deg;
 }
 
 .entry-camera {
   display: block;
-  width: 344px;
+  width: 300px;
   text-align: center;
 }
 
@@ -365,18 +507,18 @@ body.home-body {
   color: var(--ink-light);
 }
 
-/* --- About：小纸签 --- */
+/* --- About：小纸签 + 红笔圈画 --- */
 .entry-about {
-  left: 826px;
-  top: 542px;
+  left: 800px;
+  top: 556px;
   rotate: 1.5deg;
 }
 
 .paper-tag {
   position: relative;
   display: block;
-  width: 252px;
-  padding: 24px 22px 16px;
+  width: 232px;
+  padding: 20px 20px 14px;
   background: #ffffff;
   border-radius: 3px;
   box-shadow:
@@ -392,11 +534,23 @@ body.home-body {
   margin-top: 8px;
 }
 
+/* 红笔圈画：圈住 About 纸签 */
+.red-circle {
+  position: absolute;
+  inset: -16px -26px;
+  width: calc(100% + 52px);
+  height: calc(100% + 32px);
+  color: var(--vermilion);
+  opacity: 0.75;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
 /* ===== 装饰（不可点击） ===== */
 .deco-tag {
   position: absolute;
-  left: 950px;
-  top: 196px;
+  left: 992px;
+  top: 264px;
   width: 152px;
   padding: 22px 14px 14px;
   background: var(--accent-pink);
@@ -430,8 +584,8 @@ body.home-body {
 
 .deco-arrow {
   position: absolute;
-  left: 690px;
-  top: 336px;
+  left: 700px;
+  top: 396px;
   color: var(--brick);
   opacity: 0.75;
   rotate: 6deg;
@@ -439,8 +593,8 @@ body.home-body {
 
 .deco-scribble {
   position: absolute;
-  left: 152px;
-  top: 622px;
+  left: 224px;
+  top: 528px;
   font-family: var(--font-hand);
   font-size: 1.5rem;
   color: var(--ink-lighter);
@@ -455,18 +609,18 @@ body.home-body {
 
 /* Mode C：保留原 die-cut 边，极轻落影 */
 .deco-washer {
-  left: 1032px;
-  top: 330px;
-  height: 130px;
+  left: 1006px;
+  top: 420px;
+  height: 118px;
   width: auto;
   rotate: -5deg;
   filter: drop-shadow(0 2px 6px rgba(40, 32, 24, 0.1));
 }
 
 .deco-michelin {
-  left: 1088px;
-  top: 580px;
-  width: 110px;
+  left: 1062px;
+  top: 610px;
+  width: 100px;
   height: auto;
   rotate: 6deg;
   filter: drop-shadow(0 2px 6px rgba(40, 32, 24, 0.1));
@@ -474,12 +628,40 @@ body.home-body {
 
 /* Mode I（母版实际带 die-cut 白边，按 C 类观感配极轻落影） */
 .deco-wukong {
-  left: 322px;
-  top: 586px;
-  height: 190px;
+  left: 150px;
+  top: 560px;
+  height: 160px;
   width: auto;
   rotate: -4deg;
   filter: drop-shadow(0 2px 6px rgba(40, 32, 24, 0.1));
+}
+
+/* ===== 页脚记录行 ===== */
+.footer-records {
+  position: absolute;
+  left: 64px;
+  top: 740px;
+  display: flex;
+  gap: 36px;
+  font-size: 0.8rem;
+  color: var(--ink-lighter);
+}
+
+.fr-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  margin-right: 6px;
+}
+
+.footer-records a {
+  color: var(--ink-light);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(139, 133, 123, 0.5);
+}
+
+.footer-records a:hover {
+  color: var(--brick);
 }
 
 /* ===== 重播按钮 ===== */
@@ -534,7 +716,9 @@ body.home-body {
   }
 
   .greeting-block,
-  .date-stamp,
+  .date-header,
+  .records,
+  .footer-records,
   .site-mark,
   .entry,
   .deco-scribble {
@@ -607,8 +791,20 @@ body.home-body {
   .deco-tag,
   .deco-arrow,
   .deco-scribble,
-  .deco-img {
+  .deco-img,
+  .mini-cal,
+  .red-note,
+  .red-circle {
     display: none;
+  }
+
+  .records {
+    width: 100%;
+  }
+
+  .footer-records {
+    flex-wrap: wrap;
+    gap: 12px 24px;
   }
 
   /* 开本在移动端简化为封面淡出 */

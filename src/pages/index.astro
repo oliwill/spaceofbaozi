@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/components/layout/BaseLayout.astro";
+import { getCollection } from "astro:content";
 import "@/styles/neat-annotations.css";
 import "@/styles/journal.css";
 import { getSection, greetingByHour } from "@/lib/sections";
@@ -9,6 +10,55 @@ const blog = getSection("blog")!;
 const thoughts = getSection("thoughts")!;
 const photos = getSection("photos")!;
 const about = getSection("about")!;
+
+// 最近更新：八个栏目非草稿条目取日期最新 3 条（普通文字链接，不占物件入口）
+const SECTION_KEYS = [
+  "blog",
+  "thoughts",
+  "photos",
+  "drinks",
+  "books",
+  "music",
+  "about",
+  "ai-works",
+] as const;
+const allEntries = (
+  await Promise.all(SECTION_KEYS.map((k) => getCollection(k, ({ data }) => !data.draft)))
+)
+  .flat()
+  .sort((a, b) => +b.data.date - +a.data.date);
+const recent = allEntries.slice(0, 3);
+
+const latestOf = async (key: (typeof SECTION_KEYS)[number]) =>
+  (await getCollection(key, ({ data }) => !data.draft)).sort(
+    (a, b) => +b.data.date - +a.data.date
+  )[0];
+const latestBook = await latestOf("books");
+const latestMusic = await latestOf("music");
+
+// 页首日期（SSR 用构建日期，客户端 JS 校正为访问者当天）
+const now = new Date();
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+const ssrDay = now.getDate();
+const ssrWeekday = WEEKDAYS[now.getDay()];
+const ssrMonthYear = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+
+// SSR 小月历（JS 加载后按访问者时区重算）
+function buildCalendar(d: Date) {
+  const year = d.getFullYear();
+  const month = d.getMonth();
+  const first = new Date(year, month, 1).getDay();
+  const days = new Date(year, month + 1, 0).getDate();
+  const cells: (number | null)[] = Array(first).fill(null);
+  for (let i = 1; i <= days; i++) cells.push(i);
+  while (cells.length % 7) cells.push(null);
+  return cells;
+}
+const calCells = buildCalendar(now);
 ---
 
 <BaseLayout
@@ -24,23 +74,63 @@ const about = getSection("about")!;
     <div class="scale-wrap">
       <!-- 打开的手账：单页平铺网点纸（默认可见，无 JS 降级路径） -->
       <main class="paper" id="paper">
-        <header class="greeting-block settle" style="--d: 0ms">
+        <!-- 页首：日期头 + 小月历 -->
+        <header class="date-header settle" style="--d: 0ms">
+          <span class="dh-num" id="dh-num">{ssrDay}</span>
+          <span class="dh-meta">
+            <span class="dh-weekday" id="dh-weekday">{ssrWeekday}</span>
+            <span class="dh-month" id="dh-month">{ssrMonthYear}</span>
+          </span>
+        </header>
+
+        <div class="mini-cal settle" style="--d: 40ms" id="mini-cal" aria-hidden="true">
+          <span class="mc-title" id="mc-title">{ssrMonthYear}</span>
+          <div class="mc-grid" id="mc-grid">
+            <span class="mc-w">S</span><span class="mc-w">M</span><span class="mc-w">T</span>
+            <span class="mc-w">W</span><span class="mc-w">T</span><span class="mc-w">F</span>
+            <span class="mc-w">S</span>
+            {
+              calCells.map((c) =>
+                c === null ? (
+                  <span class="mc-d" />
+                ) : (
+                  <span class:list={["mc-d", { "mc-today": c === ssrDay }]}>{c}</span>
+                )
+              )
+            }
+          </div>
+        </div>
+
+        <span class="site-mark settle" style="--d: 60ms" aria-hidden="true">baozi.space</span>
+
+        <!-- 开场白 -->
+        <div class="greeting-block settle" style="--d: 80ms">
           <p class="greeting">
             <span id="greeting-time">{initialGreeting}</span>，欢迎光临中华一番包子铺
           </p>
-          <p class="intro-note">
-            这里不是博客，也不是商店。<br />
-            是一本会不断变厚的数字手账。
-          </p>
-        </header>
+          <p class="intro-note">这里不是博客，也不是商店，是一本会不断变厚的数字手账。</p>
+        </div>
 
-        <span class="date-stamp settle" id="date-stamp" style="--d: 60ms" aria-hidden="true"
-          >2026 · 07 · 24</span
-        >
-        <span class="site-mark settle" style="--d: 60ms" aria-hidden="true">baozi.space</span>
+        <!-- 最近更新：手写记录行 -->
+        <section class="records settle" style="--d: 140ms" aria-label="最近更新">
+          <p class="rec-title">Recent · 最近更新</p>
+          <ul class="rec-list">
+            {
+              recent.map((e) => (
+                <li class="rec-line">
+                  <span class="rec-check" aria-hidden="true" />
+                  <time datetime={e.data.date.toISOString()}>
+                    {e.data.date.getMonth() + 1}/{e.data.date.getDate()}
+                  </time>
+                  <a href={`/${e.collection}/${e.id}`}>{e.data.title}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
 
         <!-- 主锚点：Blog -->
-        <a href={blog.href} class="entry entry-blog settle" style="--d: 120ms" data-entry="blog">
+        <a href={blog.href} class="entry entry-blog settle" style="--d: 180ms" data-entry="blog">
           <span class="entry-note" aria-hidden="true">{blog.number} · {blog.title} · {blog.zh}</span>
           <span class="paper-scrap">
             <span class="tape tape-top" aria-hidden="true"></span>
@@ -49,11 +139,11 @@ const about = getSection("about")!;
           </span>
         </a>
 
-        <!-- Thoughts：便利贴 -->
+        <!-- Thoughts：便利贴 + 红笔批注 -->
         <a
           href={thoughts.href}
           class="entry entry-thoughts settle"
-          style="--d: 180ms"
+          style="--d: 220ms"
           data-entry="thoughts"
         >
           <span class="entry-note" aria-hidden="true"
@@ -64,11 +154,14 @@ const about = getSection("about")!;
             <span class="sticky-label">Thoughts</span>
           </span>
         </a>
+        <span class="red-note red-note-sticky settle" style="--d: 260ms" aria-hidden="true"
+          >突然想到！</span
+        >
 
         <!-- 装饰：可拖动纸签 -->
         <div
           class="deco-tag draggable settle"
-          style="--d: 240ms"
+          style="--d: 280ms"
           id="deco-tag"
           role="img"
           aria-label="装饰纸签：待整理清单"
@@ -77,7 +170,7 @@ const about = getSection("about")!;
           <p>待整理：照片、酒标、唱片清单。</p>
         </div>
 
-        <!-- 装饰：手绘箭头（指向 Photos） -->
+        <!-- 装饰：手绘箭头（指向相机） -->
         <svg
           class="deco-arrow settle"
           style="--d: 300ms"
@@ -116,12 +209,42 @@ const about = getSection("about")!;
           </span>
         </a>
 
-        <span class="deco-scribble settle" style="--d: 360ms" aria-hidden="true">记录中 →</span>
+        <span class="deco-scribble settle" style="--d: 340ms" aria-hidden="true">记录中 →</span>
+
+        <!-- About：小纸签 + 红笔圈画 -->
+        <a
+          href={about.href}
+          class="entry entry-about settle"
+          style="--d: 360ms"
+          data-entry="about"
+        >
+          <span class="entry-note" aria-hidden="true"
+            >{about.number} · {about.title} · {about.zh}</span
+          >
+          <span class="paper-tag">
+            <span class="tape tape-top" aria-hidden="true"></span>
+            <span class="entry-big">About</span>
+            <span class="entry-sub">你好，我是包子</span>
+            <svg class="red-circle" viewBox="0 0 300 130" aria-hidden="true">
+              <ellipse
+                cx="150"
+                cy="65"
+                rx="142"
+                ry="58"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-dasharray="840 60"
+                transform="rotate(-1.5 150 65)"></ellipse>
+            </svg>
+          </span>
+        </a>
 
         <!-- 装饰贴纸与玩偶（不可点击） -->
         <img
           class="deco-img deco-washer settle"
-          style="--d: 340ms"
+          style="--d: 320ms"
           src="/assets/home/deco-sticker-washer@C.webp"
           alt="洗衣机造型贴纸"
           width="531"
@@ -130,7 +253,7 @@ const about = getSection("about")!;
         />
         <img
           class="deco-img deco-michelin settle"
-          style="--d: 370ms"
+          style="--d: 380ms"
           src="/assets/home/deco-sticker-michelin@C.webp"
           alt="米其林 2025 贴纸"
           width="400"
@@ -147,22 +270,25 @@ const about = getSection("about")!;
           loading="lazy"
         />
 
-        <!-- About：小纸签 -->
-        <a
-          href={about.href}
-          class="entry entry-about settle"
-          style="--d: 380ms"
-          data-entry="about"
-        >
-          <span class="entry-note" aria-hidden="true"
-            >{about.number} · {about.title} · {about.zh}</span
-          >
-          <span class="paper-tag">
-            <span class="tape tape-top" aria-hidden="true"></span>
-            <span class="entry-big">About</span>
-            <span class="entry-sub">你好，我是包子</span>
-          </span>
-        </a>
+        <!-- 页脚记录行：取真实集合最新条目 -->
+        <footer class="footer-records settle" style="--d: 420ms">
+          {
+            latestBook && (
+              <span class="fr-item">
+                <span class="fr-label">BOOK:</span>
+                <a href={`/books/${latestBook.id}`}>{latestBook.data.title}</a>
+              </span>
+            )
+          }
+          {
+            latestMusic && (
+              <span class="fr-item">
+                <span class="fr-label">MUSIC:</span>
+                <a href={`/music/${latestMusic.id}`}>{latestMusic.data.title}</a>
+              </span>
+            )
+          }
+        </footer>
       </main>
 
       <!-- 合上的手账封面（JS 就绪后才接管开本；无 JS 时保持隐藏） -->

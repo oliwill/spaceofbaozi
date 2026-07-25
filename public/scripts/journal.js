@@ -7,30 +7,56 @@
   const stage = document.getElementById("book-stage");
   const paper = document.getElementById("paper");
   const greetingTime = document.getElementById("greeting-time");
-  const dateStamp = document.getElementById("date-stamp");
+  const dhNum = document.getElementById("dh-num");
+  const dhWeekday = document.getElementById("dh-weekday");
+  const dhMonth = document.getElementById("dh-month");
+  const mcTitle = document.getElementById("mc-title");
+  const mcGrid = document.getElementById("mc-grid");
   const replayBtn = document.getElementById("replay-btn");
 
   if (!stage || !paper) return;
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ===== 时区问候与日期印章 ===== */
+  const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const MONTHS = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+
+  /* ===== 时区问候与页首日期 ===== */
   function setGreeting() {
-    if (greetingTime) {
-      const hour = new Date().getHours();
-      let text = "夜深了";
-      if (hour >= 5 && hour < 11) text = "早上好";
-      else if (hour >= 11 && hour < 14) text = "中午好";
-      else if (hour >= 14 && hour < 18) text = "下午好";
-      else if (hour >= 18 && hour < 22) text = "晚上好";
-      greetingTime.textContent = text;
+    if (!greetingTime) return;
+    const hour = new Date().getHours();
+    let text = "夜深了";
+    if (hour >= 5 && hour < 11) text = "早上好";
+    else if (hour >= 11 && hour < 14) text = "中午好";
+    else if (hour >= 14 && hour < 18) text = "下午好";
+    else if (hour >= 18 && hour < 22) text = "晚上好";
+    greetingTime.textContent = text;
+  }
+
+  function setDateHeader() {
+    const now = new Date();
+    const monthYear = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+    if (dhNum) dhNum.textContent = String(now.getDate());
+    if (dhWeekday) dhWeekday.textContent = WEEKDAYS[now.getDay()];
+    if (dhMonth) dhMonth.textContent = monthYear;
+    if (mcTitle) mcTitle.textContent = monthYear;
+    if (!mcGrid) return;
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const today = now.getDate();
+    const first = new Date(year, month, 1).getDay();
+    const days = new Date(year, month + 1, 0).getDate();
+    let html = ["S", "M", "T", "W", "T", "F", "S"]
+      .map((w) => `<span class="mc-w">${w}</span>`)
+      .join("");
+    for (let i = 0; i < first; i++) html += '<span class="mc-d"></span>';
+    for (let i = 1; i <= days; i++) {
+      html += `<span class="mc-d${i === today ? " mc-today" : ""}">${i}</span>`;
     }
-    if (dateStamp) {
-      const now = new Date();
-      const mm = String(now.getMonth() + 1).padStart(2, "0");
-      const dd = String(now.getDate()).padStart(2, "0");
-      dateStamp.textContent = `${now.getFullYear()} · ${mm} · ${dd}`;
-    }
+    mcGrid.innerHTML = html;
   }
 
   /* ===== 开本 ===== */
@@ -143,6 +169,7 @@
   /* ===== 初始化 ===== */
   function init() {
     setGreeting();
+    setDateHeader();
     // JS 接管开本：先合上（inert），再翻开；无 JS 时页面保持打开态可导航
     paper.inert = true;
     stage.classList.remove("is-open");
