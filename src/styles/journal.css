@@ -355,7 +355,7 @@ body.home-body {
 
 .site-mark {
   position: absolute;
-  left: 1080px;
+  left: 956px; /* 1080→956：避让视口右下固定的 replay-btn（1440×900 下会盖住签名尾部） */
   top: 752px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
