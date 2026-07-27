@@ -25,6 +25,17 @@ body.home-body {
   display: grid;
   place-items: center;
   perspective: 2200px;
+  /* 条纹书脊布带：封面书脊与翻开后纸面左缘留存共用同一图案 */
+  --spine-stripes: repeating-linear-gradient(
+    180deg,
+    #26395f 0 10px,
+    #e7e0cd 10px 14px,
+    #8a94ac 14px 18px,
+    #e7e0cd 18px 21px,
+    #26395f 21px 30px,
+    #c8bd9f 30px 36px,
+    #26395f 36px 40px
+  );
 }
 
 /* 等比缩放整张纸：构图与相对位置不变（纯 CSS，无 JS 依赖） */
@@ -55,6 +66,54 @@ body.home-body {
     0 28px 64px rgba(40, 32, 24, 0.16);
 }
 
+/* 书脊留存：翻开后条纹布带缩为纸面左缘一条，封面与内页成为同一物件 */
+.paper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 11px;
+  background: var(--spine-stripes);
+  box-shadow: inset -2px 0 3px rgba(13, 18, 30, 0.25);
+  opacity: 0;
+  z-index: 7;
+  pointer-events: none;
+  transition: opacity 0.45s ease 0.8s;
+}
+
+.js .book-stage.is-open .paper::before {
+  opacity: 1;
+}
+
+/* 影子扫过：封面掀起时投影在纸面上从右向左收 */
+.paper::after {
+  content: "";
+  position: absolute;
+  inset: 0 -50%;
+  background: linear-gradient(
+    100deg,
+    transparent 32%,
+    rgba(24, 28, 44, 0.2) 46%,
+    rgba(24, 28, 44, 0.3) 54%,
+    transparent 68%
+  );
+  opacity: 0;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.js .book-stage.is-open .paper::after {
+  animation: shadow-sweep 0.95s cubic-bezier(0.55, 0.06, 0.35, 1) 0.08s both;
+}
+
+@keyframes shadow-sweep {
+  0% { opacity: 0; transform: translateX(40%); }
+  22% { opacity: 1; }
+  80% { opacity: 0.85; }
+  100% { opacity: 0; transform: translateX(-40%); }
+}
+
 /* ===== 开本落位动画（仅 JS 接管后生效；无 JS 直接可见） ===== */
 .js .settle {
   opacity: 0;
@@ -64,9 +123,10 @@ body.home-body {
 .js .book-stage.is-open .settle {
   opacity: 1;
   translate: 0 0;
+  /* 两拍节奏：先开书，+200ms 后物件落位 */
   transition:
-    opacity 0.5s ease var(--d, 0ms),
-    translate 0.5s ease var(--d, 0ms);
+    opacity 0.5s ease calc(var(--d, 0ms) + 200ms),
+    translate 0.5s ease calc(var(--d, 0ms) + 200ms);
 }
 
 /* 合上时隐藏内页，点击翻开后再显露纸张 */
@@ -114,44 +174,98 @@ body.home-body {
 
 .cover-back {
   transform: rotateY(180deg);
+  /* 书衣内衬：米色夹里 */
+  background: #f0ead8;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(120, 108, 78, 0.05) 0 1px,
+    transparent 1px 4px
+  );
+  border-radius: 12px 4px 4px 12px;
+  box-shadow: inset 0 0 48px rgba(64, 52, 30, 0.12);
 }
 
-.cover-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 18px 40px rgba(40, 32, 24, 0.3));
+/* 深靛蓝麻布（CSS 占位；AI 麻布图 cover-linen@A-.webp 到位后换 background-image 并移除纹理渐变） */
+.cover-front {
+  background-color: #31497a;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(13, 18, 30, 0.08) 0 1px, transparent 1px 4px),
+    radial-gradient(120% 90% at 30% 20%, rgba(255, 255, 255, 0.05), transparent 60%);
+  border-radius: 4px 12px 12px 4px;
+  box-shadow:
+    0 22px 48px rgba(24, 28, 44, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-/* 封面题字：压在蓝色篷布区域，像印在篷布上的白字 */
-.cover-title {
+/* 条纹书脊布带 */
+.cover-spine {
   position: absolute;
-  left: 50%;
-  top: 30%;
-  width: 46%;
-  text-align: center;
-  white-space: nowrap;
-  font-family: var(--font-display);
-  font-size: 3rem;
-  color: #fdfdfc;
-  letter-spacing: 0.08em;
-  text-shadow: 0 1px 3px rgba(40, 32, 24, 0.35);
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 62px;
+  background: var(--spine-stripes);
+  border-radius: 4px 0 0 4px;
+  box-shadow: inset -3px 0 6px rgba(13, 18, 30, 0.35);
+}
+
+/* 手写区（真迹到位前以宋体占位） */
+.cover-quote {
+  position: absolute;
+  right: 54px;
+  top: 148px;
+  width: 384px;
+  color: #f5f2e8;
   rotate: -1.5deg;
 }
 
-.cover-subtitle {
-  position: absolute;
-  left: 50%;
-  top: calc(30% + 82px);
-  width: 46%;
-  text-align: center;
-  white-space: nowrap;
+.cover-quote-text {
+  margin: 0;
   font-family: var(--font-display);
-  font-size: 1.8rem;
-  color: rgba(253, 253, 252, 0.88);
-  letter-spacing: 0.24em;
-  rotate: -1.5deg;
+  font-size: 1.75rem;
+  line-height: 2.05;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 3px rgba(13, 18, 30, 0.4);
+}
+
+.cover-quote-src {
+  margin: 22px 0 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  color: rgba(245, 242, 232, 0.72);
+  text-align: right;
+}
+
+/* 织唛标签：米白布标 + 锁边虚线 */
+.cover-label {
+  position: absolute;
+  left: 108px;
+  bottom: 148px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  background: #f4efdf;
+  outline: 5px solid #f4efdf;
+  border: 1.5px dashed rgba(52, 62, 88, 0.45);
+  color: #343e58;
+  rotate: 1deg;
+  box-shadow: 0 3px 8px rgba(13, 18, 30, 0.3);
+}
+
+.cl-brand {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+}
+
+.cl-domain {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: rgba(52, 62, 88, 0.7);
 }
 
 /* 翻开：绕左书脊旋转，中途露出封底，随后整体淡出 */
@@ -1004,22 +1118,51 @@ body.home-body {
   .book-cover {
     width: min(88vw, 420px);
     height: auto;
-    aspect-ratio: 728 / 929;
+    aspect-ratio: 627 / 800;
+  }
+
+  .cover-spine {
+    width: 40px;
+  }
+
+  .cover-quote {
+    right: 20px;
+    left: 60px;
+    top: 84px;
+    width: auto;
+  }
+
+  .cover-quote-text {
+    font-size: 1.15rem;
+    line-height: 1.9;
+  }
+
+  .cover-quote-src {
+    margin-top: 14px;
+    font-size: 0.68rem;
+  }
+
+  .cover-label {
+    left: 64px;
+    bottom: 96px;
+    gap: 4px;
+    padding: 9px 12px;
+  }
+
+  .cl-brand {
+    font-size: 0.8rem;
+  }
+
+  /* 移动端简化开本：书脊留存与影子扫过不生效 */
+  .paper::before,
+  .paper::after {
+    display: none;
   }
 
   .open-hint {
     bottom: 64px;
     color: var(--ink-light);
     text-shadow: none;
-  }
-
-  .cover-title {
-    font-size: 1.9rem;
-  }
-
-  .cover-subtitle {
-    top: calc(30% + 54px);
-    font-size: 1.15rem;
   }
 
   .book-stage.is-open .book-cover {
@@ -1047,6 +1190,14 @@ body.home-body {
   .book-stage.is-open .book-closed,
   .entry-note,
   .entry :where(.paper-scrap, .sticky-note, .about-photo, .entry-camera) {
+    transition: none;
+  }
+
+  .js .book-stage.is-open .paper::after {
+    animation: none;
+  }
+
+  .paper::before {
     transition: none;
   }
 
