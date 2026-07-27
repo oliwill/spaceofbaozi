@@ -173,19 +173,19 @@ public/assets/                    ← 投产版（进仓库，网站直接引用
 
 命名：`<slug>@<mode>.<ext>`；首页装饰物加 `deco-` 前缀；数字手绘/插画类用 `@I`。
 
-首页当前槽位（包子按此表投放文件）：
+首页槽位（2026-07-27 已按实际落地校准，新增物件追加在后）：
 
-| 槽位 | 文件（public/assets/home/） | 模式 | 说明 |
+| 槽位 | 文件（public/assets/home/） | 模式 | 状态 |
 |---|---|---|---|
-| Blog 入口（主锚点） | `notebook@A-.webp` | A- | 手账本，不描边，重落影 |
-| Thoughts 入口 | `sticky-thoughts@B.webp` | B | 便利贴，不描边 |
-| Photos 入口 | `camera@A.webp` | A | 相机，白边 |
-| About 入口 | `baozi@A.webp` | A | 包子形象/玩偶，白边 |
-| 装饰 · 唱片 | `deco-vinyl@A-.webp` | A- | 不描边 |
-| 装饰 · 贴纸 | `deco-sticker-<名字>@C.webp` | C | 保留原 die-cut 边 |
-| 装饰 · 花 | `deco-flower@A.webp` | A | 白边 |
-| 装饰 · 印章 | `deco-stamp-<名字>@D.webp` | D | 无边无影，multiply |
-| 手绘装饰 | `deco-<名字>@I.webp` | I | 插画类，无边 |
+| Blog 入口（主锚点） | —（CSS 纸片实现，无需图片） | B | 已上线 |
+| Thoughts 入口 | —（CSS 便利贴实现，无需图片） | B | 已上线 |
+| Photos 入口 | `camera@B.webp` | B | 已上线（最终选了无白边版本） |
+| About 入口 | `baozi@A.webp` | A | 已上线 |
+| 封面（正/背） | `cover@A.webp` / `cover@B.webp` | A/B | 已上线 |
+| 装饰 · 贴纸 | `deco-sticker-airpods@C.webp`、`deco-sticker-michelin@C.webp`、`deco-sticker-washer@C.webp` | C | 已上线（airpods 带 WebGL 掀开交互） |
+| 装饰 · 玩偶 | `deco-wukong@I.webp` | I | 已上线 |
+| 装饰 · 插画 | `deco-jiale01.webp` | I | 已上线（命名缺 @mode，新增时按 `deco-名字@I.webp`） |
+| 装饰 · 唱片/花/印章 | `deco-vinyl@A-.webp`、`deco-flower@A.webp`、`deco-stamp-名字@D.webp` | A-/A/D | 待制作 |
 
 - 母版同名存 `assets-master/master/home/<同名>.png`；原始照片存 `assets-master/raw/home/`。
 - `<slug>`：英文短横线命名，与内容 Markdown 的 slug 对应或语义关联。

@@ -669,6 +669,52 @@ body.home-body {
   rotate: -3deg;
 }
 
+/* 手绘邮戳（顶部空带，Mode D） */
+.deco-stamp {
+  position: absolute;
+  left: 430px;
+  top: 52px;
+  color: var(--vermilion);
+  opacity: 0.72;
+  rotate: -7deg;
+  pointer-events: none;
+}
+
+.stamp-line {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  fill: currentColor;
+}
+
+.stamp-line-zh {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.3em;
+}
+
+/* 手绘小花（左中下空带，Mode I） */
+.deco-flower {
+  position: absolute;
+  left: 96px;
+  top: 424px;
+  color: var(--brick);
+  opacity: 0.8;
+  rotate: 4deg;
+  pointer-events: none;
+}
+
+/* 手绘黑胶（页脚 MUSIC 上方，Mode I） */
+.deco-vinyl {
+  position: absolute;
+  left: 324px;
+  top: 630px;
+  color: var(--ink-light);
+  opacity: 0.85;
+  rotate: 8deg;
+  pointer-events: none;
+}
+
 /* 实拍贴纸与玩偶装饰：不可点击，不拦截指针 */
 .deco-img {
   position: absolute;
@@ -929,6 +975,9 @@ body.home-body {
   .deco-scribble,
   .deco-img,
   .deco-peel,
+  .deco-stamp,
+  .deco-flower,
+  .deco-vinyl,
   .mini-cal,
   .red-note,
   .red-circle {
