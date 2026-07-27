@@ -132,7 +132,7 @@ body.home-body {
   width: 46%;
   text-align: center;
   white-space: nowrap;
-  font-family: var(--font-hand-cn);
+  font-family: var(--font-display);
   font-size: 3rem;
   color: #fdfdfc;
   letter-spacing: 0.08em;
@@ -147,7 +147,7 @@ body.home-body {
   width: 46%;
   text-align: center;
   white-space: nowrap;
-  font-family: var(--font-hand-cn);
+  font-family: var(--font-display);
   font-size: 1.8rem;
   color: rgba(253, 253, 252, 0.88);
   letter-spacing: 0.24em;
@@ -174,7 +174,7 @@ body.home-body {
   left: 50%;
   bottom: 44px;
   translate: -50% 0;
-  font-family: var(--font-hand-cn);
+  font-family: var(--font-display);
   font-size: 1.05rem;
   color: rgba(253, 253, 252, 0.94);
   text-shadow: 0 1px 4px rgba(40, 32, 24, 0.5);
@@ -199,7 +199,7 @@ body.home-body {
 
 .greeting {
   margin: 0;
-  font-family: var(--font-hand-cn);
+  font-family: var(--font-display);
   font-size: 1.75rem;
   color: var(--ink);
 }
@@ -285,7 +285,7 @@ body.home-body {
 }
 
 .dh-num {
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-size: 3.6rem;
   line-height: 1;
   color: var(--ink);
@@ -298,7 +298,7 @@ body.home-body {
 }
 
 .dh-weekday {
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-size: 1.3rem;
   color: var(--ink-light);
 }
@@ -384,7 +384,7 @@ body.home-body {
   bottom: calc(100% + 10px);
   left: 0;
   white-space: nowrap;
-  font-family: var(--font-hand-cn);
+  font-family: var(--font-display);
   font-size: 1.15rem;
   color: var(--brick);
   opacity: 0;
@@ -465,7 +465,7 @@ body.home-body {
 
 .entry-big {
   display: block;
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-size: 3.6rem;
   line-height: 1;
   color: var(--ink);
@@ -488,7 +488,7 @@ body.home-body {
 /* 红笔批注 */
 .red-note {
   position: absolute;
-  font-family: var(--font-hand-cn);
+  font-family: var(--font-display);
   font-size: 1.1rem;
   color: var(--vermilion);
   mix-blend-mode: multiply;
@@ -522,7 +522,7 @@ body.home-body {
 
 .sticky-label {
   margin-top: auto;
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-size: 1.7rem;
   line-height: 1.2;
   color: var(--ink-light);
@@ -556,7 +556,7 @@ body.home-body {
 .camera-caption {
   display: block;
   margin-top: 4px;
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-size: 1.6rem;
   color: var(--ink-light);
 }
@@ -663,7 +663,7 @@ body.home-body {
   position: absolute;
   left: 224px;
   top: 528px;
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-size: 1.5rem;
   color: var(--ink-lighter);
   rotate: -3deg;
@@ -722,7 +722,7 @@ body.home-body {
   right: -18px;
   bottom: -20px;
   width: max-content;
-  font-family: var(--font-hand-cn);
+  font-family: var(--font-display);
   font-size: 0.82rem;
   color: var(--brick);
   opacity: 0;
@@ -801,7 +801,7 @@ body.home-body {
   bottom: 18px;
   z-index: 20;
   padding: 8px 14px;
-  font-family: var(--font-label);
+  font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--ink-light);
   background: rgba(253, 253, 252, 0.85);

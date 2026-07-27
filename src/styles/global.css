@@ -1,13 +1,7 @@
-/* 子集化中文字体（scripts/subset-fonts.mjs 生成，按全站实际用字裁剪） */
+/* 等宽字体子集（scripts/subset-fonts.mjs 生成，ASCII + 常用标点） */
 @font-face {
-  font-family: "SlideXiaXing";
-  src: url("/fonts/slide-xiaxing.woff2") format("woff2");
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "LXGW WenKai";
-  src: url("/fonts/lxgw-wenkai.woff2") format("woff2");
+  font-family: "IoskeleyMono Nerd Font";
+  src: url("/fonts/ioskeley-mono-nerd-font.woff2") format("woff2");
   font-display: swap;
 }
 
@@ -27,16 +21,12 @@
   --accent-green: #d1fae5;
   --accent-coral: #ffddd8;
   --accent-lavender: #e6def7;
-  /* 正文：霞鹜文楷 */
-  --font-body: "LXGW WenKai", "PingFang SC", "Microsoft YaHei", sans-serif;
-  /* 英文手写：Caveat */
-  --font-hand: "Caveat", cursive;
-  /* 手写标题：演示夏行楷 */
-  --font-hand-cn: "SlideXiaXing", "PingFang SC", cursive;
-  /* 标签 / UI：Zen Maru Gothic */
-  --font-label: "Zen Maru Gothic", "PingFang SC", sans-serif;
-  /* 时间 / 编号：IBM Plex Mono */
-  --font-mono: "IBM Plex Mono", monospace;
+  /* 正文 / 编辑文字：系统宋体 */
+  --font-body: "Songti SC", "STSong", "SimSun", serif;
+  /* 展示文字（大标题 / 日期数字 / 题字）：暂随正文宋体，待图片化设计文字替换 */
+  --font-display: "Songti SC", "STSong", "SimSun", serif;
+  /* 时间 / 编号 / 标签：IoskeleyMono Nerd Font，中文回退宋体 */
+  --font-mono: "IoskeleyMono Nerd Font", "Songti SC", monospace;
   --radius: 1.2rem;
   --shadow-soft: 0 2px 6px rgba(40, 32, 24, 0.1);
   --shadow-lift: 0 14px 32px rgba(40, 32, 24, 0.16);
@@ -142,7 +132,7 @@ button {
 
 .section-header h1 {
   margin: 0 0 0.6rem;
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-size: clamp(2.6rem, 6vw, 3.6rem);
   font-weight: 600;
   line-height: 1.1;
@@ -277,7 +267,7 @@ button {
 }
 
 .empty-state strong {
-  font-family: var(--font-hand-cn);
+  font-family: var(--font-display);
   font-size: 1.25rem;
   color: var(--ink);
 }
@@ -339,7 +329,7 @@ button {
 .prose .photo-frame figcaption {
   margin-top: 0.4rem;
   text-align: center;
-  font-family: var(--font-hand-cn);
+  font-family: var(--font-display);
   font-size: 1.05rem;
   color: var(--ink-light);
 }
@@ -360,7 +350,7 @@ button {
 
 .footer-note {
   margin-top: 3rem;
-  font-family: var(--font-hand);
+  font-family: var(--font-display);
   font-size: 1.25rem;
   color: var(--ink-lighter);
   transform: rotate(-1deg);

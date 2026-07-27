@@ -1,8 +1,7 @@
 /**
- * 中文字体子集化
+ * 字体子集化
  *
- * 流程：扫描 src/ 与 public/scripts/ 的源码文本 → 收集实际用字
- * → pyftsubset 把 fonts-src/ 里的全量字体裁成 woff2 → public/fonts/
+ * 流程：收集用字 → pyftsubset 把 fonts-src/ 里的全量字体裁成 woff2 → public/fonts/
  *
  * 用法：node scripts/subset-fonts.mjs   （或 bun run fonts:subset）
  * 依赖：Python + fonttools + brotli（pip install fonttools brotli）
@@ -14,23 +13,16 @@ import { join, extname } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 
-// name: 输出文件名；src: fonts-src/ 里的全量字体；scanDirs: 扫描目录
-//   SlideXiaXing（手写标题）只用于站点骨架/首页/组件，不覆盖文章正文，
-//   避免长文把展示字体的子集撑爆；文章内手写图注缺字时回退系统字体。
-//   LXGW WenKai（正文）必须覆盖全部内容字符。
+// name: 输出文件名；src: fonts-src/ 里的全量字体；scanDirs: 额外扫描目录
+//   IoskeleyMono Nerd Font 只用于日期/编号/标签（拉丁+数字），
+//   可打印 ASCII + SAFETY 标点即够用，不扫描源码，子集保持最小。
 // 来源：
-//   SlideXiaXing.ttf      — https://www.npmjs.com/package/@fontpkg/slidexiaxing（演示夏行楷，免费商用）
-//   LXGWWenKai-Regular.ttf — https://github.com/lxgw/LxgwWenKai/releases（OFL）
+//   IoskeleyMonoNerdFont-Regular.ttf — https://github.com/ahatem/IoskeleyMono/releases（OFL）
 const FONTS = [
   {
-    name: "slide-xiaxing",
-    src: "fonts-src/SlideXiaXing.ttf",
-    scanDirs: ["src/pages", "src/components", "src/lib", "public/scripts"],
-  },
-  {
-    name: "lxgw-wenkai",
-    src: "fonts-src/LXGWWenKai-Regular.ttf",
-    scanDirs: ["src", "public/scripts"],
+    name: "ioskeley-mono-nerd-font",
+    src: "fonts-src/ioskeley/Normal/IoskeleyMonoNerdFont-Regular.ttf",
+    scanDirs: [],
   },
 ];
 const SCAN_EXTS = new Set([".astro", ".md", ".mdx", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".json"]);
