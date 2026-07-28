@@ -402,16 +402,23 @@ const calCells = buildCalendar(now);
           <div class="cover-face cover-front">
             <!-- 条纹书脊布带（翻开后以 .paper::before 留存） -->
             <span class="cover-spine" aria-hidden="true"></span>
-            <!-- 手写区：占位文案；真迹到位后替换为 <img class="cover-hand" src="/assets/home/cover-hand@D.webp" alt="">（暗字转白、透明底、multiply 不适用——深底上直接用白字图） -->
+            <!-- 手绣题字（cover-hand@D.webp：白字黑底转暖白透明）+《火花》题记 -->
             <div class="cover-quote">
+              <img
+                class="cover-hand"
+                src="/assets/home/cover-hand@D.webp"
+                alt="中华一番包子铺（手绣题字）"
+                width="880"
+                height="126"
+              />
               <p class="cover-quote-text">
                 每天把没意义的傻话<br />挂在嘴上，却用一种<br />引人注目的方式咏唱着。
               </p>
               <p class="cover-quote-src">—— 又吉直树《火花》</p>
             </div>
-            <!-- 织唛标签：品牌 + 域名 -->
+            <!-- 织唛标签：营业状态 + 域名 -->
             <span class="cover-label">
-              <span class="cl-brand">中华一番包子铺</span>
+              <span class="cl-brand">手账营业中</span>
               <span class="cl-domain">baozi.space</span>
             </span>
           </div>

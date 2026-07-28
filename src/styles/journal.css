@@ -185,13 +185,12 @@ body.home-body {
   box-shadow: inset 0 0 48px rgba(64, 52, 30, 0.12);
 }
 
-/* 深靛蓝麻布（CSS 占位；AI 麻布图 cover-linen@A-.webp 到位后换 background-image 并移除纹理渐变） */
+/* 深靛蓝麻布（cover-linen@A-.webp：浅蓝原图经乘法染整为 #31497a 家族） */
 .cover-front {
   background-color: #31497a;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(90deg, rgba(13, 18, 30, 0.08) 0 1px, transparent 1px 4px),
-    radial-gradient(120% 90% at 30% 20%, rgba(255, 255, 255, 0.05), transparent 60%);
+  background-image: url("/assets/home/cover-linen@A-.webp");
+  background-size: cover;
+  background-position: center;
   border-radius: 4px 12px 12px 4px;
   box-shadow:
     0 22px 48px rgba(24, 28, 44, 0.35),
@@ -210,22 +209,30 @@ body.home-body {
   box-shadow: inset -3px 0 6px rgba(13, 18, 30, 0.35);
 }
 
-/* 手写区（真迹到位前以宋体占位） */
+/* 手绣题字 +《火花》题记 */
 .cover-quote {
   position: absolute;
   right: 54px;
-  top: 148px;
-  width: 384px;
+  top: 120px;
+  width: 400px;
   color: #f5f2e8;
   rotate: -1.5deg;
 }
 
+.cover-hand {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 3px rgba(13, 18, 30, 0.35));
+}
+
 .cover-quote-text {
-  margin: 0;
+  margin: 34px 0 0;
   font-family: var(--font-display);
-  font-size: 1.75rem;
-  line-height: 2.05;
-  letter-spacing: 0.05em;
+  font-size: 1.08rem;
+  line-height: 2.0;
+  letter-spacing: 0.06em;
+  color: rgba(245, 242, 232, 0.88);
   text-shadow: 0 1px 3px rgba(13, 18, 30, 0.4);
 }
 
@@ -1128,13 +1135,14 @@ body.home-body {
   .cover-quote {
     right: 20px;
     left: 60px;
-    top: 84px;
+    top: 72px;
     width: auto;
   }
 
   .cover-quote-text {
-    font-size: 1.15rem;
-    line-height: 1.9;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    line-height: 1.85;
   }
 
   .cover-quote-src {

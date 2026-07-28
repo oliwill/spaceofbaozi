@@ -181,8 +181,8 @@ public/assets/                    ← 投产版（进仓库，网站直接引用
 | Thoughts 入口 | —（CSS 便利贴实现，无需图片） | B | 已上线 |
 | Photos 入口 | `camera@B.webp` | B | 已上线（最终选了无白边版本） |
 | About 入口 | `baozi@A.webp` | A | 已上线 |
-| 封面麻布（空白） | `cover-linen@A-.webp` | A- | 待制作（当前为 CSS 占位，到位后替换 .cover-front 背景） |
-| 封面手写真迹 | `cover-hand@D.webp` | D（暗字转白） | 待制作（到位后替换 .cover-quote 占位文字） |
+| 封面麻布（空白） | `cover-linen@A-.webp` | A- | 已上线（浅蓝原图乘法染整为深爵蓝，143.8KB） |
+| 封面手绣题字 | `cover-hand@D.webp` | D（白字黑底转暖白透明） | 已上线（28.3KB；内容为「中华一番包子铺」虚线绣质感） |
 | ~~封面（正/背）~~ | ~~`cover@A.webp` / `cover@B.webp`~~ | — | 已过时（2026-07-27 封面重构，不再引用；文件留仓备查） |
 | 装饰 · 贴纸 | `deco-sticker-airpods@C.webp`、`deco-sticker-michelin@C.webp`、`deco-sticker-washer@C.webp` | C | 已上线（airpods 带 WebGL 掀开交互） |
 | 装饰 · 玩偶 | `deco-wukong@I.webp` | I | 已上线 |
