@@ -511,8 +511,8 @@ body.home-body {
   opacity: 0;
   translate: 0 6px;
   transition:
-    opacity 0.22s ease,
-    translate 0.22s ease;
+    opacity 0.2s var(--ease-ui-out),
+    translate 0.2s var(--ease-ui-out);
   pointer-events: none;
 }
 
@@ -535,14 +535,19 @@ body.home-body {
 /* 矩形阴影只给纸片类；相机走 img drop-shadow，避免透出矩形底 */
 .entry:hover :where(.paper-scrap, .sticky-note, .about-photo) {
   box-shadow:
+.entry:active :where(.paper-scrap, .sticky-note, .about-photo, .entry-camera) {
+  scale: 0.97;
+}
+
     0 6px 14px rgba(40, 32, 24, 0.14),
     0 16px 30px rgba(40, 32, 24, 0.16);
 }
 
 .entry :where(.paper-scrap, .sticky-note, .about-photo, .entry-camera) {
   transition:
-    translate 0.22s ease,
-    box-shadow 0.22s ease;
+    translate 0.2s var(--ease-ui-out),
+    box-shadow 0.2s var(--ease-ui-out),
+    scale 0.15s var(--ease-press);
 }
 
 /* 胶带 */
@@ -667,7 +672,7 @@ body.home-body {
   width: 100%;
   height: auto;
   filter: drop-shadow(0 4px 8px rgba(40, 32, 24, 0.14));
-  transition: filter 0.22s ease;
+  transition: filter 0.2s var(--ease-ui-out);
 }
 
 .entry-photos:hover .entry-camera img {

@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title?: string;
@@ -27,8 +28,10 @@ const {
     <meta property="og:url" content={Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.href} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{title}</title>
+    <ClientRouter fallback="none" />
   </head>
   <body class={bodyClass}>
     <slot />
+    <script type="module" src="/scripts/site-experience.js"></script>
   </body>
 </html>

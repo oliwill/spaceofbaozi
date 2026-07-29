@@ -32,6 +32,8 @@
   --shadow-lift: 0 14px 32px rgba(40, 32, 24, 0.16);
   --sticker-outline: 0 0 0 4px #ffffff;
   --page-bg: #f0efeb;
+  --ease-ui-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-press: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 *,
@@ -65,6 +67,74 @@ img {
 
 button {
   font: inherit;
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 660px) {
+  html[data-baozi-entry-turn="forward"]::view-transition-old(root) {
+    animation: baozi-page-leaf-out 300ms cubic-bezier(0.55, 0.06, 0.35, 1) both;
+    transform-origin: left center;
+    backface-visibility: hidden;
+  }
+
+  html[data-baozi-entry-turn="forward"]::view-transition-new(root) {
+    animation: baozi-page-leaf-in 480ms var(--ease-press) both;
+    transform-origin: left center;
+    backface-visibility: hidden;
+  }
+
+  @keyframes baozi-page-leaf-out {
+    from {
+      opacity: 1;
+      transform: perspective(1600px) rotateY(0deg);
+    }
+
+    to {
+      opacity: 0;
+      transform: perspective(1600px) rotateY(-82deg);
+    }
+  }
+
+  @keyframes baozi-page-leaf-in {
+    from {
+      opacity: 0;
+      transform: perspective(1600px) rotateY(78deg);
+    }
+
+    to {
+      opacity: 1;
+      transform: perspective(1600px) rotateY(0deg);
+    }
+  }
+}
+
+@media (max-width: 659.98px) and (prefers-reduced-motion: no-preference) {
+  html[data-baozi-entry-turn="forward"]::view-transition-old(root) {
+    animation: baozi-page-fade-out 160ms var(--ease-ui-out) both;
+  }
+
+  html[data-baozi-entry-turn="forward"]::view-transition-new(root) {
+    animation: baozi-page-fade-in 200ms var(--ease-ui-out) both;
+  }
+
+  @keyframes baozi-page-fade-out {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes baozi-page-fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
 }
 
 /* Section / content pages — continuous journal feel */
@@ -301,6 +371,58 @@ button {
 
 .prose a:hover {
   color: var(--brick);
+}
+
+.prose .inline-note[data-inline-note-enhanced] {
+  color: inherit;
+  font-style: italic;
+  border-bottom: 1px dashed rgba(184, 106, 90, 0.55);
+  cursor: help;
+}
+
+@media (min-width: 1000px) {
+  .prose .inline-note[data-inline-note-enhanced] {
+    position: relative;
+  }
+
+  .prose .inline-note[data-inline-note-enhanced]::after {
+    content: attr(data-note);
+    position: absolute;
+    left: calc(100% + 28px);
+    top: -0.35rem;
+    width: 180px;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--brick);
+    opacity: 0;
+    translate: 0 6px;
+    rotate: -1.5deg;
+    transition: opacity 0.2s var(--ease-ui-out), translate 0.2s var(--ease-ui-out);
+  }
+
+  .prose .inline-note[data-inline-note-enhanced]:hover::after,
+  .prose .inline-note[data-inline-note-enhanced]:focus-visible::after {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (max-width: 999.98px) {
+  .prose .inline-note[data-inline-note-enhanced]::after {
+    content: attr(data-note);
+    position: static;
+    display: block;
+    width: auto;
+    margin: 0.35rem 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--brick);
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+  }
 }
 
 /* 正文图片：默认朴素居中（PicGo 粘贴的 ![alt](url) 即此效果） */
