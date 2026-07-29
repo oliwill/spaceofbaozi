@@ -13,7 +13,7 @@
   const mcTitle = document.getElementById("mc-title");
   const mcGrid = document.getElementById("mc-grid");
   const bookClosed = document.getElementById("book-closed");
-  const replayBtn = document.getElementById("replay-btn");
+  const bookmarkBtn = document.getElementById("bookmark-btn");
 
   if (!stage || !paper) return;
 
@@ -87,6 +87,7 @@
 
   function replay() {
     closeBook();
+    bookmarkBtn?.blur();
     bookClosed?.focus({ preventScroll: true });
   }
 
@@ -199,7 +200,11 @@
     initCover();
     initTwoStep();
     initDraggable();
-    if (replayBtn) replayBtn.addEventListener("click", replay);
+    if (bookmarkBtn)
+      bookmarkBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // 书签在 paper 内，阻止冒泡到 stage 的翻开监听
+        replay();
+      });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

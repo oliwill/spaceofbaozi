@@ -74,6 +74,15 @@ const calCells = buildCalendar(now);
     <div class="scale-wrap">
       <!-- 打开的手账：单页平铺网点纸（默认可见，无 JS 降级路径） -->
       <main class="paper" id="paper">
+        <!-- 活页分隔卡：合上手账，回到封面 -->
+        <button
+          class="bookmark-btn settle"
+          style="--d: 60ms"
+          id="bookmark-btn"
+          type="button"
+          aria-label="合上手账，回到封面"
+        ></button>
+
         <!-- 页首：日期头 + 小月历 -->
         <header class="date-header settle" style="--d: 0ms">
           <span class="dh-num" id="dh-num">{ssrDay}</span>
@@ -429,10 +438,6 @@ const calCells = buildCalendar(now);
       </div>
     </div>
   </div>
-
-  <button class="replay-btn" id="replay-btn" type="button" aria-label="重新播放打开动效">
-    ↻ 重新打开
-  </button>
 
   <script type="module" src="/scripts/peel-sticker.js"></script>
   <script is:inline src="/scripts/journal.js"></script>

@@ -183,6 +183,8 @@ public/assets/                    ← 投产版（进仓库，网站直接引用
 | About 入口 | `baozi@A.webp` | A | 已上线 |
 | 封面麻布（空白） | `cover-linen@A-.webp` | A- | 已上线（浅蓝原图乘法染整为深爵蓝，143.8KB） |
 | 封面手绣题字 | `cover-hand@D.webp` | D（白字黑底转暖白透明） | 已上线（28.3KB；内容为「中华一番包子铺」虚线绣质感） |
+| 封面中央条纹布带 | `cover-B.webp` | B（布纹背景） | 已上线（由 `cover-B.png` 裁压为 360×1200，125.6KB；封面书脊与翻开后纸面左缘共用） |
+| 首页合书书签 | `cover-bookmark.webp` | A（透明抠图） | 已上线（由 `cover-bookmark.png` 抠黑底并压缩为 313×560，54.7KB；按钮保留 aria-label） |
 | ~~封面（正/背）~~ | ~~`cover@A.webp` / `cover@B.webp`~~ | — | 已过时（2026-07-27 封面重构，不再引用；文件留仓备查） |
 | 装饰 · 贴纸 | `deco-sticker-airpods@C.webp`、`deco-sticker-michelin@C.webp`、`deco-sticker-washer@C.webp` | C | 已上线（airpods 带 WebGL 掀开交互） |
 | 装饰 · 玩偶 | `deco-wukong@I.webp` | I | 已上线 |
