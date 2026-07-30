@@ -153,16 +153,25 @@ body.home-body {
     visibility 0s;
 }
 
+.cover-presentation {
+  display: grid;
+  grid-template-columns: 564px 416px;
+  column-gap: 80px;
+  align-items: center;
+  width: 1060px;
+  height: 720px;
+}
+
 .js .book-closed:focus-visible {
   outline: 2px dashed var(--brick);
   outline-offset: -10px;
 }
 
-/* 封面高度 = 纸张高度：开本前后尺度连续 */
+/* 封面与扉页按同一实体书比例并排呈现 */
 .book-cover {
   position: relative;
-  width: 627px;
-  height: 800px;
+  width: 564px;
+  height: 720px;
   transform-style: preserve-3d;
   transform-origin: left center;
   /* 合上：绕左书脊旋回（打开用 is-open 的 0.9s） */
@@ -206,52 +215,87 @@ body.home-body {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 62px;
+  width: 56px;
   background: var(--spine-stripes) center / cover no-repeat;
   border-radius: 4px 0 0 4px;
   box-shadow: inset -3px 0 6px rgba(13, 18, 30, 0.35);
 }
 
-/* 手绣题字 +《火花》题记 */
-.cover-quote {
-  position: absolute;
-  right: 54px;
-  top: 120px;
-  width: 400px;
-  color: #f5f2e8;
-  rotate: -1.5deg;
-}
-
+/* 实体封面只保留手绣站名题字 */
 .cover-hand {
+  position: absolute;
+  right: 48px;
+  top: 108px;
   display: block;
-  width: 100%;
+  width: 360px;
   height: auto;
+  rotate: -1.5deg;
   filter: drop-shadow(0 2px 3px rgba(13, 18, 30, 0.35));
 }
 
-.cover-quote-text {
-  margin: 34px 0 0;
-  font-family: var(--font-display);
-  font-size: 1.08rem;
-  line-height: 2.0;
-  letter-spacing: 0.06em;
-  color: rgba(245, 242, 232, 0.88);
-  text-shadow: 0 1px 3px rgba(13, 18, 30, 0.4);
+/* 扉页：白纸、轻点阵与编辑式文字层级 */
+.cover-title-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  width: 416px;
+  height: 660px;
+  padding: 72px 48px 48px;
+  border: 1px solid var(--grid-dot);
+  border-radius: 2px 5px 5px 2px;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--grid-dot) 0.8px, transparent 0.8px);
+  background-size: 22px 22px;
+  box-shadow: var(--shadow-lift);
+  font-synthesis: none;
+  user-select: text;
 }
 
-.cover-quote-src {
-  margin: 22px 0 0;
+.cover-page-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: 0.04em;
+  text-wrap: balance;
+}
+
+.cover-page-description {
+  margin: 40px 0 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--ink-light);
+}
+
+.cover-page-categories {
+  margin: 32px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--grid-dot);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.8;
+  letter-spacing: 0.1em;
+  color: var(--ink-lighter);
+}
+
+.cover-page-prompt {
+  margin: auto 0 0;
+  font-family: var(--font-mono);
   font-size: 0.82rem;
-  letter-spacing: 0.12em;
-  color: rgba(245, 242, 232, 0.72);
-  text-align: right;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--brick);
 }
 
 /* 织唛标签：米白布标 + 锁边虚线 */
 .cover-label {
   position: absolute;
-  left: 108px;
-  bottom: 148px;
+  left: 97px;
+  bottom: 133px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -291,26 +335,6 @@ body.home-body {
   transition:
     opacity 0.3s ease 0.6s,
     visibility 0s 1s;
-}
-
-.open-hint {
-  position: absolute;
-  left: 50%;
-  bottom: 44px;
-  translate: -50% 0;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  color: rgba(253, 253, 252, 0.94);
-  text-shadow: 0 1px 4px rgba(40, 32, 24, 0.5);
-  z-index: 20;
-  animation: hint-pulse 2.2s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes hint-pulse {
-  0%,
-  100% { opacity: 0.45; }
-  50% { opacity: 1; }
 }
 
 /* ===== 欢迎区 ===== */
@@ -1125,45 +1149,89 @@ body.home-body {
     inset: 0;
     background: var(--page-bg);
     z-index: 30;
+    overflow-x: clip;
+  }
+
+  .cover-presentation {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 12px;
+    width: min(92vw, 360px);
+    height: auto;
   }
 
   .book-cover {
-    width: min(88vw, 420px);
+    width: 100%;
     height: auto;
-    aspect-ratio: 627 / 800;
+    aspect-ratio: 564 / 720;
   }
 
   .cover-spine {
-    width: 40px;
+    width: 10%;
   }
 
-  .cover-quote {
-    right: 20px;
-    left: 60px;
-    top: 72px;
-    width: auto;
+  .cover-front {
+    box-shadow: var(--shadow-soft);
   }
 
-  .cover-quote-text {
-    margin-top: 20px;
-    font-size: 0.85rem;
-    line-height: 1.85;
-  }
-
-  .cover-quote-src {
-    margin-top: 14px;
-    font-size: 0.68rem;
+  .cover-hand {
+    right: 8%;
+    top: 15%;
+    width: 64%;
   }
 
   .cover-label {
-    left: 64px;
-    bottom: 96px;
-    gap: 4px;
-    padding: 9px 12px;
+    left: 17%;
+    bottom: 18.5%;
+    gap: 3px;
+    padding: 4px 6px;
+    outline-width: 2px;
+    border-width: 1px;
+    box-shadow: var(--shadow-soft);
   }
 
   .cl-brand {
-    font-size: 0.8rem;
+    font-size: clamp(0.46rem, 2vw, 0.54rem);
+    letter-spacing: 0.12em;
+  }
+
+  .cl-domain {
+    font-size: clamp(0.34rem, 1.5vw, 0.4rem);
+  }
+
+  .cover-title-page {
+    width: 100%;
+    height: auto;
+    min-height: clamp(280px, 80vw, 312px);
+    padding: clamp(14px, 4vw, 18px) clamp(10px, 3vw, 14px);
+    border-radius: 1px 3px 3px 1px;
+    background-size: 16px 16px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .cover-page-title {
+    font-size: clamp(0.9rem, 4.2vw, 1.05rem);
+    line-height: 1.25;
+    letter-spacing: 0.03em;
+  }
+
+  .cover-page-description {
+    margin-top: clamp(10px, 3vw, 14px);
+    font-size: clamp(0.66rem, 3.2vw, 0.75rem);
+    line-height: 1.65;
+  }
+
+  .cover-page-categories {
+    margin-top: clamp(10px, 3vw, 14px);
+    padding-top: clamp(8px, 2.5vw, 10px);
+    font-size: clamp(0.58rem, 2.5vw, 0.64rem);
+    line-height: 1.65;
+    letter-spacing: 0.05em;
+  }
+
+  .cover-page-prompt {
+    font-size: clamp(0.62rem, 2.8vw, 0.7rem);
+    line-height: 1.5;
+    letter-spacing: 0.02em;
   }
 
   /* 移动端简化开本：书脊留存与影子扫过不生效 */
@@ -1177,12 +1245,6 @@ body.home-body {
     top: 6px;
     width: 62px;
     height: 112px;
-  }
-
-  .open-hint {
-    bottom: 64px;
-    color: var(--ink-light);
-    text-shadow: none;
   }
 
   .book-stage.is-open .book-cover {
@@ -1219,9 +1281,6 @@ body.home-body {
     transition: none;
   }
 
-  .open-hint {
-    animation: none;
-  }
 }
 
 /* 防止拖动时文字被选中 */

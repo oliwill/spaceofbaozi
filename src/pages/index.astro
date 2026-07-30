@@ -406,13 +406,19 @@ const calCells = buildCalendar(now);
       </main>
 
       <!-- 合上的手账封面（JS 就绪后才接管开本；无 JS 时保持隐藏） -->
-      <div class="book-closed" id="book-closed" role="button" tabindex="0" aria-label="打开手账">
-        <div class="book-cover">
-          <div class="cover-face cover-front">
-            <!-- 条纹书脊布带（翻开后以 .paper::before 留存） -->
-            <span class="cover-spine" aria-hidden="true"></span>
-            <!-- 手绣题字（cover-hand@D.webp：白字黑底转暖白透明）+《火花》题记 -->
-            <div class="cover-quote">
+      <div
+        class="book-closed"
+        id="book-closed"
+        role="button"
+        tabindex="0"
+        aria-label="打开这本手账，浏览包子的文章、想法、摄影与生活记录"
+      >
+        <div class="cover-presentation">
+          <div class="book-cover">
+            <div class="cover-face cover-front">
+              <!-- 条纹书脊布带（翻开后以 .paper::before 留存） -->
+              <span class="cover-spine" aria-hidden="true"></span>
+              <!-- 手绣题字（cover-hand@D.webp：白字黑底转暖白透明） -->
               <img
                 class="cover-hand"
                 src="/assets/home/cover-hand@D.webp"
@@ -420,21 +426,25 @@ const calCells = buildCalendar(now);
                 width="880"
                 height="126"
               />
-              <p class="cover-quote-text">
-                每天把没意义的傻话<br />挂在嘴上，却用一种<br />引人注目的方式咏唱着。
-              </p>
-              <p class="cover-quote-src">—— 又吉直树《火花》</p>
+              <!-- 织唛标签：营业状态 + 域名 -->
+              <span class="cover-label">
+                <span class="cl-brand">手账营业中</span>
+                <span class="cl-domain">baozi.space</span>
+              </span>
             </div>
-            <!-- 织唛标签：营业状态 + 域名 -->
-            <span class="cover-label">
-              <span class="cl-brand">手账营业中</span>
-              <span class="cl-domain">baozi.space</span>
-            </span>
+            <!-- 书衣内衬：米色夹里 -->
+            <div class="cover-face cover-back" aria-hidden="true"></div>
           </div>
-          <!-- 书衣内衬：米色夹里 -->
-          <div class="cover-face cover-back" aria-hidden="true"></div>
+
+          <div class="cover-title-page">
+            <p class="cover-page-title">一本会不断变厚的<br />数字手账</p>
+            <p class="cover-page-description">
+              你好，我是包子。这里收录文章、想法、摄影、酒、书、音乐，以及和 AI 一起做的实验。
+            </p>
+            <p class="cover-page-categories">文章 · 想法 · 摄影 · 酒 · 书 · 音乐 · AI 创作</p>
+            <p class="cover-page-prompt">点击任意处，打开这本手账 ↗</p>
+          </div>
         </div>
-        <span class="open-hint">点击任意处，翻开手账</span>
       </div>
     </div>
   </div>

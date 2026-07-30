@@ -10,8 +10,13 @@
 - Markdown Content Collections（八个栏目）
 - 纯 CSS + 少量原生 JS（首页开本 / 拖动 / 栏目过渡）
 
-设计规格见 [`baozi-space-spec.md`](./baozi-space-spec.md)。  
-已确认的桌面端交互 demo 保存在 [`demo/`](./demo/)（只读参考，不再作为生产入口）。
+## 产品与规范
+
+- V2 产品需求：[`baozi-space-prd.md`](./baozi-space-prd.md)
+- Phase 0 基线与 Phase 1 用户内容输入：[`docs/project/`](./docs/project/)
+- 素材加工基线：[`baozi-space-assets.md`](./baozi-space-assets.md)
+- [`baozi-space-spec.md`](./baozi-space-spec.md) 是 V1 历史设计规格，不再作为 V2 实施依据
+- [`demo/`](./demo/) 是早期只读参考，不再作为生产入口
 
 ## 本地开发
 
@@ -76,18 +81,24 @@ draft: false
 
 ## 当前阶段
 
-正式开发进行中。已完成：
+现有 Astro 生产骨架可运行，但 **V2 正式页面开发尚未开始**。当前执行 Phase 1 产品与内容定义，高保真设计确认前不迁移 V2 原型。
 
-- 生产骨架 + 八个内容集合 + 栏目列表/详情页
-- 首页按 Layout Guideline v1（spec §3.5）重建为单页平铺网点纸：四入口（Blog、Thoughts、Photos、About）+ 装饰、真实封面开本、触屏两步进入、装饰拖动、移动端纵向重排
-- 中文字体子集化流水线（`fonts:subset`，源字体在 gitignored 的 `fonts-src/`）
+已完成：
 
-尚未完成：
+- 生产骨架、八个内容集合、栏目列表与详情页
+- `bun run check` 与 `bun run build`；当前生成 27 个静态页面
+- Phase 0 仓库、页面、内容、素材和规范基线
+- 选定 `binder-archive（透明活页档案 + 周记网格主页）` 为 V2 唯一视觉论题
+- V2 PRD、决策记录、逐页内容输入表和现有内容批准清单
 
-- 首页四入口的真实物件素材（相机、便利贴、手账本、包子）与装饰素材投产
-- 移动端独立手账叙事（当前为纵向重排过渡方案）
-- 栏目内页模板深化（纸张/批注编辑语言）
-- 域名部署与旧 Gridea 内容迁移
+下一步：
+
+- 用户完成 `docs/project/phase-1-content-input.md` 第一轮输入
+- 逐条确认 `docs/project/content-approval-register.md`
+- 关闭 Phase 1 后建立 Linear 项目骨架
+- Phase 2 设计规范与图片 Style Recipes
+- 交互原型、高保真确认、正式开发、QA
+- Cloudflare Pages 预览、生产部署与域名绑定
 
 ## Demo 预览
 

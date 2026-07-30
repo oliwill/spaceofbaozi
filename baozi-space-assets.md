@@ -2,8 +2,11 @@
 
 **文档定位：** 与 `baozi-space-spec.md`（视觉设计规格）、`baozi-space-prd.md`（产品需求）同级的第三份规范——**素材工程规范**。  
 **适用范围：** 所有进入网站的实拍物件、纸片、贴纸、印章与手绘标记的加工、命名与投产。  
-**关联：** 输出参数与 `baozi-space-prd.md` 第八章「导出与输出系统」、第十章「性能指标」互相引用；CSS 阴影/白边复用 `src/styles/global.css` 既有设计令牌。  
+**关联：** 产品边界、内容字段、渐进增强与质量门槛以 `baozi-space-prd.md` V2 第 6、8、9 章为准；CSS 阴影/白边复用 `src/styles/global.css` 既有设计令牌。
+
 **版本：** v1 · 2026-07-24
+
+> **V2 说明（2026-07-30）：** 本文件当前继续约束真实素材的原图、母版、投产版、命名、白边和阴影。第 10 章 Prompt 主要用于既有素材加工，不等同于 V2 的生成图片 Style Recipe。透明活页本、桌面、卡面与手账插画的可复现配方将在 Phase 2 单独补充；在此之前不要根据零散 Prompt 批量生成正式资产。
 
 ---
 
@@ -12,7 +15,7 @@
 > **Everything on the desk should feel owned, used, and collected by Baozi — not invented by AI.**
 > Every object keeps its real-world identity. AI acts only as a **darkroom technician**: it may cut out, de-dust, and match lighting — it may **never** repaint, restyle, add, remove, or invent any part of the object. **If a detail wasn't in the photo, it doesn't exist.**
 
-「暗房师（darkroom technician）」而非「工匠（craftsman）」：工匠会创造，暗房师只冲洗。这条是全流程的红线，任何工序与任何模式都不得违反。
+「暗房师（darkroom technician）」而非「工匠（craftsman）」：工匠会创造，暗房师只冲洗。这条是**实物资产加工流程**的红线，任何实物工序与模式都不得违反。原生数字插画 / AI 插画属于 Mode I，按第 2 节和未来 V2 Style Recipe 管理，不得伪装成真实物件。
 
 ---
 
@@ -339,5 +342,5 @@ intended to sit on paper with mix-blend-mode: multiply.
 
 - **本规范（素材工程）**：物件从照片到透明资产的加工、命名、投产参数。
 - **`baozi-space-spec.md`（视觉设计）**：物件在页面中的排布、比例、纸张编排、批注语言。
-- **`baozi-space-prd.md`（产品）**：栏目、路由、内容模型、性能阈值、发布流程；第八章「输出系统」与第十章「性能指标」是本规范输出参数的上位约束。
-- **不变量**：无论工具如何替换，第 0 条「AI 只做暗房师、不造物」、实物资产出图必对照原图人工验收、母版/投产双版、落影走 CSS——这四条不可变。
+- **`baozi-space-prd.md`（产品）**：栏目、路由、内容模型、渐进增强、质量门槛与发布完整性；它是本规范的产品上位约束。
+- **不变量**：无论工具如何替换，实物资产中的 AI 只做暗房处理、不虚构物件；实物出图必对照原图人工验收；保留母版/投产双版；落影走 CSS——这四条不可变。
