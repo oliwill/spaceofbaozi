@@ -14,6 +14,8 @@
 | Retire | 不进入 V2；是否删除文件在开发阶段另行确认 |
 | Pending | 尚未判断 |
 
+> `Phase 2 Design-ready / Publication pending` 是补充设计状态，不替代上述用户决定；内容可用于设计时仍可保持 `Edit`，且不得计入生产发布门禁。
+
 ## 发布规则
 
 - 本清单由用户确认。
@@ -31,13 +33,13 @@
 
 | 目标栏目 / 页面 | 最低要求 | 当前可计数内容 | 当前结论 |
 |---|---:|---:|---|
-| Blog | 1 条真实且已批准内容 | 0 | 有多条迁移候选，等待逐条批准 |
-| Photos | 1 条真实且已批准内容 | 0 | 当前只有占位条目，需提供真实相册/记录 |
-| Project | 1 条真实且已批准内容 | 0 | 当前 AI Works 条目为占位，不计数 |
-| Drinks | 1 条真实且已批准内容 | 0 | 当前只有占位条目，需提供真实记录 |
-| Books | 1 条真实且已批准内容 | 0 | 当前只有占位条目，需提供真实记录 |
-| Music | 1 条真实且已批准内容 | 0 | 当前只有占位条目，需提供真实记录 |
-| Movies | 1 条真实且已批准内容 | 0 | 当前无正式条目，需提供真实记录 |
+| Blog | 1 条真实且已批准内容 | 0 | 《料亭菜单 NO.5——将心注入》已标记为 `Phase 2 Design-ready / Publication pending`；发布状态仍为 Edit，Phase 5 修订并最终 Approve 前不计数 |
+| Photos | 1 条真实且已批准内容 | 0 | 首发相册的主题、排版和顺序由包子完整策展；方案及真实原创照片尚未交付 |
+| Project | 1 条真实且已批准内容 | 0 | 「中华一番包子铺」已标记为 `Phase 2 Design-ready / Publication pending`；六个核心字段、精简详情、截图方案及链接策略已确认，真实截图、正式内容文件和最终 Approve 尚未完成，当前 AI Works 占位条目不计数 |
+| Drinks | 1 条真实且已批准内容 | 0 | 首条真实酒款记录暂不拆解，由包子准备好后一次性交付完整记录；当前占位条目不计数 |
+| Books | 1 条真实且已批准内容 | 0 | 首条真实阅读记录暂不拆解，由包子准备好后一次性交付完整记录；当前占位条目不计数 |
+| Music | 1 条真实且已批准内容 | 0 | KOKIA《Songbird》保持 `Phase 1 Input pending`；包子暂时没有个人简短感受，不生成代写内容，当前占位条目也不计数 |
+| Movies（收录电影 + 剧集） | 1 条真实且已批准内容 | 0 | 首发样本《火花》(2016) 已标记为 `Phase 2 Design-ready / Publication pending`；真实结构、10 集信息、观看日期和个人短评可用于 Phase 2 设计，但正式内容文件、未确认素材和最终 Approve 尚未完成，仍不计入门禁 |
 | About | 用户批准的正式完整页面 | 0 | 短版身份已确认；长版页面待确认 |
 
 > “当前可计数内容”只统计已经由用户 Approve 且最终满足发布字段与 QA 的内容；技术上当前可构建或公开不计入。
@@ -56,7 +58,7 @@
 | Blog | `src/content/blog/welcome-to-baozi-space.md` | 已知占位 | 公开 | Draft | 用户已确认不展示；Phase 5 设为草稿或另行 Retire |
 | Blog | `src/content/blog/jiangjian-niuxiaopai.md` | 迁移旧内容 | 公开 | Pending | |
 | Blog | `src/content/blog/niuwei-gutang.md` | 迁移旧内容 | 公开 | Pending | |
-| Blog | `src/content/blog/ryoutei-menu-05.md` | 迁移旧内容 | 公开 | Pending | |
+| Blog | `src/content/blog/ryoutei-menu-05.md` | 迁移旧内容；Blog 首发设计样本（`Phase 2 Design-ready / Publication pending`） | 公开 | Edit | 原创、摘要、标签已确认；开头引文保留，需修正引号并署名“——又吉直树《火花》”；Milk Boy / M-1 段落保留，统一名称并按官方结果与历史资料校正，补充官方来源；现有第三方内容链接全部保留为普通外链，不嵌入，统一标题并在上线前检查有效性；正文采用轻度校对；两处「更加捕鼠器」确认改为「更佳捕鼠器」；“让将灵魂注入油豆腐”确认删除多余的「将」；第二人称保留「妳」；其余明确错漏按轻度校对处理；当前门禁计数为 0，完成差异检查后再由包子 Approve |
 | Blog | `src/content/blog/roasted-chicken-wings.md` | 迁移旧内容 | 公开 | Pending | |
 | Blog | `src/content/blog/biomed-supply-chain.md` | 迁移/现有内容 | 公开 | Pending | |
 | Blog | `src/content/blog/unsplash-daily-image.md` | 迁移/现有内容 | 公开 | Pending | |
