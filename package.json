@@ -10,6 +10,8 @@
     "preview": "astro preview --host 127.0.0.1 --port 4321",
     "check": "astro check",
     "fonts:subset": "node scripts/subset-fonts.mjs",
+    "assets:intro:audit": "node scripts/audit-intro-assets.mjs",
+    "assets:intro:build": ".venv-assets/Scripts/python.exe scripts/build-intro-sprites.py",
     "publish": "node scripts/subset-fonts.mjs && git add -A && git commit -m \"content: update\" && git push"
   },
   "dependencies": {
@@ -17,6 +19,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "sharp": "^0.35.3",
     "typescript": "^5.8.3"
   },
   "engines": {
