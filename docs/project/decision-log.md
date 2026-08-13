@@ -1,6 +1,6 @@
 # baozi.space V2 · 决策记录
 
-**最后更新：** 2026-07-30
+**最后更新：** 2026-08-04
 
 **规则：** 这里只记录已经确认、会约束后续工作的决策；想法和待讨论项放在 PRD 的 Open Questions 中。
 
@@ -928,6 +928,52 @@
 - **设计边界：** Phase 2 可以使用上述真实结构与文字设计 Movies 归档卡、最近活动卡和详情页；未确认的海报、其他平台素材、扩展字段和文案不得补写或伪造，核心字段在正式内容审批前仍需完成来源核对。
 - **发布边界：** 该标记不是发布批准；正式 Movies 内容文件尚未创建，`approved: true` 不得设置，Movies 生产发布门禁计数仍为 0。
 - **实施边界：** Phase 1 不创建正式 Movies 内容文件，不修改 schema 或页面代码；Phase 2 只产出设计规范与原型。
+
+### D-104 · Launch / Home 视觉目标重对齐，废止 demo-v3 `3:2` 双页首页假设
+
+- **状态：** Accepted
+- **决策：** 启动页与主页的视觉目标以 2026-08-04 重对齐计划定义的两个状态为准：Launch 是干净摄影台背景上的一整本拼贴封面手账；Home 是打开后的周记式手账内页（日期轨、横线/网格、首要内容、七栏目文字索引、最近更新、About 摘要）。两者共享纸张、字体与档案语境，但不共用同一套自由拼贴构图。
+- **废止内容：** `demo-v3` 旧版中 `3:2` 双页 `.spread` 首页、首页目录先于内容出现、以及首屏后 `.continuation` 延展纸面的构图假设全部废止，不再作为 Home 的设计依据；`docs/plans/2026-07-24-home-single-page-design.md` 的旧首页构图同样不作为新设计依据。
+- **替代关系：** 本决策在 D-002（binder-archive 视觉论题）之上细化 Launch/Home 的几何事实来源；D-002 的周记式阅读骨架与黑色正文 + 一处强调的约束继续有效。带尺寸标注的实现说明见 `docs/project/phase-2-launch-home-frames.md`（Figma 不可用时按既定应急方案以静态画板替代）。
+- **受影响文档：** `baozi-space-prd.md` Phase 2（新增不可变约束）、`docs/project/phase-2-launch-home-frames.md`（新增）、`demo-v3/`（按新 Frame 重做）、生产 `src/pages/index.astro` / `src/styles/journal.css` / `public/scripts/journal.js`（Demo 验收通过后迁移）。
+- **实施边界：** 高保真静态画面与可点击 Demo 通过验收前，不修改生产页面实现（延续 D-006）；Demo 可使用明确标注的结构样本文字，迁移生产时只复用已批准的真实内容与资产。
+
+### D-105 · 数字纸张方向落地生产：取代 Launch/Home 两状态与 binder-archive 首页几何
+
+- **状态：** Accepted（2026-08-12 计划经用户批准后实施完成）
+- **改变原因：** D-104 的「摄影台上的 3D 封面物件 + 独立网页主页」经多版 demo（demo-v2/v3、D-104 画板）验证为「四不像」；固定舞台（`overflow:hidden` + 1440×900 缩放坐标系）是 App 不是网站。新方向让手账本身成为可滚动文档：浏览 = 滚动 = 网站行为。
+- **决定：**
+  - 首页 = sticky 全屏封面 + 下滑开本（首页纸面 z-index 盖过封面，纯 CSS）+ 五页结构：P.01 Blog / P.02 Photos / P.03 书影音（三栏并页）/ P.04 Project / P.05 页尾（About 摘要 + 联系 + Drinks 可达 + 合上本子）。
+  - 「仿真」降级为「数字纸张」：不渲染桌上 3D 书、不用摄影台背景、不做翻书物理；纸张即界面（暖白纸色 + 固定噪点 + 书脊折影 + 胶带 + 手写体 + 页码，全部 2D CSS）。
+  - 详情页统一为 `BookSpread` 跨页：左导航（blog 标签聚合 / photos 相册目录 / about 无）+ 书脊中线 + 右正文（≤65ch），rotateY 入场动画，reduced-motion 与无 JS 全部静态降级。
+  - 栏目列表页继承纸张 chrome（暖纸底、顶部折痕、页脚页码）。
+  - 字体系统：BaoziHand（SlideXiaXing 子集，仅限纯中文 chrome 文字）+ 系统宋体（正文+标题）+ IoskeleyMono（拉丁/数字/元信息）；`font-synthesis: none`（宋体栈无粗体文件），强调以荧光笔 strong / 虚线 em / 朱砂边线 h2 承担；字号收敛为 `--fs-caption/small/body/lead/title/display` 六档。
+- **废止内容：**
+  - D-002 binder-archive 论题作为首页几何依据废止；D-104 的 Launch/Home 两状态画板、`index.astro` 的 sessionStorage 启动逻辑（FR-LAUNCH-09/10/11）、`src/styles/journal.css`、`public/scripts/journal.js` 全部废止并已删除。
+  - PRD 3.4「首页的两个状态」与 Phase 2 不可变约束中 Launch/Home 画板约束不再作为生产依据。
+  - `docs/project/phase-2-launch-home-frames.md`、`baozi-space-B-homepage-visual-handoff.md`（2026-08-11 点阵纸拼贴方向）均不再是首页视觉事实来源。
+- **继续有效：** D-013「合上本子」文案（保留于 P.05）、D-022 featured 精选（P.01 首卡胶带）、D-024 About 摘要、D-026 空栏目规则（影栏「正在整理」）。
+- **静态化偏差记录：** 标签筛选原计划 `/blog?tag=xx`（SSR 查询参数），因站点无 adapter 的纯静态托管无法实现构建期求值，落地为 `/blog/tag/<tag>` 构建期静态页（getStaticPaths，每标签一页）；「无 JS 可工作、可分享 URL」意图完整保留。
+- **实施清单：** `src/pages/index.astro`（重写）、`src/styles/home.css`（新建）、`src/styles/global.css`（纸张令牌/共享纸样式/排版系统）、`src/components/layout/BookSpread.astro`（新建）、`EntryDetail.astro`（薄包装）、`SectionLayout.astro`（纸张继承 + skip-link 目标）、`EntryList.astro`（stretched-link 重构 + tagBaseHref）、`src/pages/blog/tag/[tag].astro`（新建）、`public/scripts/cover-open.js`（新建）、`public/scripts/site-experience.js`（全内部链接 forward/back 过渡）、`scripts/subset-fonts.mjs`（xiaxing-hand + 源缺失守卫）。
+- **受影响文档：** 本文件、`README.md`（目录结构与状态）、`docs/plans/2026-08-12-journal-digital-paper-redesign.md`（实施计划存档）、PRD 3.4 / Phase 2 约束（见上，等待正式修订）、decision-log 未涵盖的旧 demo 文档（见废止内容）。
+- **待办（不在本次范围）：** 书影音归档热力图（D-016~020）、movies 内容集合、真实联系方式（D-005）、思想/AI Works 旧路由迁移（D-021 Phase 5）、PRD 正式修订。
+
+### D-106 · 设计规范 v2.0 交接包成为唯一设计事实来源：废弃手账方向，引入开场动画叙事
+
+- **状态：** Accepted（2026-08-13，用户与外部顾问讨论后确认方向调整，交接包 `baozi-space-harness-handoff/` 整理完成）
+- **改变原因：** 设计长期未达要求导致项目严重延期；用户重新思考后锁定新方向——「无限暖白点阵纸 + 日式编辑拼贴 50% + 安静独立杂志 50%」，并引入此前不存在的角色开场叙事（球 → 狗 → 人 → 摔入首页）。D-105 数字纸张方向上线后即被本方向取代。
+- **决定：**
+  - **设计事实来源切换**：`baozi-space-harness-handoff/docs/baozi-space-design-spec.md` v2.0 是全站唯一有效设计规范。与旧文档冲突时以该规范为准；PRD 降级为产品与内容责任文档，其视觉与交互章节全部让位。
+  - **废弃 D-105 手账方向**：sticky 封面开本、五页结构（P.01–P.05）、BookSpread 详情跨页不再作为生产方向；`spec` §15 明确废弃「以实体手账、书脊、翻页或桌面边框承载全站」。现有生产实现保留运行，进入重建队列，不继续投入。
+  - **IA 收缩**：一级导航由七栏目 + About 改为五个：Blog / Photos / **Shelf（Books + Movies + Music 合并）** / Projects / About。Thoughts 并入 Blog、AI Works 并入 Projects（延续既有迁移方向）；Drinks、Devices、Apps 降级为标签，不进一级导航。
+  - **开场叙事**：八镜头滚动动画（球滚入 → 小狗追 → 人物被牵入 → 共同奔跑 → 失衡 → 草地右侧摔出 → 首页左侧摔入 → 站起 + 小狗绕圈）。全段左进右出，第一拍只有球；300vh 滚动 + sticky 舞台；reduced-motion / 跳过 / 会话完成 / 素材失败四条回退路径。桌面 `/lab/intro` 实验页先行，通过后才接入首页。
+  - **首页构图**：左侧身份区（问候 / 称呼 / 城市 / 一句介绍）+ 右侧 Blog 主视觉 + 底部 Photos 预告；左上角显示访问者天气，**不显示网站名称**。
+  - **技术栈扩展**：新增 GSAP + ScrollTrigger、Vitest、Playwright、Sharp（审计）、Python + rembg/Pillow（仅开发期素材管线）。继续禁止 React / Three.js / PixiJS / Rive / Lottie / Lenis。包管理器维持 Bun（计划中的 npm 命令在本地以 bun 执行）。
+  - **阶段路线**：A0 素材工程化（6 组源稿 → 透明 4×2 WebP sprite，≤6MB，锚点 manifest）→ A1 桌面 `/lab/intro` 原型 → B 首页整合 → C 全站页面系统 → D 移动端与季节扩展。A0 资产审计通过前不开始 A1 动画联调。
+- **素材状态：** 交接包 29MB 素材完整（6 组动作源稿、3 张角色设定、1 张分镜、15 张参考），但 10 张生成 PNG 均无 Alpha 通道（棋盘格为烘焙假透明），A0 需 rembg 抠图；`summer-pulled-run-right-source.png` 1672×941 不被 4×2 整除，需补齐。白色小狗 / 暖白衬衫 / 帽檐 / 手部为抠图高危项，损坏即停止报告，禁止颜色键强抠。
+- **受影响文档：** `baozi-space-prd.md`（视觉 / 交互 / IA 章节待正式修订，修订草案 `docs/plans/2026-08-13-prd-v2.1-revision.md`）、`README.md`、`AGENTS.md`、`docs/plans/2026-08-12-journal-digital-paper-redesign.md`（随 D-105 一并归档为历史）、`design-compare/`（昨日五风格对比原型作废，点阵纸概念已被新规范吸收）。
+- **继续有效：** PRD §6 内容治理（draft / approved 门禁、占位内容禁令、用户批准流程）、D-022 featured 精选语义、D-026 空栏目「正在整理」回退、内容真实性原则（用户个人事实不得 AI 虚构）。
+- **待办：** A0 素材管线（环境已配置）、PRD v2.1 正式修订与批准、内容 schema 对齐新 IA（shelf 集合、approved 字段）、生产页面重建计划（阶段 B/C）。
 
 ## 变更规则
 
