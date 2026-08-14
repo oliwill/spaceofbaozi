@@ -3,7 +3,7 @@ title: 关于包子
 description: 个人介绍占位页，后续替换为正式文案与联系方式。
 date: 2026-07-22
 tags: [about]
-featured: true
+draft: true
 ---
 
 你好，我是包子。

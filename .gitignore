@@ -29,11 +29,18 @@ Thumbs.db
 install*.log
 build*.log
 
-# large demo screenshots stay local-optional
-demo/screenshots/*.png
 fonts-src/
 
 # Gridea export archive (migrated into src/content, kept locally)
 bcb2a403-e02e-49b5-b603-404f2faf49d7-posts/
-.venv-assets/
 design-assets/intro/qa/
+output/
+
+# local review and delivery artifacts
+/test-results/
+/playwright-report/
+/*.mp4
+/baozi-space-tone-pixel-demo-v1/
+/baozi-space-a0-v-production-v*.zip
+/assets-master/baozi-space-a0-v-production-v*.zip
+/assets-master/baozi-space-a0-v-production-v*/

@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "mode": "production",
+  "fps": 9,
+  "assets": {
+    "ballBounce": {
+      "src": "/assets/intro/production/ball/ball-bounce.webp",
+      "frames": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": { "width": 160, "height": 160 },
+      "displayWidthVh": 5,
+      "loop": true,
+      "outlineRatio": 0.03,
+      "anchors": [
+        { "ground": [0.50, 0.92], "center": [0.50, 0.50] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.50] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.50] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.50] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.58] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.63] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.50] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.50] }
+      ]
+    },
+    "dogRun": {
+      "src": "/assets/intro/production/dog/dog-run-right.webp",
+      "frames": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": { "width": 320, "height": 240 },
+      "displayWidthVh": 23,
+      "loop": true,
+      "outlineRatio": 0.035,
+      "anchors": [
+        { "ground": [0.50, 0.92], "center": [0.50, 0.56], "collar": [0.66, 0.38] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.56], "collar": [0.64, 0.42] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.55], "collar": [0.66, 0.36] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.62], "collar": [0.66, 0.51] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.56], "collar": [0.66, 0.39] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.58], "collar": [0.66, 0.46] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.57], "collar": [0.66, 0.41] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.64], "collar": [0.66, 0.52] }
+      ]
+    },
+    "dogSettle": {
+      "src": "/assets/intro/production/dog/dog-circle-settle.webp",
+      "frames": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": { "width": 320, "height": 240 },
+      "displayWidthVh": 23,
+      "loop": false,
+      "outlineRatio": 0.035,
+      "anchors": [
+        { "ground": [0.50, 0.92], "center": [0.50, 0.56], "collar": [0.66, 0.43] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.56], "collar": [0.67, 0.44] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.56], "collar": [0.67, 0.46] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.57], "collar": [0.66, 0.48] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.56], "collar": [0.66, 0.44] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.58], "collar": [0.66, 0.49] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.62], "collar": [0.64, 0.55] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.62], "collar": [0.64, 0.55] }
+      ]
+    },
+    "personRun": {
+      "src": "/assets/intro/production/person/summer-pulled-run-right.webp",
+      "frames": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": { "width": 384, "height": 384 },
+      "displayWidthVh": 36,
+      "loop": true,
+      "outlineRatio": 0.028,
+      "anchors": [
+        { "ground": [0.50, 0.92], "center": [0.50, 0.52], "hand": [0.89, 0.33] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.54], "hand": [0.88, 0.42] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.52], "hand": [0.61, 0.31] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.53], "hand": [0.68, 0.38] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.55], "hand": [0.75, 0.42] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.54], "hand": [0.72, 0.44] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.53], "hand": [0.72, 0.43] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.55], "hand": [0.69, 0.44] }
+      ]
+    },
+    "personTrip": {
+      "src": "/assets/intro/production/person/summer-trip-exit-right.webp",
+      "frames": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": { "width": 384, "height": 384 },
+      "displayWidthVh": 36,
+      "loop": false,
+      "outlineRatio": 0.028,
+      "anchors": [
+        { "ground": [0.50, 0.92], "center": [0.50, 0.53], "hand": [0.77, 0.43] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.53], "hand": [0.66, 0.39] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.53], "hand": [0.78, 0.29] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.55], "hand": [0.88, 0.29] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.68], "hand": [0.72, 0.82] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.69], "hand": [0.57, 0.66] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.69], "hand": [0.43, 0.71] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.68], "hand": [0.89, 0.40] }
+      ]
+    },
+    "personStand": {
+      "src": "/assets/intro/production/person/summer-land-stand.webp",
+      "frames": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": { "width": 384, "height": 384 },
+      "displayWidthVh": 36,
+      "loop": false,
+      "outlineRatio": 0.028,
+      "anchors": [
+        { "ground": [0.50, 0.92], "center": [0.50, 0.67], "hand": [0.13, 0.64] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.64], "hand": [0.31, 0.81] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.61], "hand": [0.38, 0.85] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.60], "hand": [0.38, 0.85] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.60], "hand": [0.38, 0.64] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.57], "hand": [0.64, 0.28] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.53], "hand": [0.58, 0.43] },
+        { "ground": [0.50, 0.92], "center": [0.50, 0.52], "hand": [0.59, 0.55] }
+      ]
+    }
+  },
+  "environment": {
+    "grass": {
+      "src": "/assets/intro/production/environment/intro-grass.webp",
+      "selectedVariant": "C2",
+      "intrinsicSize": { "width": 2560, "height": 640 },
+      "visibleBounds": { "x": 0, "y": 280, "width": 2560, "height": 360 },
+      "displayWidthVw": 100,
+      "align": "bottom",
+      "transitionOut": [0.78, 0.82]
+    }
+  },
+  "fallback": "/assets/intro/production/intro-final-still.webp"
+}

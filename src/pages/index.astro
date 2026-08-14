@@ -1,42 +1,30 @@
 ---
 import BaseLayout from "@/components/layout/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import "@/styles/neat-annotations.css";
-import "@/styles/journal.css";
-import { getSection, greetingByHour } from "@/lib/sections";
+import { greetingByHour } from "@/lib/sections";
+import "@/styles/home.css";
 
-const initialGreeting = greetingByHour();
-const blog = getSection("blog")!;
-const thoughts = getSection("thoughts")!;
-const photos = getSection("photos")!;
-const about = getSection("about")!;
+// ===== 数据（计划步骤 4：五页各自取最近条目，movies 集合不存在 → 静态空态） =====
+type Dated = { data: { date: Date; draft?: boolean } };
+const byDateDesc = <T extends Dated>(a: T, b: T) => +b.data.date - +a.data.date;
+const notDraft = (e: Dated) => !e.data.draft;
 
-// 最近更新：八个栏目非草稿条目取日期最新 3 条（普通文字链接，不占物件入口）
-const SECTION_KEYS = [
-  "blog",
-  "thoughts",
-  "photos",
-  "drinks",
-  "books",
-  "music",
-  "about",
-  "ai-works",
-] as const;
-const allEntries = (
-  await Promise.all(SECTION_KEYS.map((k) => getCollection(k, ({ data }) => !data.draft)))
-)
-  .flat()
-  .sort((a, b) => +b.data.date - +a.data.date);
-const recent = allEntries.slice(0, 3);
+const blogAll = (await getCollection("blog", notDraft)).sort(byDateDesc);
+// 精选（D-022）：blog 内 featured 优先，置于 P.01 首位并贴「精选」胶带
+const featured = blogAll.find((e) => e.data.featured);
+const blogRecent = featured
+  ? [featured, ...blogAll.filter((e) => e !== featured)].slice(0, 4)
+  : blogAll.slice(0, 4);
 
-const latestOf = async (key: (typeof SECTION_KEYS)[number]) =>
-  (await getCollection(key, ({ data }) => !data.draft)).sort(
-    (a, b) => +b.data.date - +a.data.date
-  )[0];
-const latestBook = await latestOf("books");
-const latestMusic = await latestOf("music");
+const photosRecent = (await getCollection("photos", notDraft)).sort(byDateDesc).slice(0, 4);
+const bookRecent = (await getCollection("books", notDraft)).sort(byDateDesc).slice(0, 3);
+const musicRecent = (await getCollection("music", notDraft)).sort(byDateDesc).slice(0, 3);
+const projectRecent = (await getCollection("ai-works", notDraft)).sort(byDateDesc).slice(0, 4);
 
-// 页首日期（SSR 用构建日期，客户端 JS 校正为访问者当天）
+const fmtDate = (d: Date) => d.toLocaleDateString("zh-CN");
+const greeting = greetingByHour();
+
+// 页首日期轨（SSR 构建日期，与旧首页一致）
 const now = new Date();
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const MONTHS = [
@@ -46,409 +34,225 @@ const MONTHS = [
 const ssrDay = now.getDate();
 const ssrWeekday = WEEKDAYS[now.getDay()];
 const ssrMonthYear = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
-
-// SSR 小月历（JS 加载后按访问者时区重算）
-function buildCalendar(d: Date) {
-  const year = d.getFullYear();
-  const month = d.getMonth();
-  const first = new Date(year, month, 1).getDay();
-  const days = new Date(year, month + 1, 0).getDate();
-  const cells: (number | null)[] = Array(first).fill(null);
-  for (let i = 1; i <= days; i++) cells.push(i);
-  while (cells.length % 7) cells.push(null);
-  return cells;
-}
-const calCells = buildCalendar(now);
 ---
 
 <BaseLayout
   title="baozi.space — 中华一番包子铺"
-  description="打开一本属于包子的手账，在纸张、照片、标签和手写记录之间认识他的文章、想法、摄影、酒、书、音乐和 AI 创作。"
+  description="中华一番包子铺：一本会不断变厚的数字手账，收录包子的文章、摄影、书影音记录与项目。"
   bodyClass="home-body"
 >
-  <script is:inline>
-    document.documentElement.classList.add("js");
-  </script>
-
-  <div class="book-stage" id="book-stage">
-    <div class="scale-wrap">
-      <!-- 打开的手账：单页平铺网点纸（默认可见，无 JS 降级路径） -->
-      <main class="paper" id="paper">
-        <!-- 活页分隔卡：合上手账，回到封面 -->
-        <button
-          class="bookmark-btn settle"
-          style="--d: 60ms"
-          id="bookmark-btn"
-          type="button"
-          aria-label="合上手账，回到封面"
-        ></button>
-
-        <!-- 页首：日期头 + 小月历 -->
-        <header class="date-header settle" style="--d: 0ms">
-          <span class="dh-num" id="dh-num">{ssrDay}</span>
-          <span class="dh-meta">
-            <span class="dh-weekday" id="dh-weekday">{ssrWeekday}</span>
-            <span class="dh-month" id="dh-month">{ssrMonthYear}</span>
-          </span>
-        </header>
-
-        <div class="mini-cal settle" style="--d: 40ms" id="mini-cal" aria-hidden="true">
-          <span class="mc-title" id="mc-title">{ssrMonthYear}</span>
-          <div class="mc-grid" id="mc-grid">
-            <span class="mc-w">S</span><span class="mc-w">M</span><span class="mc-w">T</span>
-            <span class="mc-w">W</span><span class="mc-w">T</span><span class="mc-w">F</span>
-            <span class="mc-w">S</span>
-            {
-              calCells.map((c) =>
-                c === null ? (
-                  <span class="mc-d" />
-                ) : (
-                  <span class:list={["mc-d", { "mc-today": c === ssrDay }]}>{c}</span>
-                )
-              )
-            }
-          </div>
-        </div>
-
-        <span class="site-mark settle" style="--d: 60ms" aria-hidden="true">baozi.space</span>
-
-        <!-- 装饰：手绘邮戳（Mode D，纯 SVG 无边无影） -->
-        <svg
-          class="deco-stamp settle"
-          style="--d: 440ms"
-          width="140"
-          height="100"
-          viewBox="0 0 140 100"
-          aria-hidden="true"
-        >
-          <ellipse
-            cx="70" cy="50" rx="64" ry="45"
-            fill="none" stroke="currentColor" stroke-width="2.6"
-            stroke-linecap="round" stroke-dasharray="330 30"
-            transform="rotate(-2 70 50)"></ellipse>
-          <ellipse
-            cx="70" cy="50" rx="50" ry="33"
-            fill="none" stroke="currentColor" stroke-width="1.8" opacity="0.55"
-            stroke-linecap="round" stroke-dasharray="240 20"
-            transform="rotate(-2 70 50)"></ellipse>
-          <text x="70" y="46" text-anchor="middle" class="stamp-line">BAOZI.SPACE</text>
-          <text x="70" y="66" text-anchor="middle" class="stamp-line stamp-line-zh">手账营业中</text>
-        </svg>
-
-        <!-- 开场白 -->
-        <div class="greeting-block settle" style="--d: 80ms">
-          <p class="greeting">
-            <span id="greeting-time">{initialGreeting}</span>，欢迎光临中华一番包子铺
-          </p>
-          <p class="intro-note">这里不是博客，也不是商店，是一本会不断变厚的数字手账。</p>
-        </div>
-
-        <!-- 最近更新：手写记录行 -->
-        <section class="records settle" style="--d: 140ms" aria-label="最近更新">
-          <p class="rec-title">Recent · 最近更新</p>
-          <ul class="rec-list">
-            {
-              recent.map((e) => (
-                <li class="rec-line">
-                  <span class="rec-check" aria-hidden="true" />
-                  <time datetime={e.data.date.toISOString()}>
-                    {e.data.date.getMonth() + 1}/{e.data.date.getDate()}
-                  </time>
-                  <a href={`/${e.collection}/${e.id}`}>{e.data.title}</a>
-                </li>
-              ))
-            }
-          </ul>
-        </section>
-
-        <!-- 主锚点：Blog -->
-        <a href={blog.href} class="entry entry-blog settle" style="--d: 180ms" data-entry="blog">
-          <span class="entry-note" aria-hidden="true">{blog.number} · {blog.title} · {blog.zh}</span>
-          <span class="paper-scrap">
-            <span class="tape tape-top" aria-hidden="true"></span>
-            <span class="entry-big">Blog</span>
-            <span class="entry-sub">文章记录 · 长文与专题</span>
-          </span>
-        </a>
-
-        <!-- Thoughts：便利贴 + 红笔批注 -->
-        <a
-          href={thoughts.href}
-          class="entry entry-thoughts settle"
-          style="--d: 220ms"
-          data-entry="thoughts"
-        >
-          <span class="entry-note" aria-hidden="true"
-            >{thoughts.number} · {thoughts.title} · {thoughts.zh}</span
-          >
-          <span class="sticky-note">
-            <span class="sticky-quote">今日想法：<br />把网页当成房间来布置。</span>
-            <span class="sticky-label">Thoughts</span>
-          </span>
-        </a>
-        <span class="red-note red-note-sticky settle" style="--d: 260ms" aria-hidden="true"
-          >突然想到！</span
-        >
-
-        <!-- 装饰：可拖动纸签 -->
-        <div
-          class="deco-tag draggable settle"
-          style="--d: 280ms"
-          id="deco-tag"
-          role="img"
-          aria-label="装饰纸签：待整理清单"
-        >
-          <span class="tape tape-top" aria-hidden="true"></span>
-          <p>待整理：照片、酒标、唱片清单。</p>
-        </div>
-
-        <!-- 装饰：手绘箭头（指向相机） -->
-        <svg
-          class="deco-arrow settle"
-          style="--d: 300ms"
-          width="150"
-          height="110"
-          viewBox="0 0 150 110"
-          aria-hidden="true"
-        >
-          <path
-            d="M132 14 C 96 30, 66 52, 38 84 M 38 84 l -3 -16 M 38 84 l 15 -6"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-        </svg>
-
-        <!-- Photos：佳能 A-1 胶片相机 -->
-        <a
-          href={photos.href}
-          class="entry entry-photos settle"
-          style="--d: 320ms"
-          data-entry="photos"
-        >
-          <span class="entry-note" aria-hidden="true"
-            >{photos.number} · {photos.title} · {photos.zh}</span
-          >
-          <span class="entry-camera">
-            <img
-              src="/assets/home/camera@B.webp"
-              alt="包子的佳能 A-1 胶片相机"
-              width="1100"
-              height="666"
-            />
-            <span class="camera-caption">Photos · 胶片与生活</span>
-          </span>
-        </a>
-
-        <span class="deco-scribble settle" style="--d: 340ms" aria-hidden="true">记录中 →</span>
-
-        <!-- 装饰：手绘小花（Mode I，与悟空、涂鸦组成左下组） -->
-        <svg
-          class="deco-flower settle"
-          style="--d: 460ms"
-          width="92"
-          height="120"
-          viewBox="0 0 92 120"
-          aria-hidden="true"
-        >
-          <path
-            d="M46 114 C 42 92, 49 74, 45 56"
-            fill="none" style="stroke: var(--moss)" stroke-width="3" stroke-linecap="round"></path>
-          <path
-            d="M45 88 C 35 86, 28 78, 26 68 C 36 70, 43 76, 45 84"
-            fill="none" style="stroke: var(--moss)" stroke-width="2.4"
-            stroke-linecap="round" stroke-linejoin="round"></path>
-          <path
-            d="M45 74 C 54 72, 60 64, 62 55 C 53 57, 47 63, 45 70"
-            fill="none" style="stroke: var(--moss)" stroke-width="2.4"
-            stroke-linecap="round" stroke-linejoin="round"></path>
-          <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
-            <ellipse cx="45" cy="20" rx="8" ry="10"></ellipse>
-            <ellipse cx="62" cy="32" rx="9" ry="8" transform="rotate(38 62 32)"></ellipse>
-            <ellipse cx="55" cy="52" rx="8" ry="9" transform="rotate(80 55 52)"></ellipse>
-            <ellipse cx="34" cy="52" rx="8" ry="9" transform="rotate(-80 34 52)"></ellipse>
-            <ellipse cx="28" cy="31" rx="9" ry="8" transform="rotate(-38 28 31)"></ellipse>
-          </g>
-          <circle
-            cx="45" cy="37" r="7"
-            style="fill: var(--accent-yellow)" stroke="currentColor" stroke-width="2.4"></circle>
-        </svg>
-
-        <!-- About：小纸签 + 红笔圈画 -->
-        <a
-          href={about.href}
-          class="entry entry-about settle"
-          style="--d: 360ms"
-          data-entry="about"
-        >
-          <span class="entry-note" aria-hidden="true"
-            >{about.number} · {about.title} · {about.zh}</span
-          >
-          <span class="about-photo">
-            <img
-              src="/assets/home/baozi@A.webp"
-              alt="烟花下向夜空挥手的包子插画"
-              width="1000"
-              height="563"
-            />
-            <span class="about-caption">
-              <span class="entry-big">About</span>
-              <span class="entry-sub">你好，我是包子</span>
-            </span>
-            <svg class="red-circle" viewBox="0 0 340 230" aria-hidden="true">
-              <ellipse
-                cx="170"
-                cy="115"
-                rx="162"
-                ry="104"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-dasharray="980 70"
-                transform="rotate(-1.5 170 115)"></ellipse>
-            </svg>
-          </span>
-        </a>
-
-        <!-- 可掀开的贴纸：静态图是无 JS/WebGL 降级 -->
-        <div
-          class="deco-peel deco-airpods settle"
-          style="--d: 320ms"
-          data-peel-sticker
-          data-source="/assets/home/deco-sticker-airpods@C.webp"
-        >
-          <img
-            class="peel-fallback"
-            src="/assets/home/deco-sticker-airpods@C.webp"
-            alt="Kodak Charmera 钥匙扣与透明随身盒贴纸"
-            width="499"
-            height="650"
-            loading="lazy"
-          />
-          <sticker-forge
-            class="peel-canvas"
-            role="img"
-            aria-label="可从边缘掀开的 Kodak Charmera 贴纸"
-          ></sticker-forge>
-          <span class="peel-hint" aria-hidden="true">↙ 从边缘掀开</span>
-        </div>
-        <img
-          class="deco-img deco-jiale settle"
-          style="--d: 380ms"
-          src="/assets/home/deco-jiale01.webp"
-          alt="戴皇冠的嘉乐在蓝色花丛中的插画"
-          width="450"
-          height="600"
-          loading="lazy"
-        />
-        <img
-          class="deco-img deco-wukong settle"
-          style="--d: 400ms"
-          src="/assets/home/deco-wukong@I.webp"
-          alt="钩针悟空玩偶"
-          width="416"
-          height="600"
-          loading="lazy"
-        />
-
-        <!-- 装饰：手绘黑胶唱片（Mode I，守在 MUSIC 记录行上方） -->
-        <svg
-          class="deco-vinyl settle"
-          style="--d: 480ms"
-          width="96"
-          height="96"
-          viewBox="0 0 96 96"
-          aria-hidden="true"
-        >
-          <ellipse
-            cx="48" cy="48" rx="44" ry="42.5"
-            fill="none" stroke="currentColor" stroke-width="3"
-            stroke-linecap="round" stroke-dasharray="270 14"></ellipse>
-          <ellipse
-            cx="48" cy="48" rx="33" ry="32"
-            fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.45"
-            stroke-linecap="round" stroke-dasharray="140 10 60 8"></ellipse>
-          <ellipse
-            cx="48" cy="48" rx="24" ry="23"
-            fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.45"
-            stroke-linecap="round" stroke-dasharray="90 8 40 10"></ellipse>
-          <circle
-            cx="48" cy="48" r="12.5"
-            style="fill: var(--accent-blue)" stroke="currentColor" stroke-width="2"></circle>
-          <path
-            d="M20 32 C 26 21, 36 14, 47 13"
-            fill="none" stroke="currentColor" stroke-width="2" opacity="0.35"
-            stroke-linecap="round"></path>
-          <circle cx="48" cy="48" r="2.6" style="fill: currentColor"></circle>
-        </svg>
-
-        <!-- 页脚记录行：取真实集合最新条目 -->
-        <footer class="footer-records settle" style="--d: 420ms">
-          {
-            latestBook && (
-              <span class="fr-item">
-                <span class="fr-label">BOOK:</span>
-                <a href={`/books/${latestBook.id}`}>{latestBook.data.title}</a>
-              </span>
-            )
-          }
-          {
-            latestMusic && (
-              <span class="fr-item">
-                <span class="fr-label">MUSIC:</span>
-                <a href={`/music/${latestMusic.id}`}>{latestMusic.data.title}</a>
-              </span>
-            )
-          }
-        </footer>
-      </main>
-
-      <!-- 合上的手账封面（JS 就绪后才接管开本；无 JS 时保持隐藏） -->
-      <div
-        class="book-closed"
-        id="book-closed"
-        role="button"
-        tabindex="0"
-        aria-label="打开这本手账，浏览包子的文章、想法、摄影与生活记录"
-      >
-        <div class="cover-presentation">
-          <div class="book-cover">
-            <div class="cover-face cover-front">
-              <!-- 条纹书脊布带（翻开后以 .paper::before 留存） -->
-              <span class="cover-spine" aria-hidden="true"></span>
-              <!-- 手绣题字（cover-hand@D.webp：白字黑底转暖白透明） -->
-              <img
-                class="cover-hand"
-                src="/assets/home/cover-hand@D.webp"
-                alt="中华一番包子铺（手绣题字）"
-                width="880"
-                height="126"
-              />
-              <!-- 织唛标签：营业状态 + 域名 -->
-              <span class="cover-label">
-                <span class="cl-brand">手账营业中</span>
-                <span class="cl-domain">baozi.space</span>
-              </span>
-            </div>
-            <!-- 书衣内衬：米色夹里 -->
-            <div class="cover-face cover-back" aria-hidden="true"></div>
-          </div>
-
-          <div class="cover-title-page">
-            <p class="cover-page-title">一本会不断变厚的<br />数字手账</p>
-            <p class="cover-page-description">
-              你好，我是包子。这里收录文章、想法、摄影、酒、书、音乐，以及和 AI 一起做的实验。
-            </p>
-            <p class="cover-page-categories">文章 · 想法 · 摄影 · 酒 · 书 · 音乐 · AI 创作</p>
-            <p class="cover-page-prompt">点击任意处，打开这本手账 ↗</p>
-          </div>
-        </div>
-      </div>
+  <!-- ============ 封面：sticky 全屏，下滑时被内页纸面盖过 = 开本 ============ -->
+  <div class="cover" id="cover">
+    <img class="cover-art" src="/assets/home/cover@A.webp" alt="" />
+    <div class="cover-shade" aria-hidden="true"></div>
+    <div class="cover-title">
+      <p class="cover-greeting">{greeting}，欢迎光临</p>
+      <h1 class="cover-name">中华一番包子铺</h1>
+      <p class="cover-sub">一本会不断变厚的数字手账</p>
+      <p class="cover-hint">往下滚动，打开这本手账 ↓</p>
     </div>
   </div>
 
-  <script type="module" src="/scripts/peel-sticker.js"></script>
-  <script is:inline src="/scripts/journal.js"></script>
+  <main id="main">
+    <!-- ============ P.01 Blog ============ -->
+    <section class="paper-page" aria-label="Blog 文章">
+      <header class="page-head">
+        <div class="date-rail">
+          <span class="dr-day">{ssrDay}</span>
+          <span class="dr-meta">
+            <span class="dr-weekday">{ssrWeekday}</span>
+            <span class="dr-month">{ssrMonthYear}</span>
+          </span>
+        </div>
+        <p class="page-label"><span class="pl-zh">文章</span><span class="pl-en">Blog</span></p>
+      </header>
+
+      <div class="page-body">
+        {
+          blogRecent.map((entry, i) => (
+            <a class="journal-entry entry" href={`/${entry.collection}/${entry.id}`}>
+              {entry === featured && <span class="tape tape-featured">精选</span>}
+              {entry.data.cover && (
+                <img class="je-cover" src={entry.data.cover} alt="" loading={i === 0 ? "eager" : "lazy"} />
+              )}
+              <span class="je-text">
+                <span class="je-meta">
+                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
+                </span>
+                <strong class="je-title">{entry.data.title}</strong>
+                {entry.data.description && <span class="je-desc">{entry.data.description}</span>}
+              </span>
+            </a>
+          ))
+        }
+        <a class="page-more" href="/blog">全部文章 → /blog</a>
+      </div>
+
+      <footer class="page-foot">
+        <span class="pf-num">01</span>
+        <span class="pf-label">BLOG</span>
+        <span class="pf-meta">BAOZI.SPACE</span>
+      </footer>
+    </section>
+
+    <!-- ============ P.02 Photos ============ -->
+    <section class="paper-page" aria-label="Photos 摄影">
+      <header class="page-head">
+        <p class="page-label"><span class="pl-zh">摄影</span><span class="pl-en">Photos</span></p>
+      </header>
+
+      <div class="page-body">
+        {
+          photosRecent.map((entry) => (
+            <a class="journal-entry entry" href={`/${entry.collection}/${entry.id}`}>
+              {entry.data.cover && <img class="je-cover" src={entry.data.cover} alt="" loading="lazy" />}
+              <span class="je-text">
+                <span class="je-meta">
+                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
+                </span>
+                <strong class="je-title">{entry.data.title}</strong>
+                {entry.data.description && <span class="je-desc">{entry.data.description}</span>}
+              </span>
+            </a>
+          ))
+        }
+        <a class="page-more" href="/photos">全部相册 → /photos</a>
+      </div>
+
+      <footer class="page-foot">
+        <span class="pf-num">02</span>
+        <span class="pf-label">PHOTOS</span>
+        <span class="pf-meta">BAOZI.SPACE</span>
+      </footer>
+    </section>
+
+    <!-- ============ P.03 书影音 ============ -->
+    <section class="paper-page" aria-label="书影音记录">
+      <header class="page-head">
+        <p class="page-label"><span class="pl-zh">书影音</span><span class="pl-en">Notes</span></p>
+      </header>
+
+      <div class="page-body media-grid">
+        <div class="media-col">
+          <p class="media-title">书</p>
+          {
+            bookRecent.map((entry) => (
+              <a class="media-item entry" href={`/${entry.collection}/${entry.id}`}>
+                {entry.data.cover && <img class="mi-cover" src={entry.data.cover} alt="" loading="lazy" />}
+                <span class="mi-text">
+                  <strong>{entry.data.title}</strong>
+                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
+                </span>
+              </a>
+            ))
+          }
+          <a class="page-more" href="/books">全部记录 → /books</a>
+        </div>
+
+        <div class="media-col">
+          <p class="media-title">影</p>
+          <!-- D-026：movies 集合尚不存在，静态空态，不建集合、不造内容 -->
+          <div class="media-empty">
+            <p><strong>正在整理</strong></p>
+            <p>看过的电影与剧集，整理好之后写在这一栏。</p>
+          </div>
+          <a class="page-more" href="/movies">全部记录 → /movies</a>
+        </div>
+
+        <div class="media-col">
+          <p class="media-title">音</p>
+          {
+            musicRecent.map((entry) => (
+              <a class="media-item entry" href={`/${entry.collection}/${entry.id}`}>
+                {entry.data.cover && <img class="mi-cover" src={entry.data.cover} alt="" loading="lazy" />}
+                <span class="mi-text">
+                  <strong>{entry.data.title}</strong>
+                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
+                </span>
+              </a>
+            ))
+          }
+          <a class="page-more" href="/music">全部记录 → /music</a>
+        </div>
+      </div>
+
+      <footer class="page-foot">
+        <span class="pf-num">03</span>
+        <span class="pf-label">书影音</span>
+        <span class="pf-meta">BAOZI.SPACE</span>
+      </footer>
+    </section>
+
+    <!-- ============ P.04 Project ============ -->
+    <section class="paper-page" aria-label="Project 项目">
+      <header class="page-head">
+        <p class="page-label"><span class="pl-zh">项目</span><span class="pl-en">Project</span></p>
+      </header>
+
+      <div class="page-body">
+        {
+          projectRecent.map((entry) => (
+            <a class="journal-entry entry" href={`/${entry.collection}/${entry.id}`}>
+              {entry.data.cover && <img class="je-cover" src={entry.data.cover} alt="" loading="lazy" />}
+              <span class="je-text">
+                <span class="je-meta">
+                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
+                </span>
+                <strong class="je-title">{entry.data.title}</strong>
+                {entry.data.description && <span class="je-desc">{entry.data.description}</span>}
+              </span>
+            </a>
+          ))
+        }
+        <!-- D-021 迁移前项目详情仍在 /ai-works/<id>，列表页在 /projects -->
+        <a class="page-more" href="/projects">全部项目 → /projects</a>
+      </div>
+
+      <footer class="page-foot">
+        <span class="pf-num">04</span>
+        <span class="pf-label">PROJECT</span>
+        <span class="pf-meta">BAOZI.SPACE</span>
+      </footer>
+    </section>
+
+    <!-- ============ P.05 页尾 ============ -->
+    <section class="paper-page page-last" aria-label="关于与联系">
+      <header class="page-head">
+        <p class="page-label"><span class="pl-zh">页尾</span><span class="pl-en">Info</span></p>
+      </header>
+
+      <div class="page-body">
+        <section class="foot-about" aria-label="关于包子">
+          <p class="foot-blocktitle">ABOUT · 包子</p>
+          <!-- D-024 原文两段 -->
+          <p>前小红书商业化早期员工，懂一些营销，懂一点产品。</p>
+          <p>工作之外，也想做一个生活家。</p>
+          <a class="page-more" href="/about">继续认识包子 → /about</a>
+        </section>
+
+        <section class="foot-contact" aria-label="联系方式">
+          <p class="foot-blocktitle">CONTACT · 联系</p>
+          <!-- D-005：联系方式由用户提供后填入，当前为占位 -->
+          <p class="contact-item">hello@baozi.space</p>
+          <p class="contact-item contact-placeholder">社交链接稍后补上</p>
+        </section>
+
+        <p class="foot-corner">
+          还有一角：<a href="/drinks">酒 → /drinks</a>
+        </p>
+
+        <a class="close-book" href="#cover" data-scroll-top>合上本子 ↑</a>
+
+        <p class="copyright">© 2026 包子 · baozi.space</p>
+      </div>
+
+      <footer class="page-foot">
+        <span class="pf-num">05</span>
+        <span class="pf-label">INFO</span>
+        <span class="pf-meta">BAOZI.SPACE</span>
+      </footer>
+    </section>
+  </main>
+
+  <script is:inline src="/scripts/cover-open.js"></script>
 </BaseLayout>

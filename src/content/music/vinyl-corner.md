@@ -3,6 +3,7 @@ title: 黑胶角的第一张
 description: Music 栏目占位。
 date: 2026-07-21
 tags: [音乐]
+draft: true
 ---
 
 专辑、歌单、单曲与听感都会放在这里。首页黑胶物件是入口，不是全部。

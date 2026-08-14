@@ -8,7 +8,7 @@
  * 源字体：fonts-src/ 不下进 git，缺了看下方 FONTS 注释里的来源重新下载。
  */
 import { execFileSync } from "node:child_process";
-import { readdirSync, readFileSync, statSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, extname } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
@@ -23,6 +23,15 @@ const FONTS = [
     name: "ioskeley-mono-nerd-font",
     src: "fonts-src/ioskeley/Normal/IoskeleyMonoNerdFont-Regular.ttf",
     scanDirs: [],
+  },
+  // 手写体只用于 chrome 文字（问候/小节标签/页码/批注，见计划步骤 1），
+  // 正文仍是 Songti，故只扫组件/页面/lib 的静态字符串，不扫 content 正文
+  // keepLayout: false — 手写体不需要 GPOS/GSUB，省一半体积
+  {
+    name: "xiaxing-hand",
+    src: "fonts-src/SlideXiaXing.ttf",
+    scanDirs: ["src/components", "src/pages", "src/lib"],
+    keepLayout: false,
   },
 ];
 const SCAN_EXTS = new Set([".astro", ".md", ".mdx", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".json"]);
@@ -64,7 +73,7 @@ function subset(font, charsFile) {
       `--text-file=${charsFile}`,
       "--flavor=woff2",
       `--output-file=${out}`,
-      "--layout-features=*",
+      font.keepLayout === false ? "--layout-features=" : "--layout-features=*",
       "--no-hinting",
       "--desubroutinize",
     ],
@@ -76,6 +85,15 @@ function subset(font, charsFile) {
 
 mkdirSync(join(ROOT, "public/fonts"), { recursive: true });
 for (const font of FONTS) {
+  const srcPath = join(ROOT, font.src);
+  const outPath = join(ROOT, `public/fonts/${font.name}.woff2`);
+  if (!existsSync(srcPath)) {
+    if (existsSync(outPath)) {
+      console.log(`- ${font.name}: source missing, existing woff2 kept`);
+      continue;
+    }
+    throw new Error(`Font source missing and no existing output: ${font.src}`);
+  }
   const chars = collectChars(font.scanDirs);
   const charsFile = `fonts-src/_chars-${font.name}.txt`;
   writeFileSync(join(ROOT, charsFile), chars, "utf8");

@@ -1,7 +1,7 @@
 ---
-import { render } from "astro:content";
 import type { CollectionEntry, CollectionKey } from "astro:content";
-import SectionLayout from "./SectionLayout.astro";
+import BaseLayout from "./BaseLayout.astro";
+import BookSpread from "./BookSpread.astro";
 import { type SectionMeta } from "@/lib/sections";
 
 interface Props {
@@ -10,36 +10,15 @@ interface Props {
 }
 
 const { section, entry } = Astro.props;
-const { Content } = await render(entry);
+
+// 左栏导航变体：相册目录 / 关于无导航 / 其余标签导航
+const navVariant =
+  section.key === "photos" ? "album-index" : section.key === "about" ? "none" : "tags";
+
+const pageTitle = `${entry.data.title} · ${section.title} · baozi.space`;
+const pageDesc = entry.data.description || section.desc;
 ---
 
-<SectionLayout
-  section={section}
-  title={entry.data.title}
-  description={entry.data.description || section.desc}
->
-  <article class="prose" slot="header">
-    <span class="section-kicker">{section.number} · {section.title}</span>
-    <h1>{entry.data.title}</h1>
-    <div class="entry-meta">
-      <time class="date-chip" datetime={entry.data.date.toISOString()}>
-        {entry.data.date.toLocaleDateString("zh-CN")}
-      </time>
-      {entry.data.tags?.map((tag) => <span class="tag">#{tag}</span>)}
-      {entry.data.status && <span class="tag">{entry.data.status}</span>}
-    </div>
-  </article>
-
-  <article class="prose">
-    <Content />
-    {
-      entry.data.link && (
-        <p class="link-out">
-          <a href={entry.data.link} target="_blank" rel="noopener noreferrer">
-            在新标签阅读原文 ↗
-          </a>
-        </p>
-      )
-    }
-  </article>
-</SectionLayout>
+<BaseLayout title={pageTitle} description={pageDesc} bodyClass="section-body">
+  <BookSpread section={section} entry={entry} navVariant={navVariant} />
+</BaseLayout>

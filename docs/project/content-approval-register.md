@@ -14,51 +14,49 @@
 | Retire | 不进入 V2；是否删除文件在开发阶段另行确认 |
 | Pending | 尚未判断 |
 
-> `Phase 2 Design-ready / Publication pending` 是补充设计状态，不替代上述用户决定；内容可用于设计时仍可保持 `Edit`，且不得计入生产发布门禁。
+> `Design-ready / Publication pending` 是补充设计状态，不替代上述用户决定；内容可用于设计时仍可保持 `Edit`，且不得计入生产发布门禁。旧文档中的 `Phase 1/2/5/6` 名称按 D-107 视为历史阶段称呼。
 
 ## 发布规则
 
 - 本清单由用户确认。
-- Phase 5–6 根据确认结果更新 frontmatter 或内容，不在 Phase 1 修改正式内容。
-- 只有 `Approve`，或完成修改后从 `Edit` 转为 `Approve` 的内容，才能将 frontmatter 设为 `approved: true` 并进入 V2 生产候选。
-- Phase 5 所有列表和详情统一过滤为 `draft: false && approved: true`；`status` 不承担公开门禁。
+- 阶段 C 根据确认结果更新 frontmatter 或内容；只有 `Approve` 才能设置 `approved: true`。
+- 所有生产列表和详情统一过滤为 `draft: false && approved: true`；`status` 不承担公开门禁。
 - `Approve` 后仍需通过 schema、图片来源、alt、链接和排版 QA。
 - 新内容也必须进入本清单或后续同等批准流程。
-- V2 生产首发要求 Blog、Photos、Project、Drinks、Books、Music、Movies 各至少有一条真实内容达到 `draft: false && approved: true`；主栏目与次栏目使用同一门禁。
-- 现有占位内容、布局样本和生成的假内容不能获得首发计数；用户已明确要求它们不展示。
-- About 不计入七个内容栏目数量，但完整页面也必须使用用户批准的正式内容。
-- 预览或迁移过程中有效内容为零的栏目保留 URL，显示“正在整理”并设置 `noindex`；第一条有效内容发布后由内容数量自动取消该状态。
+- v2.1 生产首发要求 Blog、Photos、Projects 各至少一条真实批准内容；Shelf 内 Books、Movies、Music 各至少一条；About 使用批准后的完整页面。
+- Drinks 不再有独立栏目门禁；旧记录逐条确认目标，确认前不计入任何门禁。
+- 占位内容、布局样本和生成的假内容不能获得首发计数。
+- 预览或迁移过程中有效内容为零的目标栏目保留 URL，显示“正在整理”并设置 `noindex`；第一条有效内容发布后自动恢复。
 
-## V2 首发门禁检查
+## v2.1 首发门禁检查
 
 | 目标栏目 / 页面 | 最低要求 | 当前可计数内容 | 当前结论 |
 |---|---:|---:|---|
-| Blog | 1 条真实且已批准内容 | 0 | 《料亭菜单 NO.5——将心注入》已标记为 `Phase 2 Design-ready / Publication pending`；发布状态仍为 Edit，Phase 5 修订并最终 Approve 前不计数 |
-| Photos | 1 条真实且已批准内容 | 0 | 首发相册的主题、排版和顺序由包子完整策展；方案及真实原创照片尚未交付 |
-| Project | 1 条真实且已批准内容 | 0 | 「中华一番包子铺」已标记为 `Phase 2 Design-ready / Publication pending`；六个核心字段、精简详情、截图方案及链接策略已确认，真实截图、正式内容文件和最终 Approve 尚未完成，当前 AI Works 占位条目不计数 |
-| Drinks | 1 条真实且已批准内容 | 0 | 首条真实酒款记录暂不拆解，由包子准备好后一次性交付完整记录；当前占位条目不计数 |
-| Books | 1 条真实且已批准内容 | 0 | 首条真实阅读记录暂不拆解，由包子准备好后一次性交付完整记录；当前占位条目不计数 |
-| Music | 1 条真实且已批准内容 | 0 | KOKIA《Songbird》保持 `Phase 1 Input pending`；包子暂时没有个人简短感受，不生成代写内容，当前占位条目也不计数 |
-| Movies（收录电影 + 剧集） | 1 条真实且已批准内容 | 0 | 首发样本《火花》(2016) 已标记为 `Phase 2 Design-ready / Publication pending`；真实结构、10 集信息、观看日期和个人短评可用于 Phase 2 设计，但正式内容文件、未确认素材和最终 Approve 尚未完成，仍不计入门禁 |
+| Blog | 1 条真实且已批准内容 | 0 | 《料亭菜单 NO.5——将心注入》为 Design-ready / Publication pending；完成修订并最终 Approve 前不计数 |
+| Photos | 1 条真实且已批准内容 | 0 | 首发相册及真实原创照片尚未交付 |
+| Projects | 1 条真实且已批准内容 | 0 | 「中华一番包子铺」为 Design-ready / Publication pending；真实截图、正式文件和最终 Approve 尚未完成 |
+| Shelf / Books | 1 条真实且已批准内容 | 0 | 首条真实阅读记录尚未交付；旧占位不计数 |
+| Shelf / Movies | 1 条真实且已批准内容 | 0 | 《火花》(2016) 为 Design-ready / Publication pending；正式内容文件与最终 Approve 尚未完成 |
+| Shelf / Music | 1 条真实且已批准内容 | 0 | KOKIA《Songbird》缺少个人简短感受；不得代写，旧占位不计数 |
 | About | 用户批准的正式完整页面 | 0 | 短版身份已确认；长版页面待确认 |
 
-> “当前可计数内容”只统计已经由用户 Approve 且最终满足发布字段与 QA 的内容；技术上当前可构建或公开不计入。
+> “当前可计数内容”只统计用户 Approve 且满足最终字段与 QA 的内容；技术上可构建或公开不计入。
 
-## V2 栏目迁移说明
+## v2.1 内容迁移说明
 
-- 当前文件路径继续记录 Phase 0 事实，本阶段不移动内容文件。
-- 用户确认后，获准保留的 Thoughts 内容在 Phase 5 并入 Blog。
-- 获准保留的 AI Works 内容在 Phase 5 并入 Project。
-- 每条被迁移且曾公开的内容都必须保留旧 URL 永久跳转；Retire 内容是否保留跳转在开发前逐条确认。
+- 当前文件路径继续记录 D-105 生产事实；A0-H / A1 不移动内容文件。
+- 经批准 Thoughts 在阶段 C 并入 Blog；AI Works 并入 Projects；Books / Movies / Music 统一迁入 Shelf 并保留类型语义。
+- Drinks 逐条确认目标，不做整栏盲迁移。
+- 每条曾公开内容必须保留旧 URL 永久跳转；Retire 内容是否保留跳转在迁移前逐条确认。
 
 ## 当前 18 个公开详情页
 
 | 栏目 | 文件 | 当前性质 | 当前技术状态 | 用户决定 | 备注 / 修改要求 |
 |---|---|---|---|---|---|
-| Blog | `src/content/blog/welcome-to-baozi-space.md` | 已知占位 | 公开 | Draft | 用户已确认不展示；Phase 5 设为草稿或另行 Retire |
+| Blog | `src/content/blog/welcome-to-baozi-space.md` | 已知占位 | 公开 | Draft | 用户已确认不展示；阶段 C 设为草稿或另行 Retire |
 | Blog | `src/content/blog/jiangjian-niuxiaopai.md` | 迁移旧内容 | 公开 | Pending | |
 | Blog | `src/content/blog/niuwei-gutang.md` | 迁移旧内容 | 公开 | Pending | |
-| Blog | `src/content/blog/ryoutei-menu-05.md` | 迁移旧内容；Blog 首发设计样本（`Phase 2 Design-ready / Publication pending`） | 公开 | Edit | 原创、摘要、标签已确认；开头引文保留，需修正引号并署名“——又吉直树《火花》”；Milk Boy / M-1 段落保留，统一名称并按官方结果与历史资料校正，补充官方来源；现有第三方内容链接全部保留为普通外链，不嵌入，统一标题并在上线前检查有效性；正文采用轻度校对；两处「更加捕鼠器」确认改为「更佳捕鼠器」；“让将灵魂注入油豆腐”确认删除多余的「将」；第二人称保留「妳」；其余明确错漏按轻度校对处理；当前门禁计数为 0，完成差异检查后再由包子 Approve |
+| Blog | `src/content/blog/ryoutei-menu-05.md` | 迁移旧内容；Blog 首发设计样本（`Design-ready / Publication pending`） | 公开 | Edit | 原创、摘要、标签已确认；开头引文保留，需修正引号并署名“——又吉直树《火花》”；Milk Boy / M-1 2019 段落保留，统一名称并补充官方来源；现有第三方内容链接保留为普通外链，上线前检查有效性；正文轻度校对；完成差异检查后再由包子 Approve |
 | Blog | `src/content/blog/roasted-chicken-wings.md` | 迁移旧内容 | 公开 | Pending | |
 | Blog | `src/content/blog/biomed-supply-chain.md` | 迁移/现有内容 | 公开 | Pending | |
 | Blog | `src/content/blog/unsplash-daily-image.md` | 迁移/现有内容 | 公开 | Pending | |
@@ -97,4 +95,4 @@ Draft: welcome-to-baozi-space, placeholder-frame
 Retire: ...
 ```
 
-Codex 会将结果回写为逐条状态，并在 Phase 5–6 生成对应实施任务。
+Codex 会将结果回写为逐条状态，并在阶段 C / E 生成对应实施任务。

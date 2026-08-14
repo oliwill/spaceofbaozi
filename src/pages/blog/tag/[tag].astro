@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import SectionLayout from "@/components/layout/SectionLayout.astro";
+import EntryList from "@/components/layout/EntryList.astro";
+import { getSection } from "@/lib/sections";
+
+// 构建期按标签生成静态筛选页（无 JS 也工作，静态托管适配 /blog?tag= 的替代）
+export const getStaticPaths = (async () => {
+  const entries = await getCollection("blog", ({ data }) => !data.draft);
+  const tags = new Set(entries.flatMap((e) => e.data.tags));
+  return [...tags].map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      entries: entries.filter((e) => e.data.tags.includes(tag)),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { tag, entries } = Astro.props;
+const section = getSection("blog")!;
+---
+
+<SectionLayout section={section} title={`#${tag}`} description={`标签 #${tag} 下的文章。`}>
+  <p class="tag-filter">
+    <a class="tag-clear" href="/blog">#{tag} ✕ 清除</a>
+  </p>
+  <EntryList
+    entries={entries}
+    tagBaseHref="/blog/tag"
+    emptyHint="这一页还没有这个标签的文章。"
+  />
+</SectionLayout>

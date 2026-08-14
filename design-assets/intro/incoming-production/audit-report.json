@@ -1,0 +1,25 @@
+{
+  "selected": "incoming-production",
+  "totalBytes": 3474820,
+  "limitBytes": 6291456,
+  "errors": [],
+  "checks": {
+    "manifest": true,
+    "requiredFiles": true,
+    "exactSheetDimensions": true,
+    "realAlpha": true,
+    "fourByTwoGrid": true,
+    "eightConnectedSpritesPerSheet": true,
+    "eightAnchorsPerAction": true,
+    "rightFacing": true,
+    "spritesExcludeLeashGrassShadowOrPageBackground": true,
+    "selectedGrassVariantC2": true,
+    "grassExactDimensions": true,
+    "grassRealAlpha": true,
+    "grassVisibleBounds": true,
+    "grassChromaResidueFree": true,
+    "fallbackStill": true,
+    "payloadWithinLimit": true
+  },
+  "pass": true
+}

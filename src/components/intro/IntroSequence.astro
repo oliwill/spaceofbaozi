@@ -1,0 +1,92 @@
+---
+import "@/components/intro/intro.css";
+---
+
+<section class="intro" data-intro-root data-intro-complete="true" data-intro-phase="complete" data-intro-progress="1.000">
+  <div class="intro__stage" data-intro-stage>
+    <div class="intro__scene intro__grass" data-intro-scene="grass" data-active="false" aria-hidden="true">
+      <img class="intro__grass-image" data-intro-grass-image src="" alt="" hidden />
+    </div>
+    <div class="intro__scene intro__home" data-intro-scene="home" data-active="true">
+      <main class="intro__sheet" id="main">
+        <section class="intro__identity" aria-labelledby="intro-title">
+          <p class="intro__eyebrow">下午好，我是包子</p>
+          <h1 class="intro__title" id="intro-title">欢迎来到我的个人空间</h1>
+          <p class="intro__summary">这里记录写作、照片、书影音与正在做的事。正式首页仍在建设，实验页只验证开场动作。</p>
+          <a class="intro__home-link" href="/">返回当前首页 →</a>
+        </section>
+      </main>
+      <img class="intro__final-art" data-intro-final-art src="" alt="" hidden />
+    </div>
+
+    <svg class="intro__leash" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+      <path data-intro-leash opacity="0"></path>
+    </svg>
+    <div class="intro__actor" data-intro-moving data-intro-ball data-visible="false" aria-hidden="true">
+      <div class="intro__sprite" data-intro-sprite="ball"></div>
+    </div>
+    <div class="intro__actor" data-intro-moving data-intro-dog data-visible="false" aria-hidden="true">
+      <div class="intro__sprite" data-intro-sprite="dog"></div>
+    </div>
+    <div class="intro__actor" data-intro-moving data-intro-person data-visible="false" aria-hidden="true">
+      <div class="intro__sprite" data-intro-sprite="person"></div>
+    </div>
+
+    <button class="intro__skip" type="button" data-intro-skip>跳过动画</button>
+    <output class="intro__debug" data-intro-debug hidden></output>
+  </div>
+</section>
+
+<script>
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { createIntroTimeline } from "@/lib/intro/createTimeline";
+  import { loadIntroAssets } from "@/lib/intro/loadIntroAssets";
+  import { setFinalState } from "@/lib/intro/setFinalState";
+
+  const SESSION_KEY = "baozi-intro-complete";
+  const FINAL_STILL = "/assets/intro/production/intro-final-still.webp";
+  const root = document.querySelector<HTMLElement>("[data-intro-root]");
+
+  if (root) {
+    const skip = root.querySelector<HTMLButtonElement>("[data-intro-skip]");
+    const debug = new URL(window.location.href).searchParams.get("debugIntro") === "1";
+    const debugOutput = root.querySelector<HTMLOutputElement>("[data-intro-debug]");
+    if (debugOutput) debugOutput.hidden = !debug;
+
+    const finish = (fallbackSrc = "") => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      setFinalState(root, fallbackSrc);
+      if (skip) skip.hidden = true;
+    };
+
+    skip?.addEventListener("click", () => {
+      sessionStorage.setItem(SESSION_KEY, "1");
+      finish(FINAL_STILL);
+      root.querySelector<HTMLElement>("#main")?.focus({ preventScroll: true });
+    });
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion || sessionStorage.getItem(SESSION_KEY) === "1") {
+      finish(FINAL_STILL);
+    } else {
+      loadIntroAssets(new URL(window.location.href), import.meta.env.DEV)
+        .then((manifest) => {
+          root.dataset.introComplete = "false";
+          if (skip) skip.hidden = false;
+          createIntroTimeline({
+            root,
+            manifest,
+            debug,
+            onComplete: () => {
+              sessionStorage.setItem(SESSION_KEY, "1");
+              root.dataset.introComplete = "true";
+            },
+          });
+        })
+        .catch((error: unknown) => {
+          console.warn("Intro assets unavailable; showing stable content.", error);
+          finish(FINAL_STILL);
+        });
+    }
+  }
+</script>

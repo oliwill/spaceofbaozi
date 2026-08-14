@@ -3,6 +3,7 @@ title: 正在读 / 想读的一叠
 description: Books 栏目的占位清单。
 date: 2026-07-21
 tags: [书单]
+draft: true
 ---
 
 后续在这里记录书名、摘录、推荐语，以及是否值得再读一遍。

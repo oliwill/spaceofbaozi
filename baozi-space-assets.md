@@ -1,12 +1,12 @@
 # baozi.space 素材工程规范（Asset Pipeline）
 
-**文档定位：** 与 `baozi-space-spec.md`（视觉设计规格）、`baozi-space-prd.md`（产品需求）同级的第三份规范——**素材工程规范**。  
-**适用范围：** 所有进入网站的实拍物件、纸片、贴纸、印章与手绘标记的加工、命名与投产。  
-**关联：** 产品边界、内容字段、渐进增强与质量门槛以 `baozi-space-prd.md` V2 第 6、8、9 章为准；CSS 阴影/白边复用 `src/styles/global.css` 既有设计令牌。
+**文档定位：** 实物照片、纸片、贴纸、印章与真实笔迹的通用加工规范；不再承担全站设计或开场角色 Sprite 规范。
+**适用范围：** 真实物件的原图、母版、投产版、命名、内容完整性与人工验收。
+**关联：** 全站视觉以 `docs/design/baozi-space-design-spec.md` 为准；人物、小狗、球和开场草地以 `docs/intro/asset-production-contract.md` 为准；产品与发布门禁以 `baozi-space-prd.md` 为准。
 
-**版本：** v1 · 2026-07-24
+**版本：** v1.1 · 2026-08-13
 
-> **V2 说明（2026-07-30）：** 本文件当前继续约束真实素材的原图、母版、投产版、命名、白边和阴影。第 10 章 Prompt 主要用于既有素材加工，不等同于 V2 的生成图片 Style Recipe。透明活页本、桌面、卡面与手账插画的可复现配方将在 Phase 2 单独补充；在此之前不要根据零散 Prompt 批量生成正式资产。
+> **v2.1 边界：** 本文件继续约束真实物件的“暗房师”处理。开场水彩剪纸角色属于独立 A0-V 视觉轨道，本地 harness 不生成、补画或重绘；源稿放在 `design-assets/intro/`，只有通过 Intro 契约审计的生产资产可以进入 `public/assets/intro/production/`。
 
 ---
 
@@ -160,43 +160,38 @@
 
 ## 7. 命名与目录规范
 
-没有命名规范，几十个物件后必乱。目录已在仓库中建好：
+仓库使用三层素材目录：
 
 ```text
-assets-master/                    ← 本地母版库（gitignored，不进仓库）
-  raw/                            ← 原始照片（未经处理）
-    home/  blog/  thoughts/  photos/  drinks/  books/  music/  about/  ai-works/
-  master/                         ← 抠图验收后的 PNG 母版（2048px bounding box）
-    home/  blog/  ...（同上的九个目录）
+assets-master/
+  raw/                 # 用户提供或原始拍摄，未经处理
+  master/              # 人工验收后的高保真母版
 
-public/assets/                    ← 投产版（进仓库，网站直接引用）
-  home/                           ← 首页物件（入口 + 装饰）
-  blog/  thoughts/  photos/  drinks/  books/  music/  about/  ai-works/
+design-assets/intro/
+  source/              # 六组动作源稿，不进入 public
+  reference/           # 角色设定、真人、小狗、风格与分镜参考
+  incoming-production/ # 外部 A0-V 暂存
+  qa/contact-sheets/   # 审计产物，不进入 public
+
+public/assets/
+  home/                # 当前生产基线实际引用的首页投产资产
+  <section>/           # 内容图片
+  intro/
+    placeholders/      # 仅显式开发 / 测试
+    production/        # 默认运行时
 ```
 
-命名：`<slug>@<mode>.<ext>`；首页装饰物加 `deco-` 前缀；数字手绘/插画类用 `@I`。
+命名：真实内容资产使用 `<slug>@<mode>.<ext>`；数字手绘/插画类使用 `@I`。Intro 资产文件名由 `docs/intro/asset-production-contract.md` 固定，不沿用通用命名推断。
 
-首页槽位（2026-07-27 已按实际落地校准，新增物件追加在后）：
+当前首页投产资产：
 
-| 槽位 | 文件（public/assets/home/） | 模式 | 状态 |
-|---|---|---|---|
-| Blog 入口（主锚点） | —（CSS 纸片实现，无需图片） | B | 已上线 |
-| Thoughts 入口 | —（CSS 便利贴实现，无需图片） | B | 已上线 |
-| Photos 入口 | `camera@B.webp` | B | 已上线（最终选了无白边版本） |
-| About 入口 | `baozi@A.webp` | A | 已上线 |
-| 封面麻布（空白） | `cover-linen@A-.webp` | A- | 已上线（浅蓝原图乘法染整为深爵蓝，143.8KB） |
-| 封面手绣题字 | `cover-hand@D.webp` | D（白字黑底转暖白透明） | 已上线（28.3KB；内容为「中华一番包子铺」虚线绣质感） |
-| 封面中央条纹布带 | `cover-B.webp` | B（布纹背景） | 已上线（由 `cover-B.png` 裁压为 360×1200，125.6KB；封面书脊与翻开后纸面左缘共用） |
-| 首页合书书签 | `cover-bookmark.webp` | A（透明抠图） | 已上线（由 `cover-bookmark.png` 抠黑底并压缩为 313×560，54.7KB；按钮保留 aria-label） |
-| ~~封面（正/背）~~ | ~~`cover@A.webp` / `cover@B.webp`~~ | — | 已过时（2026-07-27 封面重构，不再引用；文件留仓备查） |
-| 装饰 · 贴纸 | `deco-sticker-airpods@C.webp`、`deco-sticker-michelin@C.webp`、`deco-sticker-washer@C.webp` | C | 已上线（airpods 带 WebGL 掀开交互） |
-| 装饰 · 玩偶 | `deco-wukong@I.webp` | I | 已上线 |
-| 装饰 · 插画 | `deco-jiale01.webp` | I | 已上线（命名缺 @mode，新增时按 `deco-名字@I.webp`） |
-| 装饰 · 唱片/花/印章 | `deco-vinyl@A-.webp`、`deco-flower@A.webp`、`deco-stamp-名字@D.webp` | A-/A/D | 待制作 |
+| 文件 | 来源 | 状态 |
+|---|---|---|
+| `public/assets/home/cover@A.webp` | `assets-master/raw/home/cover@A.webp` | D-105 可运行基线仍在使用；阶段 B 替换首页后删除 |
 
-- 母版同名存 `assets-master/master/home/<同名>.png`；原始照片存 `assets-master/raw/home/`。
-- `<slug>`：英文短横线命名，与内容 Markdown 的 slug 对应或语义关联。
-- 栏目内容图（正文插图）存对应栏目目录，规则相同；首页物件的网页坐标属于 `journal.css` 视觉设计，不在本规范。
+旧麻布封面、书签、贴纸、相机、人物和装饰物件的投产版、母版及一次性加工脚本已按 D-108 删除。不得从 Git 历史恢复为 v2.1 页面素材。
+
+栏目内容图存对应栏目目录；完整路由迁移前继续使用现有 section 目录，阶段 C 再按 Blog / Photos / Shelf / Projects / About 重组。
 
 ---
 
@@ -340,7 +335,8 @@ intended to sit on paper with mix-blend-mode: multiply.
 
 ## 12. 与其他规范的边界
 
-- **本规范（素材工程）**：物件从照片到透明资产的加工、命名、投产参数。
-- **`baozi-space-spec.md`（视觉设计）**：物件在页面中的排布、比例、纸张编排、批注语言。
-- **`baozi-space-prd.md`（产品）**：栏目、路由、内容模型、渐进增强、质量门槛与发布完整性；它是本规范的产品上位约束。
-- **不变量**：无论工具如何替换，实物资产中的 AI 只做暗房处理、不虚构物件；实物出图必对照原图人工验收；保留母版/投产双版；落影走 CSS——这四条不可变。
+- **本规范（素材工程）**：真实物件从照片到透明资产的加工、命名与投产参数。
+- **`docs/design/baozi-space-design-spec.md`（视觉设计）**：全站材料、排版、比例、角色与组件语言。
+- **`docs/intro/asset-production-contract.md`（开场素材）**：人物、小狗、球、Manifest、生产门禁与双轨责任。
+- **`baozi-space-prd.md`（产品）**：栏目、路由、内容模型、质量门槛与发布完整性。
+- **不变量**：实物资产中的 AI 只做暗房处理、不虚构物件；实物出图必对照原图人工验收；保留母版/投产双版；落影走 CSS。

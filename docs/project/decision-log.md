@@ -1,6 +1,6 @@
 # baozi.space V2 · 决策记录
 
-**最后更新：** 2026-08-04
+**最后更新：** 2026-08-13
 
 **规则：** 这里只记录已经确认、会约束后续工作的决策；想法和待讨论项放在 PRD 的 Open Questions 中。
 
@@ -974,6 +974,70 @@
 - **受影响文档：** `baozi-space-prd.md`（视觉 / 交互 / IA 章节待正式修订，修订草案 `docs/plans/2026-08-13-prd-v2.1-revision.md`）、`README.md`、`AGENTS.md`、`docs/plans/2026-08-12-journal-digital-paper-redesign.md`（随 D-105 一并归档为历史）、`design-compare/`（昨日五风格对比原型作废，点阵纸概念已被新规范吸收）。
 - **继续有效：** PRD §6 内容治理（draft / approved 门禁、占位内容禁令、用户批准流程）、D-022 featured 精选语义、D-026 空栏目「正在整理」回退、内容真实性原则（用户个人事实不得 AI 虚构）。
 - **待办：** A0 素材管线（环境已配置）、PRD v2.1 正式修订与批准、内容 schema 对齐新 IA（shelf 集合、approved 字段）、生产页面重建计划（阶段 B/C）。
+
+### D-107 · v2.1 规范归位与双态项目结构
+
+- **状态：** Accepted（2026-08-13，依据用户提供的最终 handoff v1.2 / design spec v2.1）
+- **改变原因：** D-106 已确认新方向，但仍把原始 handoff 目录作为事实来源，版本文字停留在 v2.0，README、AGENTS、PRD 和实施计划继续描述 D-105 或使用 npm 路径。原始交接快照不能承担仓库长期架构，否则路径、包管理器和阶段门禁会持续漂移。
+- **事实来源归位：**
+  - `docs/design/baozi-space-design-spec.md` v2.1 成为全站设计唯一事实来源；纸上拼贴材料决策放在同目录。
+  - `docs/intro/` 保存动画、资产生产和清单契约。
+  - `docs/plans/2026-08-13-v2.1-project-restructure.md` 定义 A0-H / A0-V / A1 / B / C / D / E 全项目路线。
+  - `docs/plans/2026-08-13-intro-dual-track-implementation.md` 是适配 Bun 与本仓库路径的 A0-H / A1 当前计划；原始长版只留在 handoff 快照中追溯。
+- **资产目录：** 交接包中的源稿和参考资料归入非公开 `design-assets/intro/`；外部 A0-V 先进入 `incoming-production/`，contact sheet 进入 `qa/`。只有审计通过的 production 和显式调试 placeholders 可以进入 `public/assets/intro/`。
+- **双态架构：** 当前 `src/` 的八个旧 collection、D-105 首页和 BookSpread 继续作为可运行迁移基线；它们不再是设计依据，也不在 A0-H / A1 中扩展。目标结构为 Blog / Photos / Shelf / Projects / About，阶段 C 先建立逐条迁移表与永久跳转验证，再移动内容和删除旧模板。
+- **IA 与内容门禁：** Thoughts → Blog，Books / Movies / Music → Shelf，AI Works → Projects；Drinks 降级为标签或主题并逐条确认目标。生产门禁调整为 Blog、Photos、Projects 各至少一条真实批准内容，Shelf 内 Books / Movies / Music 各至少一条，以及批准后的完整 About。
+- **工具适配：** Bun 是唯一包管理器和脚本入口；双轨计划中的 npm / package-lock 指令全部替换。A0-H / A1 增加 GSAP、Vitest、Playwright 与 Sharp，但继续禁止 React、Canvas、Three.js、PixiJS、Rive、Lottie、Lenis 和游戏引擎。
+- **开发顺序：** 当前只执行 A0-H 与 placeholder-safe A1 Tasks 1–5。A0-V 缺失不阻塞接口和几何开发，但阻塞正式视觉批准与阶段 B。阶段 B 才替换首页，阶段 C 才迁移内容和清除 D-105 视觉路径。
+- **受影响文档：** `baozi-space-prd.md` 正式升级 v2.1；`README.md`、`AGENTS.md`、内容批准清单、旧阶段文档和素材说明同步；D-106 中 v2.0 版本、harness 路径和“本地 rembg 生产素材”表述由本条及 v2.1 资产契约取代。
+- **保留边界：** 用户正式内容、隐私、批准流程、D-022 精选语义和 D-026 空状态原则继续有效；旧内容文件与 URL 在迁移表确认前不得删除。
+
+### D-108 · 删除废弃原型、重复交接包与旧 Intro 生产管线
+
+- **状态：** Accepted（2026-08-13，按 D-106 / D-107 清理执行入口）
+- **删除的设计遗留：** `demo/`、`demo-v2/`、`demo-v3/`、`design-compare/`、`concept/`、`refs/`、`baozi-space-B-homepage-visual-handoff.md`、`baozi-space-spec.md` 和原始 `baozi-space-harness-handoff/`。其中仍有效的规范、契约、源稿和参考此前已归位到 `docs/design/`、`docs/intro/` 与 `design-assets/intro/`；历史由 Git 保留。
+- **删除的历史文档：** Phase 0 基线、D-104 画板说明、旧首页计划、D-105 实施记录和已应用的 PRD 修订草案。长期用户内容事实保留在 `phase-1-content-input.md`，发布状态保留在 `content-approval-register.md`，完整决策链保留在本文件。
+- **删除的旧素材管线：** 本地 rembg 虚拟环境、requirements、build / smoke / warmup / contact-sheet / audit 脚本，以及由该管线生成的 `public/assets/intro/{ball,dog,person}`。这条管线违反 v2.1 A0-V 外部视觉交付边界，生成物也不符合新的 `placeholders/production` 目录契约。
+- **删除的失联运行时资产：** Sticker Forge vendor、类型声明、peel 脚本、Neat Annotations 样式，未被当前页面引用的旧首页投产图、对应 raw / master 和一次性加工脚本。当前 D-105 首页实际使用的 `cover@A.webp` 三层资产、字体、`cover-open.js` 和 `site-experience.js` 继续保留到阶段 B / C 替换。
+- **工具边界：** Sharp 保留，供 A0-H 几何 placeholder 和统一资产审计使用；`public/assets/intro/` 将由当前双轨计划按 `placeholders/` 与 `production/` 重新创建。
+- **结果：** 根目录只保留当前执行文档、可运行生产基线、内容事实、素材母版和 Intro 源 / 参考资料。任何已删除路径都不得作为后续计划入口恢复。
+
+### D-109 · A0-H 与 placeholder-safe A1 通过几何实现门禁
+
+- **状态：** Accepted（2026-08-13，依据 D-107 双轨计划 Tasks 1–5 的实现与验证结果）
+- **实现结果：** `/lab/intro` 已使用 Astro 语义舞台、GSAP ScrollTrigger、DOM/CSS Sprite 与 SVG leash 实现 300vh 可逆八拍时间线；0%、8%、25%、45%、65%、82%、94%、100% 八节点、100% → 0% 回滚、跳过会话、`prefers-reduced-motion` 与生产素材缺失回退均通过自动化验证。
+- **素材边界：** A0-H 六张显式几何 placeholder 均为 4×2、8 帧、真透明 WebP，总负载 55,204 bytes；仅开发环境显式 `?assetMode=placeholder` 可用。生产构建携带同名参数仍只请求 `production/intro-manifest.json`，不得泄漏 placeholder。
+- **当前门禁：** 该结果只批准动画几何、状态机和素材接口，不批准正式视觉。A0-V 六张生产 Sprite、最终静态图、48 帧人工 contact-sheet QA 与 ≤6 MB 审计仍未交付，因此阶段 B 首页整合保持阻塞。
+- **受影响实现：** `src/pages/lab/intro.astro`、`src/components/intro/`、`src/lib/intro/`、`scripts/intro-assets/`、`public/assets/intro/placeholders/`、`tests/unit/intro/`、`tests/e2e/intro.spec.ts` 与对应 Bun 脚本。
+
+### D-110 · A0-V 生产素材通过审计并发布到 Intro 运行时
+
+- **状态：** Accepted（2026-08-13，Task 6 审计、发布与 production 浏览器验收完成）
+- **交付身份：** `assets-master/baozi-space-a0-v-production-v1.0.zip` 的 SHA-256 为 `dd9ecf1e0a4d5d7861152a372367e00b4c120f0bda0077d5a4845c4aa84520b2`，与用户提供值完全一致；`incoming-production` 的 9 个交付文件与压缩包逐字节一致，无缺失或额外文件。
+- **自动审计：** 六张 4×2、每组 8 帧的 production WebP、8 个归一化锚点、固定路径 / 单帧尺寸 / loop、逐格有效 Alpha、768×768 fallback 和 6 MB 预算全部通过；实际运行时图片负载 2,632,052 bytes。`audit-assets.mjs` 已补齐固定六 ID、角色锚点、逐格 Alpha 与 fallback 引用门禁。
+- **视觉审计：** 六张 contact sheet 共 48 帧与最终静态图已检查；人物眼镜、帽檐、暖白印花衬衫、手部，小狗白毛、口鼻、耳尾与青色项圈完整，无烘焙草地、牵引绳、阴影、点阵或纸页。`dogSettle` 的离散帧负责绕行步态到坐下，完整绕圈空间轨迹由 wrapper 连续椭圆位移实现。
+- **发布边界：** `public/assets/intro/production/` 仅发布 Manifest、最终静态图和六张 Sprite，不公开交付审计报告或 QA 图。发布脚本要求六项 `visual-qa.json` 均为 `true`，并使用 staging / previous 目录执行可回滚替换。
+- **浏览器验收：** production 模式 0%、8%、25%、45%、65%、82%、94%、100% 八节点、反向回滚、完整绕圈、跳过 / 会话完成、`prefers-reduced-motion`、Manifest 失败回退与 1280×720 / 1440×900 / 1920×1080 最终态无重叠均通过。时间线使用直接 scroll mapping，场景互斥；65% 狗领先人物，82% 人物单独摔入，94% 人物站稳后狗绕圈，100% 切换为稳定 final still。
+- **后续门禁：** A0-V 不再阻塞阶段 B；是否开始首页整合仍需用户确认 A1 正式视觉结果。移动端动画仍属于阶段 D，不由本条放行。
+
+### D-111 · A0-V v1.2 采用 C2 水彩草地并缩小追逐球
+
+- **状态：** Accepted（2026-08-14，依据用户提供的 `baozi-space-a0-v-production-v1.2.zip` 与包内 README）
+- **交付身份：** v1.2 压缩包 SHA-256 为 `19ab136727e994cd0d7227d81d0b0f9add93a9ad0374dc3c29ccdcc4dc312177`；按 README 只将包内 `design-assets/intro/` 合并到项目同名目录，20 个包成员逐字节复核一致。相对现有 v1.0，14 个文件不变、Manifest 与审计报告更新、新增 1 个 production 草地及 3 个环境 QA 文件；包内 `docs/` 不复制入项目。
+- **视觉调整：** Intro 草地采用 `C2 · Mottled Watercolor Print` 透明 WebP，固有尺寸 2560×640、可见范围 `2560×360+0+280`，保持自然绿、透明纸白干笔缺口和少量深蓝排线；不得 CSS 重染或加不透明底板。`ballBounce.displayWidthVh` 从 8 改为 5，在 1440×900 下 wrapper 为 45px。
+- **运行时契约：** Manifest 顶层新增可选 `environment.grass`；production 预加载并以普通绝对定位 `<img>` 等比铺满宽度、底对齐，点阵位于其下。草地 wrapper 在归一化进度 0.78–0.82 向下收回，反向滚动按同一时间线恢复；placeholder 保留 CSS 几何草地且不依赖 environment。
+- **发布与审计：** 原子发布白名单新增 `environment/intro-grass.webp`，并要求六项角色视觉 QA 与 C2 选择 QA 同时通过。审计新增显示尺寸、C2 Manifest、草地尺寸、透明安全区、可见区 Alpha 和环境文件负载检查；同时修正 Sharp `stats()` 未按前置裁剪区域统计的盲点，改为对裁剪后的 Alpha 原始字节求 min/max。production 目录现为 9 个运行时文件，总图片负载 3,474,820 bytes，仍低于 6 MiB。
+- **验收结果：** incoming / placeholder / production 三轨审计通过；unit 9/9、production/placeholder Playwright 14/14、Astro check 0 error、静态构建 24 页通过。1440×900 截图确认 C2 可见草沿约占 22.5vh、点阵经真实透明缺口透出、角色和草沿无异常，82% 草地退出后暖白首页稳定。
+- **后续门禁：** 本条更新 D-110 的运行时图片集合与负载数据，不改变 A1 人工视觉确认门禁；用户确认 `/lab/intro` 后才进入阶段 B 首页整合。
+
+### D-112 · A1 录屏反馈移除狗绕圈并修正绳索与动作分段
+
+- **状态：** Accepted（2026-08-14，依据用户对 1280×720 实际录屏的复核反馈）
+- **用户确认问题：** 追逐过程中的牵引绳没有稳定连接人物手部与小狗项圈；部分人物帧视觉尺寸发生突跳；进入首页后的小狗绕人物运动不符合目标。用户希望未来人物与小狗的头部随鼠标移动，但具体素材与交互方案后续再讨论。
+- **根因与修正：** 牵引绳 SVG 固定使用 1440×900 viewBox，却接收当前舞台 CSS 像素坐标，导致 1280×720 等视口发生二次缩放；端点 Y 又使用经验比例而非角色真实位置。运行时现按实时舞台尺寸更新父 SVG viewBox，并以角色 `offsetTop`、Sprite 尺寸和逐帧 hand / collar anchor 计算端点。人物从 run 切换 trip 时此前错误沿用 0.25–0.82 总进度，导致 `personTrip` 从后半帧开始；现改为 run、trip、stand 三段局部进度，各动作从第 1 帧进入。
+- **收尾行为：** 0.94–1.00 的小狗 wrapper 椭圆绕圈已删除；`dogSettle` 只在人物脚边原地播放并停下。旧 D-106 / D-110 中的“完整绕圈”描述保留为历史，执行时由本条覆盖。
+- **头部跟随边界：** 当前 final still 与站立 Sprite 均为扁平合成 WebP，不具备独立头部、颈部遮挡补画和 pivot anchor。素材方案未确认前保持人物与小狗静止，不使用整角色平移/旋转冒充头部跟随；该交互继续阻塞 A1 最终视觉批准。
+- **验证契约与结果：** Playwright 新增 1280×720 实时 SVG viewBox、Manifest 逐帧 anchor 到 SVG 路径首尾点 `<1px`、trip 首尾帧和狗静态收尾断言；最终 unit 9/9、Playwright 16/16、Astro check 0 error、静态构建 24 页通过。后续录屏仍需人工确认 Sprite 自身是否存在剩余尺度漂移；若局部进度修正后仍存在，必须由下一版生产素材统一帧内人物比例，不在运行时添加逐帧特例缩放。
 
 ## 变更规则
 

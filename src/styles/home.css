@@ -1,0 +1,442 @@
+/* ============================================================
+   home.css — 数字纸张首页：sticky 封面 + 五页手账内页
+   取代 journal.css（D-104 固定舞台）。纯 2D CSS，无 3D 书物件。
+   ============================================================ */
+
+.home-body {
+  background: var(--paper-warm);
+}
+
+/* ---------- 封面 ---------- */
+.cover {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  z-index: 1;
+  overflow: clip;
+  scroll-margin-top: 0;
+}
+
+.cover-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center 60%;
+  transition: transform 0.7s var(--ease-ui-out);
+}
+
+/* 底部渐变遮罩：保证文字对比度（亮部封面图也要 ≥4.5:1） */
+.cover-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(24, 20, 16, 0) 30%, rgba(24, 20, 16, 0.72) 90%);
+  transition: opacity 0.7s var(--ease-ui-out);
+}
+
+.cover-title {
+  position: absolute;
+  left: clamp(1.25rem, 6vw, 5rem);
+  bottom: clamp(4rem, 12vh, 8rem);
+  color: #f7f4ed;
+  text-shadow: 0 1px 10px rgba(24, 20, 16, 0.35);
+  transition: translate 0.7s var(--ease-ui-out);
+}
+
+.cover-greeting {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-hand);
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+}
+
+.cover-name {
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: clamp(3rem, 8.5vw, 6.2rem);
+  font-weight: 400;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.cover-sub {
+  margin: 0.75rem 0 0;
+  font-size: var(--fs-lead);
+  opacity: 0.92;
+}
+
+.cover-hint {
+  margin: 2.2rem 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: 0.14em;
+  opacity: 0.85;
+}
+
+/* 滚动中的开本反馈（JS 加 class，仅 reduced-motion: no-preference 生效） */
+.cover.is-opening .cover-art {
+  transform: scale(0.975);
+}
+
+.cover.is-opening .cover-shade {
+  opacity: 0.85;
+}
+
+.cover.is-opening .cover-title {
+  translate: 0 -12px;
+}
+
+.cover.is-open .cover-hint {
+  opacity: 0;
+}
+
+/* ---------- 内页纸张（共享样式在 global.css，此处仅首页特异） ---------- */
+/* 第一页盖过封面 = 开本：圆角 + 向上阴影 + 顶部折痕 */
+main > .paper-page:first-of-type {
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -22px 48px rgba(24, 20, 16, 0.35);
+}
+
+/* ---------- 页首：日期轨 + 手写小节名（空白区铺横线） ---------- */
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0 1.1rem;
+  margin-bottom: 1.75rem;
+  background-image: repeating-linear-gradient(
+    0deg,
+    var(--rule-line) 0 1px,
+    transparent 1px 28px
+  );
+  background-position: 0 100%;
+}
+
+.date-rail {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.dr-day {
+  font-family: var(--font-mono);
+  font-size: clamp(2.6rem, 5vw, 3.6rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.dr-meta {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: 0.08em;
+  color: var(--ink-lighter);
+}
+
+.page-label {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  transform: rotate(-1deg);
+}
+
+/* 手写体仅限纯中文；拉丁字母走等宽（中西文风格不断裂） */
+.pl-zh {
+  font-family: var(--font-hand);
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  color: var(--ink);
+}
+
+.pl-en {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-lighter);
+}
+
+/* ---------- 页体 ---------- */
+.page-body {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  max-width: 760px;
+}
+
+/* 文章/相册/项目卡 */
+.journal-entry {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.9rem 1.1rem;
+  background: #ffffff;
+  border-radius: 3px;
+  box-shadow:
+    0 2px 6px rgba(40, 32, 24, 0.1),
+    0 8px 18px rgba(40, 32, 24, 0.08);
+  transition:
+    rotate 0.2s ease,
+    translate 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.page-body .journal-entry:nth-child(odd) {
+  rotate: -0.4deg;
+}
+
+.page-body .journal-entry:nth-child(even) {
+  rotate: 0.5deg;
+}
+
+.journal-entry:hover {
+  rotate: 0deg;
+  translate: 0 -3px;
+  box-shadow:
+    0 6px 14px rgba(40, 32, 24, 0.14),
+    0 16px 30px rgba(40, 32, 24, 0.16);
+}
+
+.je-cover {
+  width: 108px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 2px;
+  flex: none;
+}
+
+.je-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.je-meta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-lighter);
+}
+
+.je-title {
+  font-size: var(--fs-lead);
+  font-weight: 400;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.je-desc {
+  font-size: var(--fs-small);
+  color: var(--ink-light);
+  text-wrap: pretty;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 「精选」胶带（D-022） */
+.tape {
+  position: absolute;
+  top: -10px;
+  left: 26px;
+  padding: 1px 14px;
+  font-family: var(--font-hand);
+  font-size: var(--fs-small);
+  color: var(--ink);
+  background: rgba(214, 202, 168, 0.72);
+  box-shadow: 0 1px 2px rgba(40, 32, 24, 0.12);
+  rotate: -3deg;
+}
+
+.page-more {
+  justify-self: start;
+  margin-top: 0.25rem;
+}
+
+/* ---------- P.03 书影音三栏 ---------- */
+.media-grid {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: none;
+  gap: 1.5rem;
+}
+
+.media-col {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.media-title {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-hand);
+  font-size: var(--fs-title);
+  color: var(--ink);
+  border-bottom: 1px solid rgba(43, 38, 32, 0.14);
+  padding-bottom: 0.4rem;
+}
+
+.media-item {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.6rem 0.7rem;
+  background: #ffffff;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(40, 32, 24, 0.1);
+  transition:
+    translate 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.media-item:hover {
+  translate: 0 -2px;
+  box-shadow: 0 8px 18px rgba(40, 32, 24, 0.14);
+}
+
+.mi-cover {
+  width: 52px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 2px;
+  flex: none;
+}
+
+.mi-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.mi-text strong {
+  font-size: var(--fs-body);
+  font-weight: 400;
+}
+
+.mi-text time {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-lighter);
+}
+
+.media-empty {
+  padding: 1.25rem 1rem;
+  border: 1px dashed rgba(43, 38, 32, 0.18);
+  border-radius: 8px;
+  color: var(--ink-light);
+  font-size: var(--fs-small);
+}
+
+.media-empty p {
+  margin: 0 0 0.35rem;
+}
+
+.media-empty strong {
+  font-family: var(--font-hand);
+  font-size: var(--fs-title);
+  font-weight: 400;
+  color: var(--ink);
+}
+
+/* ---------- P.05 页尾 ---------- */
+.foot-about p,
+.foot-contact p {
+  margin: 0 0 0.5rem;
+  max-width: 34rem;
+}
+
+.foot-blocktitle {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: 0.14em;
+  color: var(--ink-lighter);
+  margin-bottom: 0.75rem !important;
+}
+
+.foot-contact {
+  margin-top: 2rem;
+}
+
+/* 邮箱是拉丁字符串 → 等宽，不走手写体 */
+.contact-item {
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+  color: var(--indigo);
+}
+
+.contact-placeholder {
+  font-size: var(--fs-small);
+  color: var(--ink-lighter);
+}
+
+.foot-corner {
+  margin-top: 2.5rem;
+  font-size: var(--fs-small);
+}
+
+.close-book {
+  justify-self: start;
+  margin-top: 2.5rem;
+  font-family: var(--font-hand);
+  font-size: var(--fs-title);
+  color: var(--ink);
+  transform: rotate(-1.5deg);
+}
+
+.close-book:hover {
+  color: var(--indigo);
+}
+
+.copyright {
+  margin-top: 2.5rem;
+  font-size: var(--fs-caption);
+  color: var(--ink-lighter);
+}
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 659.98px) {
+  .cover-title {
+    left: 1.25rem;
+    right: 1.25rem;
+  }
+
+  .page-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .je-cover {
+    display: none; /* 省流量：移动端隐藏卡片封面图 */
+  }
+
+  .media-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- 动效收口 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .cover-art,
+  .cover-shade,
+  .cover-title,
+  .journal-entry,
+  .media-item {
+    transition: none;
+  }
+
+  .cover.is-opening .cover-art {
+    transform: none;
+  }
+
+  .cover.is-opening .cover-title {
+    translate: none;
+  }
+}

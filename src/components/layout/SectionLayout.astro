@@ -16,12 +16,12 @@ const pageDesc = description ?? section.desc;
 ---
 
 <BaseLayout title={pageTitle} description={pageDesc} bodyClass="section-body">
-  <div class="section-shell">
+  <div class="section-shell paper-page" id="main">
     <header class="section-topbar">
       <a class="brand-mark" href="/">
         <strong>baozi.space</strong> · 中华一番包子铺
       </a>
-      <a class="back-home" href="/">← 返回手账首页</a>
+      <a class="back-home" href="/" data-turn="back">← 返回手账首页</a>
     </header>
 
     <slot name="header">
@@ -35,5 +35,11 @@ const pageDesc = description ?? section.desc;
     <slot />
 
     <p class="footer-note">继续往下翻，这本手账还会更厚。</p>
+
+    <footer class="page-foot">
+      <span class="pf-num">{section.number}</span>
+      <span class="pf-label">手账 · {section.title}</span>
+      <span class="pf-meta">BAOZI.SPACE</span>
+    </footer>
   </div>
 </BaseLayout>

@@ -3,24 +3,33 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "baozi.space — 中华一番包子铺 · 数字手账个人网站",
+  "description": "baozi.space — 包子的个人网站、公开档案与个人工作空间",
   "scripts": {
     "dev": "astro dev --host 127.0.0.1 --port 4321",
     "build": "astro build",
     "preview": "astro preview --host 127.0.0.1 --port 4321",
     "check": "astro check",
     "fonts:subset": "node scripts/subset-fonts.mjs",
-    "assets:intro:audit": "node scripts/audit-intro-assets.mjs",
-    "assets:intro:build": ".venv-assets/Scripts/python.exe scripts/build-intro-sprites.py",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "assets:intro:placeholders": "node scripts/intro-assets/generate-placeholders.mjs",
+    "assets:intro:audit:placeholder": "node scripts/intro-assets/audit-assets.mjs placeholder",
+    "assets:intro:audit:incoming": "node scripts/intro-assets/audit-assets.mjs incoming-production",
+    "assets:intro:audit:production": "node scripts/intro-assets/audit-assets.mjs production",
+    "assets:intro:publish": "node scripts/intro-assets/publish-production.mjs",
     "publish": "node scripts/subset-fonts.mjs && git add -A && git commit -m \"content: update\" && git push"
   },
   "dependencies": {
-    "astro": "^5.12.0"
+    "astro": "^5.12.0",
+    "gsap": "^3.15.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0",
     "sharp": "^0.35.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
   },
   "engines": {
     "node": ">=20"

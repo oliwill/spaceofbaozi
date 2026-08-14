@@ -3,7 +3,7 @@ title: 欢迎来到中华一番包子铺
 description: 从 demo 到正式开发：这本数字手账将如何被使用与维护。
 date: 2026-07-22
 tags: [站点, 手账, 开篇]
-featured: true
+draft: true
 ---
 
 这是 baozi.space 生产站点的第一篇占位文章。

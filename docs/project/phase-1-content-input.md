@@ -1,6 +1,6 @@
 # baozi.space V2 · Phase 1 用户内容输入
 
-**状态：** 第一轮结构决策 1–18 与七个内容栏目定义已确认；Blog 首发样本与 Movies 首发样本《火花》(2016) 已标记为 `Phase 2 Design-ready / Publication pending`，仍不计入生产发布门禁；等待其余五栏首发真实内容、迁移内容逐条批准与启动页装饰图片素材清单
+**状态：** Historical content input register。已确认的用户事实和内容边界继续有效；旧七栏目、Launch 卡片和 Phase 1–6 阶段描述已被 D-106 / D-107 与 PRD v2.1 重组。后续内容审批以 `content-approval-register.md` 和 PRD §5–6 为准。
 
 **内容负责人：** 包子
 

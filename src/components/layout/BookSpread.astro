@@ -1,0 +1,123 @@
+---
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry, CollectionKey } from "astro:content";
+import type { SectionMeta } from "@/lib/sections";
+
+interface Props {
+  section: SectionMeta;
+  entry: CollectionEntry<CollectionKey>;
+  navVariant: "tags" | "album-index" | "none";
+}
+
+const { section, entry, navVariant } = Astro.props;
+const { Content } = await render(entry);
+
+// 回列表路由：D-021 迁移前 AI Works 详情在 /ai-works/<id>，列表页已在 /projects
+const listHref = section.key === "ai-works" ? "/projects" : section.href;
+
+// 左侧导航数据
+let tags: { name: string; count: number; active: boolean }[] = [];
+let albumIndex: { id: string; title: string; active: boolean }[] = [];
+
+if (navVariant !== "none") {
+  const all = await getCollection(section.collection, ({ data }) => !data.draft);
+
+  if (navVariant === "tags") {
+    const counts = new Map<string, number>();
+    for (const e of all) {
+      for (const t of e.data.tags ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);
+    }
+    const active = new Set(entry.data.tags ?? []);
+    tags = [...counts.entries()]
+      .map(([name, count]) => ({ name, count, active: active.has(name) }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "zh-CN"));
+  } else {
+    albumIndex = [...all]
+      .sort((a, b) => +b.data.date - +a.data.date)
+      .map((e) => ({ id: e.id, title: e.data.title, active: e.id === entry.id }));
+  }
+}
+
+// 标签筛选页目前只有 blog 有静态路由（/blog/tag/<tag>），其它栏目标签仅展示
+const tagLinkBase = section.key === "blog" ? "/blog/tag" : null;
+---
+
+<div class="spread-wrap">
+  <div class="spread">
+    <aside class="spread-left">
+      <a class="back-home" href="/" data-turn="back">← 回手账首页</a>
+      <a class="back-list" href={listHref} data-turn="back">全部{section.zh} →</a>
+
+      {
+        navVariant === "tags" && tags.length > 0 && (
+          <nav class="spread-tags" aria-label={`${section.zh}标签`}>
+            {tags.map((t) =>
+              tagLinkBase ? (
+                <a
+                  class:list={["spread-tag", { active: t.active }]}
+                  href={`${tagLinkBase}/${encodeURIComponent(t.name)}`}
+                >
+                  #{t.name} <i>{t.count}</i>
+                </a>
+              ) : (
+                <span class:list={["spread-tag", { active: t.active }]}>
+                  #{t.name} <i>{t.count}</i>
+                </span>
+              )
+            )}
+          </nav>
+        )
+      }
+
+      {
+        navVariant === "album-index" && (
+          <nav class="spread-albums" aria-label="相册目录">
+            {albumIndex.map((a) =>
+              a.active ? (
+                <span class="spread-album active" aria-current="page">
+                  {a.title}
+                </span>
+              ) : (
+                <a class="spread-album" href={`/${section.collection}/${a.id}`}>
+                  {a.title}
+                </a>
+              )
+            )}
+          </nav>
+        )
+      }
+    </aside>
+
+    <div class="spread-spine" aria-hidden="true"></div>
+
+    <main class="spread-right" id="main">
+      <article class="prose">
+        <span class="section-kicker">{section.number} · {section.title}</span>
+        <h1>{entry.data.title}</h1>
+        <div class="entry-meta">
+          <time class="date-chip" datetime={entry.data.date.toISOString()}>
+            {entry.data.date.toLocaleDateString("zh-CN")}
+          </time>
+          {entry.data.tags?.map((tag) => <span class="tag">#{tag}</span>)}
+          {entry.data.status && <span class="tag">{entry.data.status}</span>}
+        </div>
+        <Content />
+        {
+          entry.data.link && (
+            <p class="link-out">
+              <a href={entry.data.link} target="_blank" rel="noopener noreferrer">
+                在新标签阅读原文 ↗
+              </a>
+            </p>
+          )
+        }
+      </article>
+
+      <footer class="page-foot">
+        <span class="pf-num">{section.number}</span>
+        <span class="pf-label">{section.title}</span>
+        <span class="pf-meta">BAOZI.SPACE</span>
+      </footer>
+    </main>
+  </div>
+</div>

@@ -2,7 +2,6 @@
 (() => {
   "use strict";
 
-  const ENTRY_SELECTOR = "a.entry";
   const ENTRY_TURN_ATTR = "data-baozi-entry-turn";
   function enhanceInlineNotes() {
     document.querySelectorAll(".inline-note[data-note]").forEach((note) => {
@@ -28,14 +27,17 @@
 
   document.addEventListener("astro:before-preparation", (event) => {
     const sourceElement = event.sourceElement;
-    const isEntryLink = sourceElement instanceof Element && sourceElement.closest(ENTRY_SELECTOR);
+    const link = sourceElement instanceof Element ? sourceElement.closest("a") : null;
+    const href = link?.getAttribute("href");
 
-    if (!isEntryLink) {
+    // 非内部链接（外链/锚点/无来源元素）不做视图过渡
+    if (!href || href.startsWith("#") || /^(https?:)?\/\//.test(href)) {
       event.preventDefault();
       return;
     }
 
-    document.documentElement.setAttribute(ENTRY_TURN_ATTR, "forward");
+    const direction = link.closest("[data-turn='back']") ? "back" : "forward";
+    document.documentElement.setAttribute(ENTRY_TURN_ATTR, direction);
   });
 
   document.addEventListener("astro:before-swap", (event) => {

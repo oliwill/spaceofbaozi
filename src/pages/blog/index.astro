@@ -9,5 +9,5 @@ const entries = await getCollection("blog");
 ---
 
 <SectionLayout section={section}>
-  <EntryList entries={entries} />
+  <EntryList entries={entries} tagBaseHref="/blog/tag" />
 </SectionLayout>

@@ -4,11 +4,14 @@ import type { CollectionEntry, CollectionKey } from "astro:content";
 interface Props {
   entries: CollectionEntry<CollectionKey>[];
   emptyHint?: string;
+  /** 传入时标签渲染为筛选链接（如 "/blog/tag"，仅 blog 列表传入） */
+  tagBaseHref?: string;
 }
 
 const {
   entries,
   emptyHint = "这一页还在等待真实内容。你可以用 Markdown 往对应 content 目录里加条目。",
+  tagBaseHref,
 } = Astro.props;
 
 const sorted = [...entries]
@@ -27,27 +30,35 @@ const sorted = [...entries]
   ) : (
     <ul class="entry-list">
       {sorted.map((entry) => (
-        <li>
-          <a class="entry-card" href={`/${entry.collection}/${entry.id}`}>
-            {entry.data.cover && (
-              <img
-                class="entry-cover"
-                src={entry.data.cover}
-                alt={entry.data.title}
-                loading="lazy"
-              />
-            )}
-            <div class="entry-meta">
-              <time datetime={entry.data.date.toISOString()}>
-                {entry.data.date.toLocaleDateString("zh-CN")}
-              </time>
-              {entry.data.tags?.slice(0, 3).map((tag) => (
+        <li class="entry-card">
+          {entry.data.cover && (
+            <img
+              class="entry-cover"
+              src={entry.data.cover}
+              alt={entry.data.title}
+              loading="lazy"
+            />
+          )}
+          <div class="entry-meta">
+            <time datetime={entry.data.date.toISOString()}>
+              {entry.data.date.toLocaleDateString("zh-CN")}
+            </time>
+            {entry.data.tags?.slice(0, 3).map((tag) =>
+              tagBaseHref ? (
+                <a class="tag" href={`${tagBaseHref}/${encodeURIComponent(tag)}`}>
+                  #{tag}
+                </a>
+              ) : (
                 <span class="tag">#{tag}</span>
-              ))}
-            </div>
-            <h2>{entry.data.title}</h2>
-            {entry.data.description && <p>{entry.data.description}</p>}
-          </a>
+              )
+            )}
+          </div>
+          <h2>
+            <a class="entry-link" href={`/${entry.collection}/${entry.id}`}>
+              {entry.data.title}
+            </a>
+          </h2>
+          {entry.data.description && <p>{entry.data.description}</p>}
         </li>
       ))}
     </ul>
