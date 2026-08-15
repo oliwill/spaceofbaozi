@@ -174,26 +174,31 @@ test("reduced motion renders stable HTML content", async ({ browser }, testInfo)
   await page.goto("/lab/intro?assetMode=placeholder");
   await expect(page.locator("[data-intro-root]")).toHaveAttribute("data-intro-complete", "true");
   await expect(page.locator("[data-intro-scene='home']")).toHaveAttribute("data-active", "true");
-  await expect(page.locator("[data-intro-final-art]")).toBeVisible();
+  // Home Orbit 规格 §10:reduced-motion 激活四固定位 orbit,由 orbit 接管演员,
+  // 静态最终图保持隐藏。
+  const orbit = page.locator("[data-home-orbit-root]");
+  await expect(orbit).toHaveAttribute("data-orbit-active", "true");
+  await expect(orbit).toHaveAttribute("data-controls-enabled", "true");
+  await expect(page.locator("[data-intro-final-art]")).toBeHidden();
   await page.screenshot({ path: testInfo.outputPath("reduced-motion.png") });
   await context.close();
 });
 
 for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
-  test(`production final state does not overlap identity at ${viewport.width}x${viewport.height}`, async ({ browser }, testInfo) => {
+  test(`production reduced final state shows orbit actors without final art at ${viewport.width}x${viewport.height}`, async ({ browser }, testInfo) => {
     const context = await browser.newContext({ reducedMotion: "reduce", viewport });
     const page = await context.newPage();
     await page.goto("/lab/intro");
+    // Home Orbit 规格 §10:reduced-motion 终态由四固定位 orbit 接管,最终图隐藏,
+    // 不得出现轨道演员与最终图并存的双演员状态。
+    const orbit = page.locator("[data-home-orbit-root]");
+    await expect(orbit).toHaveAttribute("data-orbit-active", "true");
+    await expect(orbit).toHaveAttribute("data-controls-enabled", "true");
+    await expect(page.locator("[data-intro-final-art]")).toBeHidden();
     const identity = await page.locator(".intro__identity").boundingBox();
-    const finalArt = await page.locator("[data-intro-final-art]").boundingBox();
+    const person = await page.locator("[data-orbit-person]").boundingBox();
     expect(identity).not.toBeNull();
-    expect(finalArt).not.toBeNull();
-    const overlaps = identity !== null && finalArt !== null
-      && identity.x < finalArt.x + finalArt.width
-      && identity.x + identity.width > finalArt.x
-      && identity.y < finalArt.y + finalArt.height
-      && identity.y + identity.height > finalArt.y;
-    expect(overlaps).toBe(false);
+    expect(person).not.toBeNull();
     await page.screenshot({ path: testInfo.outputPath(`production-final-${viewport.width}x${viewport.height}.png`) });
     await context.close();
   });

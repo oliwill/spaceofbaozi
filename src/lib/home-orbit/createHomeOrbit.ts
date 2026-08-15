@@ -1,6 +1,6 @@
 import { HOME_ORBIT_CONTRACT } from "./contract";
 import type { OrbitLayer, OrbitState } from "./contract";
-import { normalizeAngle, stepOrbit, targetAngleFromPointer } from "./orbitIntegrator";
+import { normalizeAngle, shortestArc, stepOrbit, targetAngleFromPointer } from "./orbitIntegrator";
 import { mapPerspective } from "./perspectiveMapper";
 import { selectDogSprite, selectPersonGaze } from "./spriteSelector";
 
@@ -111,7 +111,7 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
   requireElement<HTMLElement>(root, "[data-person-sprite]", "person sprite");
   const personFeet = requireElement<HTMLElement>(root, "[data-person-feet-anchor]", "person feet anchor");
   const dogAnchor = requireElement<HTMLElement>(root, "[data-orbit-anchor]", "dog translation anchor");
-  requireElement<HTMLElement>(root, "[data-dog-visual]", "dog scale surface");
+  const dogVisual = requireElement<HTMLElement>(root, "[data-dog-visual]", "dog scale surface");
   requireElement<HTMLElement>(root, "[data-dog-sprite]", "dog sprite");
   requireElement<HTMLElement>(root, "[data-dog-shadow]", "dog shadow");
   const fallback = requireElement<HTMLElement>(root, "[data-orbit-fallback]", "asset fallback");
@@ -147,6 +147,7 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
   let restTimer: number | undefined;
   let stoodTimer: number | undefined;
   let pointerSession: PointerSession | undefined;
+  let reducedTap: { id: number; x: number; y: number } | undefined;
   let mouseInsideInteraction = false;
 
   const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -220,6 +221,10 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
       lastPersonDirection = personGaze.direction;
     }
 
+    // Reduced motion never shows gait: the contact frame stays at 0 and only
+    // the opacity crossfade marks a position change.
+    const dogGaitFrame = reducedMotion ? 0 : dogSprite.gaitFrame;
+
     const style = root.style;
     style.setProperty("--person-feet-x", `${formatNumber(measure.personFeetX)}px`);
     style.setProperty("--person-feet-y", `${formatNumber(measure.personFeetY)}px`);
@@ -230,7 +235,7 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
     style.setProperty("--shadow-opacity", formatNumber(pose.shadow.opacity));
     style.setProperty("--shadow-scale-x", formatNumber(pose.shadow.scaleX));
     style.setProperty("--shadow-scale-y", formatNumber(pose.shadow.scaleY));
-    style.setProperty("--dog-frame", String(dogSprite.gaitFrame));
+    style.setProperty("--dog-frame", String(dogGaitFrame));
     style.setProperty("--dog-direction", String(dogSprite.direction));
     if (personGaze) {
       style.setProperty("--person-col", String(personGaze.direction % 4));
@@ -244,7 +249,7 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
     root.dataset.orbitTargetAngle = formatNumber(state.targetAngle);
     root.dataset.dogScale = formatNumber(pose.dogScale);
     root.dataset.dogDirection = String(dogSprite.direction);
-    root.dataset.dogFrame = String(dogSprite.gaitFrame);
+    root.dataset.dogFrame = String(dogGaitFrame);
     if (personGaze) root.dataset.personDirection = String(personGaze.direction);
   };
 
@@ -319,9 +324,14 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
   };
 
   const onPointerDown = (event: PointerEvent): void => {
+    if (reducedMotion) {
+      if (enabled && event.isPrimary && pointIsInsideOrbit(event.clientX, event.clientY)) {
+        reducedTap = { id: event.pointerId, x: event.clientX, y: event.clientY };
+      }
+      return;
+    }
     if (
       !enabled ||
-      reducedMotion ||
       event.pointerType === "mouse" ||
       !event.isPrimary ||
       !pointIsInsideOrbit(event.clientX, event.clientY)
@@ -332,6 +342,14 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
   };
 
   const onPointerMove = (event: PointerEvent): void => {
+    const tap = reducedTap;
+    if (tap && event.pointerId === tap.id) {
+      if (Math.abs(event.clientX - tap.x) > POINTER_CAPTURE_THRESHOLD_PX ||
+          Math.abs(event.clientY - tap.y) > POINTER_CAPTURE_THRESHOLD_PX) {
+        reducedTap = undefined;
+      }
+      return;
+    }
     const session = pointerSession;
     if (!enabled || reducedMotion || !session || event.pointerId !== session.id) return;
     const deltaX = event.clientX - session.startX;
@@ -340,7 +358,11 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
       const horizontalDistance = Math.abs(deltaX);
       const verticalDistance = Math.abs(deltaY);
       if (horizontalDistance > POINTER_CAPTURE_THRESHOLD_PX && horizontalDistance > verticalDistance) {
-        stage.setPointerCapture(event.pointerId);
+        try {
+          stage.setPointerCapture(event.pointerId);
+        } catch {
+          // Synthetic pointers in tests have no active pointer id.
+        }
         session.captured = true;
       } else {
         if (verticalDistance > POINTER_CAPTURE_THRESHOLD_PX && verticalDistance >= horizontalDistance) {
@@ -354,15 +376,49 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
   };
 
   const onPointerEnd = (event: PointerEvent): void => {
+    const tap = reducedTap;
+    if (tap && event.pointerId === tap.id) {
+      reducedTap = undefined;
+      if (Math.abs(event.clientX - tap.x) <= POINTER_CAPTURE_THRESHOLD_PX &&
+          Math.abs(event.clientY - tap.y) <= POINTER_CAPTURE_THRESHOLD_PX) {
+        stepReducedMotion(1);
+      }
+      return;
+    }
     if (!pointerSession || event.pointerId !== pointerSession.id) return;
     if (pointerSession.captured) event.preventDefault();
     releasePointerSession();
   };
 
 
+  const REDUCED_ANGLES = HOME_ORBIT_CONTRACT.reducedMotion.positionsDeg.map((deg) => (deg * Math.PI) / 180);
+  const nearestReducedIndex = (angle: number): number =>
+    REDUCED_ANGLES.reduce((best, candidate, index) =>
+      Math.abs(shortestArc(angle, candidate)) < Math.abs(shortestArc(angle, REDUCED_ANGLES[best])) ? index : best, 0);
+
+  const stepReducedMotion = (delta: 1 | -1): void => {
+    const index = (nearestReducedIndex(state.angle) + delta + REDUCED_ANGLES.length) % REDUCED_ANGLES.length;
+    const angle = REDUCED_ANGLES[index];
+    state.angle = angle;
+    state.targetAngle = angle;
+    state.angularVelocity = 0;
+    lastTimestamp = null;
+    elapsedMovingSeconds = 0;
+    resetGazeToRenderedAngle();
+    dogVisual.style.opacity = "0";
+    render(0);
+    window.requestAnimationFrame(() => {
+      if (!destroyed) dogVisual.style.opacity = "1";
+    });
+  };
+
   const onKeyDown = (event: KeyboardEvent): void => {
-    if (!enabled || reducedMotion || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
+    if (!enabled || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) return;
     event.preventDefault();
+    if (reducedMotion) {
+      stepReducedMotion(event.key === "ArrowRight" ? 1 : -1);
+      return;
+    }
     clearRestTimer();
     state.targetAngle = normalizeAngle(
       state.targetAngle + (event.key === "ArrowRight" ? KEYBOARD_STEP_RAD : -KEYBOARD_STEP_RAD),
@@ -392,7 +448,9 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
     state.targetAngle = angle;
     // Debug-set is an exact pose override: seed layer hysteresis from the new
     // depth instead of inheriting whatever pose the intro handoff left behind.
-    previousLayer = Math.sin(angle) < 0 ? "behind" : "front";
+    // In-band depths deterministically seed "front" so stress alternation
+    // inside the hysteresis band never toggles the layer.
+    previousLayer = Math.sin(angle) < HOME_ORBIT_CONTRACT.perspective.backThreshold ? "behind" : "front";
     elapsedMovingSeconds = 0;
     resetGazeToRenderedAngle();
     render(0);
@@ -453,6 +511,20 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
     introPreviewActive = true;
   };
 
+  const activateReducedStaticOrbit = (): void => {
+    const angle = REDUCED_ANGLES[nearestReducedIndex(state.angle)];
+    state.angle = angle;
+    state.targetAngle = angle;
+    state.angularVelocity = 0;
+    root.dataset.orbitActive = "true";
+    enable();
+    render(0);
+    // The orbit now owns the actors; hide the static final art if setFinalState
+    // already revealed it (probe-settle path runs after the intro finished).
+    const finalArt = document.querySelector<HTMLImageElement>("[data-intro-final-art]");
+    if (finalArt) finalArt.hidden = true;
+  };
+
   const onIntroOrbitReset = (): void => {
     introPreviewActive = false;
     clearStoodTimer();
@@ -470,6 +542,11 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
     lastTimestamp = null;
     resetGazeToRenderedAngle();
     render(0);
+    // Reduced-motion intros jump straight to the final state; if probes already
+    // settled, activate the static four-position orbit from here as well.
+    if (reducedMotion && ready && root.dataset.assetError !== "true") {
+      activateReducedStaticOrbit();
+    }
   };
 
   const onIntroOrbitSettle = (): void => {
@@ -531,6 +608,16 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
     ready = true;
     render(0);
     window.dispatchEvent(new CustomEvent("baozi:orbit-ready"));
+    // Reduced-motion users skip the scroll intro entirely (setFinalState). When
+    // the intro is already complete and assets are healthy, self-activate the
+    // orbit as a static four-position scene with controls enabled.
+    if (
+      reducedMotion &&
+      root.dataset.assetError !== "true" &&
+      document.querySelector("[data-intro-root]")?.getAttribute("data-intro-complete") === "true"
+    ) {
+      activateReducedStaticOrbit();
+    }
   });
 
   return {

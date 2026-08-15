@@ -11,6 +11,7 @@
   --dog-frame: 0;
   --dog-direction: 0;
   --orbit-shadow-color: rgba(37, 35, 31, 0.16);
+  --orbit-crossfade-ms: 0ms;
 
   position: absolute;
   inset: 0;
@@ -19,6 +20,11 @@
   opacity: 0;
   overflow: clip;
   pointer-events: none;
+  touch-action: pan-y;
+}
+
+.home-orbit[data-reduced-motion="true"] {
+  --orbit-crossfade-ms: 180ms;
 }
 
 .home-orbit[data-orbit-active="true"] {
@@ -91,6 +97,7 @@
   transform: scale(var(--dog-scale));
   transform-origin: 50% 100%;
   will-change: transform;
+  transition: opacity var(--orbit-crossfade-ms) ease;
 }
 
 .home-orbit__dog-sprite {

@@ -900,3 +900,148 @@ test("home orbit reverse cycle keeps canonical ownership geometry", async ({ pag
     }
   }
 });
+
+test("reduced motion steps four perspective positions without gait", async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: "reduce" });
+  const page = await context.newPage();
+  await page.goto("/lab/intro?assetMode=placeholder");
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-reduced-motion", "true");
+  await expect(root).toHaveCSS("--orbit-crossfade-ms", "180ms");
+  await scrollToIntroEnd(page);
+  await expect(root).toHaveAttribute("data-controls-enabled", "true");
+  await expect(page.locator("[data-intro-final-art]")).toBeHidden();
+  const angleBefore = Number(await root.getAttribute("data-orbit-angle"));
+  await root.press("ArrowRight");
+  const angleAfter = Number(await root.getAttribute("data-orbit-angle"));
+  expect(angleAfter).not.toBeCloseTo(angleBefore, 5);
+  const reducedAngles = [35, 145, 215, 325].map((deg) => (deg * Math.PI) / 180);
+  expect(reducedAngles.some((angle) => Math.abs(angle - angleAfter) < 1e-9)).toBe(true);
+  await expect(root).toHaveAttribute("data-dog-frame", "0");
+  await expect(root).toHaveAttribute("data-orbit-angular-velocity", "0");
+  await root.press("ArrowRight");
+  const angleThird = Number(await root.getAttribute("data-orbit-angle"));
+  expect(reducedAngles.some((angle) => Math.abs(angle - angleThird) < 1e-9)).toBe(true);
+  expect(angleThird).not.toBeCloseTo(angleAfter, 5);
+  await context.close();
+});
+
+test("resize retains rendered angle", async ({ page }) => {
+  await setOrbitAngle(page, 145, 0);
+  const root = page.locator("[data-home-orbit-root]");
+  const before = Number(await root.getAttribute("data-orbit-angle"));
+  await page.setViewportSize({ width: 1280, height: 720 });
+  expect(Number(await root.getAttribute("data-orbit-angle"))).toBeCloseTo(before, 5);
+});
+
+test("dog failure hides sprite but keeps identity content", async ({ page }) => {
+  await page.route("**/dog-orbit-run-8dir-4f.webp", (route) => route.abort());
+  await page.reload();
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-asset-error", "true");
+  await expect(page.locator("[data-orbit-anchor]")).toBeHidden();
+  await expect(page.locator(".intro__identity")).toBeVisible();
+});
+
+test("touch drag updates target without blocking vertical scroll", async ({ page }) => {
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-controls-enabled", "true");
+  const point = await page.evaluate(() => {
+    const feet = document.querySelector("[data-person-feet-anchor]")!.getBoundingClientRect();
+    return { x: feet.left + feet.width / 2, y: feet.top + feet.height / 2 };
+  });
+  const before = await root.getAttribute("data-orbit-target-angle");
+  const init = { pointerId: 7, pointerType: "touch", isPrimary: true, bubbles: true, cancelable: true };
+  await root.dispatchEvent("pointerdown", { ...init, clientX: point.x, clientY: point.y });
+  await root.dispatchEvent("pointermove", { ...init, clientX: point.x + 200, clientY: point.y + 20 });
+  await root.dispatchEvent("pointerup", { ...init, clientX: point.x + 200, clientY: point.y + 20 });
+  await expect.poll(async () => root.getAttribute("data-orbit-target-angle")).not.toBe(before);
+  await expect(root).toHaveCSS("touch-action", "pan-y");
+});
+
+test("layer hysteresis never toggles inside the depth band", async ({ page }) => {
+  const root = page.locator("[data-home-orbit-root]");
+  const setDepth = async (depth: number) => {
+    await page.evaluate((value) => {
+      window.dispatchEvent(
+        new CustomEvent("baozi:orbit-debug-set", {
+          detail: { angle: Math.asin(value), angularVelocity: 0 },
+        }),
+      );
+    }, depth);
+  };
+  // Establish a known layer outside the band first.
+  await setDepth(0.5);
+  expect(await root.getAttribute("data-orbit-layer")).toBe("front");
+  for (let frame = 0; frame < 60; frame += 1) {
+    await setDepth(frame % 2 === 0 ? 0.079 : -0.079);
+    expect(await root.getAttribute("data-orbit-layer")).toBe("front");
+  }
+  await setDepth(0.081);
+  expect(await root.getAttribute("data-orbit-layer")).toBe("front");
+  await setDepth(-0.081);
+  expect(await root.getAttribute("data-orbit-layer")).toBe("behind");
+  await setDepth(0.081);
+  expect(await root.getAttribute("data-orbit-layer")).toBe("front");
+});
+
+for (const degrees of [0, 90, 180, 270] as const) {
+  test(`home orbit visual ${degrees}`, async ({ page }) => {
+    await setOrbitAngle(page, degrees, 1);
+    await expect(page.locator('[data-intro-scene="home"]')).toHaveScreenshot(`home-orbit-${degrees}.png`, { animations: "disabled" });
+  });
+}
+
+for (const viewport of [
+  { width: 1280, height: 720 },
+  { width: 1440, height: 900 },
+  { width: 1920, height: 1080 },
+] as const) {
+  test(`home orbit viewport ${viewport.width}x${viewport.height} stays overflow-free and grounded`, async ({ browser }) => {
+    const context = await browser.newContext({ viewport });
+    const page = await context.newPage();
+    await page.goto("/lab/intro?assetMode=placeholder");
+    await scrollToIntroEnd(page);
+    const root = page.locator("[data-home-orbit-root]");
+    await expect(root).toHaveAttribute("data-controls-enabled", "true");
+
+    const overflowX = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflowX).toBeLessThanOrEqual(0);
+
+    await expect(page.locator(".intro__identity a").first()).toBeVisible();
+
+    const footDrift = await page.evaluate(() => {
+      const orbitRoot = document.querySelector<HTMLElement>("[data-home-orbit-root]")!;
+      const feet = document.querySelector("[data-person-feet-anchor]")!.getBoundingClientRect();
+      const rootRect = orbitRoot.getBoundingClientRect();
+      const cx = rootRect.left + parseFloat(orbitRoot.style.getPropertyValue("--person-feet-x"));
+      const cy = rootRect.top + parseFloat(orbitRoot.style.getPropertyValue("--person-feet-y"));
+      return Math.hypot(cx - (feet.left + feet.width / 2), cy - (feet.top + feet.height / 2));
+    });
+    expect(footDrift).toBeLessThanOrEqual(1);
+
+    // No duplicate actors across the ownership boundary.
+    for (const progress of [0.82, 0.94, 1]) {
+      await setIntroProgress(page, progress);
+      const duplicated = await page.evaluate(() => {
+        const orbitActive = document.querySelector<HTMLElement>("[data-home-orbit-root]")!.dataset.orbitActive === "true";
+        const introVisible = [...document.querySelectorAll<HTMLElement>("[data-intro-person], [data-intro-dog]")]
+          .some((element) => element.dataset.visible === "true");
+        return orbitActive && introVisible;
+      });
+      expect(duplicated).toBe(false);
+    }
+
+    // Front dog stays below the knee.
+    await setIntroProgress(page, 1);
+    await setOrbitAngle(page, 90, 0);
+    const belowKnee = await page.evaluate(() => {
+      const person = document.querySelector("[data-orbit-person]")!.getBoundingClientRect();
+      const dog = document.querySelector("[data-dog-visual]")!.getBoundingClientRect();
+      return dog.top > person.top + person.height * 0.5;
+    });
+    expect(belowKnee).toBe(true);
+
+    await context.close();
+  });
+}
