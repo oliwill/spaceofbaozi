@@ -44,3 +44,14 @@ const assetVariables = `--orbit-person-asset: url("${personSprite}"); --orbit-do
     环绕场景暂时无法显示。
   </p>
 </section>
+
+<script>
+  import { createHomeOrbit } from "@/lib/home-orbit/createHomeOrbit";
+  import type { HomeOrbitController } from "@/lib/home-orbit/createHomeOrbit";
+
+  type HomeOrbitRoot = HTMLElement & { __homeOrbit?: HomeOrbitController };
+
+  document.querySelectorAll<HomeOrbitRoot>("[data-home-orbit-root]").forEach((root) => {
+    if (!root.__homeOrbit) root.__homeOrbit = createHomeOrbit(root);
+  });
+</script>

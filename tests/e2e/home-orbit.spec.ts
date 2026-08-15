@@ -16,9 +16,12 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("home orbit root mounts at the intro end and starts not ready", async ({ page }) => {
-  const root = page.locator("[data-home-orbit-root]");
-  await expect(root).toHaveCount(1);
-  expect(await root.getAttribute("data-orbit-ready")).toBe("false");
+  const response = await page.request.get("/lab/intro?assetMode=placeholder");
+  expect(response.ok()).toBe(true);
+  const html = await response.text();
+  const roots = html.match(/<section[^>]*data-home-orbit-root[^>]*>/g) ?? [];
+  expect(roots).toHaveLength(1);
+  expect(roots[0]).toContain('data-orbit-ready="false"');
 });
 
 test("home orbit root carries the planned control, asset, and reduced-motion dataset", async ({ page }) => {
@@ -87,13 +90,22 @@ test("home orbit root declares the planned pose CSS custom properties", async ({
       shadowOpacity: value("--shadow-opacity"),
     };
   });
-  expect(vars).toEqual({
-    orbitX: "0px",
-    orbitY: "0px",
-    dogScale: "0.97",
-    dogZ: "3",
-    shadowOpacity: "0.075",
-  });
+  expect(vars).not.toBeNull();
+  const finite = (value: string | undefined) => {
+    expect(value).toBeTruthy();
+    return Number.parseFloat(value ?? "");
+  };
+  expect(Number.isFinite(finite(vars?.orbitX))).toBe(true);
+  expect(vars?.orbitX?.endsWith("px")).toBe(true);
+  expect(Number.isFinite(finite(vars?.orbitY))).toBe(true);
+  expect(vars?.orbitY?.endsWith("px")).toBe(true);
+  const dogScale = finite(vars?.dogScale);
+  expect(dogScale).toBeGreaterThanOrEqual(0.86);
+  expect(dogScale).toBeLessThanOrEqual(1.08);
+  expect(["1", "3"]).toContain(vars?.dogZ);
+  const shadowOpacity = finite(vars?.shadowOpacity);
+  expect(shadowOpacity).toBeGreaterThanOrEqual(0.05);
+  expect(shadowOpacity).toBeLessThanOrEqual(0.1);
 });
 
 test("person and dog anchor keep their planned display sizes", async ({ page }) => {
@@ -152,4 +164,337 @@ test("home orbit root is keyboard accessible with a descriptive label", async ({
   const root = page.locator("[data-home-orbit-root]");
   await expect(root).toHaveAttribute("tabindex", "0");
   await expect(root).toHaveAttribute("aria-label", /.+/);
+});
+
+// ── Task 5: perspective controller (red until createHomeOrbit lands) ──────────
+
+async function waitForOrbitReady(page: Page) {
+  await page.waitForFunction(() => {
+    const root = document.querySelector("[data-home-orbit-root]");
+    return root?.getAttribute("data-orbit-ready") === "true";
+  }, undefined, { timeout: 5000 });
+}
+
+async function setOrbitAngle(page: Page, degrees: number, velocity = 1) {
+  await waitForOrbitReady(page);
+  await page.evaluate(() => {
+    const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!root) throw new Error("home orbit root missing");
+    root.dataset.orbitActive = "true";
+  });
+  await page.evaluate(({ degrees, velocity }) => {
+    window.dispatchEvent(
+      new CustomEvent("baozi:orbit-debug-set", {
+        detail: { angle: (degrees * Math.PI) / 180, angularVelocity: velocity },
+      }),
+    );
+  }, { degrees, velocity });
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+}
+
+for (const [degrees, scale, layer] of [
+  [0, 0.97, "front"],
+  [90, 1.08, "front"],
+  [180, 0.97, "front"],
+  [270, 0.86, "behind"],
+] as const) {
+  test(`perspective checkpoint ${degrees}`, async ({ page }) => {
+    await setOrbitAngle(page, degrees);
+    const root = page.locator("[data-home-orbit-root]");
+    await expect(root).toHaveAttribute("data-orbit-layer", layer);
+    expect(Number(await root.getAttribute("data-dog-scale"))).toBeCloseTo(scale, 2);
+    await expect(page.locator("[data-orbit-anchor]")).toHaveCSS("z-index", layer === "front" ? "3" : "1");
+  });
+}
+
+test("dog feet stay on the same anchor while scale changes", async ({ page }) => {
+  for (const degrees of [270, 90]) {
+    await setOrbitAngle(page, degrees);
+    const delta = await page.evaluate(() => {
+      const dog = document.querySelector("[data-dog-visual]")!.getBoundingClientRect();
+      const anchor = document.querySelector("[data-orbit-anchor]")!.getBoundingClientRect();
+      return Math.abs(dog.bottom - anchor.bottom);
+    });
+    expect(delta).toBeLessThanOrEqual(1);
+  }
+});
+
+test("person direction follows rendered dog position", async ({ page }) => {
+  await setOrbitAngle(page, 90);
+  await expect(page.locator("[data-home-orbit-root]")).toHaveAttribute("data-person-direction", "3");
+});
+
+test("debug orbit set writes the exact dataset attributes", async ({ page }) => {
+  await setOrbitAngle(page, 90);
+  const attrs = await page.evaluate(() => {
+    const root = document.querySelector("[data-home-orbit-root]");
+    if (!root) return null;
+    const value = (name: string) => root.getAttribute(name);
+    return {
+      orbitReady: value("data-orbit-ready"),
+      orbitLayer: value("data-orbit-layer"),
+      orbitAngle: value("data-orbit-angle"),
+      dogScale: value("data-dog-scale"),
+      dogDirection: value("data-dog-direction"),
+      dogFrame: value("data-dog-frame"),
+      personDirection: value("data-person-direction"),
+    };
+  });
+  expect(attrs).not.toBeNull();
+  expect(attrs?.orbitReady).toBe("true");
+  expect(attrs?.orbitLayer).toBe("front");
+  expect(Number(attrs?.orbitAngle)).toBeCloseTo(Math.PI / 2, 1);
+  expect(Number(attrs?.dogScale)).toBeCloseTo(1.08, 2);
+  expect(attrs?.dogDirection).toBe("4");
+  expect(attrs?.dogFrame).toBe("0");
+  expect(attrs?.personDirection).toBe("3");
+});
+
+test("orbit controller renders the planned CSS variables", async ({ page }) => {
+  for (const [degrees, dogScale, dogZ, shadowOpacity] of [
+    [90, 1.08, "3", 0.1],
+    [270, 0.86, "1", 0.05],
+  ] as const) {
+    await setOrbitAngle(page, degrees);
+    const vars = await page.evaluate(() => {
+      const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+      if (!root) return null;
+      const style = getComputedStyle(root);
+      const value = (name: string) => style.getPropertyValue(name).trim();
+      return {
+        dogScale: value("--dog-scale"),
+        dogZ: value("--dog-z"),
+        shadowOpacity: value("--shadow-opacity"),
+      };
+    });
+    expect(vars).not.toBeNull();
+    expect(Number(vars?.dogScale)).toBeCloseTo(dogScale, 2);
+    expect(vars?.dogZ).toBe(dogZ);
+    expect(Number(vars?.shadowOpacity)).toBeCloseTo(shadowOpacity, 3);
+  }
+});
+
+test("home orbit boots exactly one controller and reports ready", async ({ page }) => {
+  const controller = await page.evaluate(() => {
+    const root = document.querySelector<HTMLElement & { __homeOrbit?: Record<string, unknown> }>("[data-home-orbit-root]");
+    if (!root) return null;
+    const api = root.__homeOrbit;
+    return {
+      hasController: Boolean(api),
+      methods: api ? Object.keys(api).sort() : [],
+      callable: api ? Object.values(api).every((value) => typeof value === "function") : false,
+    };
+  });
+  expect(controller?.hasController).toBe(true);
+  expect(controller?.methods).toEqual(["destroy", "disable", "enable", "handoff"]);
+  expect(controller?.callable).toBe(true);
+  await waitForOrbitReady(page);
+  await expect(page.locator("[data-home-orbit-root]")).toHaveAttribute("data-orbit-ready", "true");
+});
+
+async function enableOrbitController(page: Page) {
+  await page.evaluate(() => {
+    const root = document.querySelector<HTMLElement & { __homeOrbit?: { enable: () => void } }>("[data-home-orbit-root]");
+    if (!root?.__homeOrbit) throw new Error("home orbit controller missing");
+    root.__homeOrbit.enable();
+  });
+}
+
+async function readOrbitTargetAngle(page: Page) {
+  return page.evaluate(() => {
+    const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    return root ? Number(root.getAttribute("data-orbit-target-angle")) : NaN;
+  });
+}
+
+test("controller enable() flips controls-enabled synchronously", async ({ page }) => {
+  await waitForOrbitReady(page);
+  const enabled = await page.evaluate(() => {
+    const root = document.querySelector<HTMLElement & { __homeOrbit?: { enable: () => void } }>("[data-home-orbit-root]");
+    if (!root?.__homeOrbit) throw new Error("home orbit controller missing");
+    root.__homeOrbit.enable();
+    return root.getAttribute("data-controls-enabled");
+  });
+  expect(enabled).toBe("true");
+});
+
+test("controller reaches ready without the delayed-control window", async ({ page }) => {
+  await page.goto("/lab/intro?assetMode=placeholder");
+  const latency = await page.evaluate(
+    () =>
+      new Promise<number>((resolve) => {
+        const start = performance.now();
+        const ready = () => {
+          const root = document.querySelector("[data-home-orbit-root]");
+          return root?.getAttribute("data-orbit-ready") === "true";
+        };
+        if (ready()) {
+          resolve(0);
+          return;
+        }
+        let observer: MutationObserver | null = null;
+        observer = new MutationObserver(() => {
+          if (ready() && observer) {
+            observer.disconnect();
+            resolve(performance.now() - start);
+          }
+        });
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["data-orbit-ready"],
+        });
+        const intro = document.querySelector<HTMLElement>("[data-intro-root]");
+        if (!intro) {
+          observer.disconnect();
+          resolve(performance.now() - start);
+          return;
+        }
+        scrollTo(0, intro.offsetTop + intro.scrollHeight - innerHeight);
+      }),
+  );
+  expect(latency).toBeLessThan(250);
+});
+
+test("mousemove outside the bounded hero region keeps the orbit target", async ({ page }) => {
+  await waitForOrbitReady(page);
+  await enableOrbitController(page);
+  await setOrbitAngle(page, 90);
+  const before = await readOrbitTargetAngle(page);
+  await page.evaluate(() => {
+    const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!root) throw new Error("home orbit root missing");
+    const rect = root.getBoundingClientRect();
+    root.dispatchEvent(new MouseEvent("mousemove", { clientX: rect.right - 20, clientY: rect.top + 20, bubbles: true }));
+  });
+  expect(await readOrbitTargetAngle(page)).toBeCloseTo(before, 5);
+});
+
+test("pointer leaving the bounded rect returns the target to rest after 900ms", async ({ page }) => {
+  await setOrbitAngle(page, 90);
+  await enableOrbitController(page);
+  await page.clock.install();
+  await page.evaluate(() => {
+    const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    const feet = document.querySelector<HTMLElement>("[data-person-feet-anchor]") ?? document.querySelector<HTMLElement>("[data-orbit-person]");
+    if (!root || !feet) throw new Error("orbit surfaces missing");
+    const box = feet.getBoundingClientRect();
+    root.dispatchEvent(
+      new MouseEvent("mousemove", { clientX: box.left + box.width / 2, clientY: box.top + box.height / 2, bubbles: true }),
+    );
+  });
+  const entered = await readOrbitTargetAngle(page);
+  await page.evaluate(() => {
+    const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!root) throw new Error("home orbit root missing");
+    const rect = root.getBoundingClientRect();
+    root.dispatchEvent(new MouseEvent("mousemove", { clientX: rect.right - 20, clientY: rect.top + 20, bubbles: true }));
+  });
+  await page.clock.fastForward(800);
+  expect(await readOrbitTargetAngle(page)).toBeCloseTo(entered, 5);
+  await page.clock.fastForward(100);
+  expect(await readOrbitTargetAngle(page)).toBeCloseTo((Math.PI * 35) / 180, 5);
+});
+
+test("mouseleave from the hero falls back to rest after 900ms", async ({ page }) => {
+  await setOrbitAngle(page, 90);
+  await enableOrbitController(page);
+  await page.clock.install();
+  await page.evaluate(() => {
+    const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    const feet = document.querySelector<HTMLElement>("[data-person-feet-anchor]") ?? document.querySelector<HTMLElement>("[data-orbit-person]");
+    if (!root || !feet) throw new Error("orbit surfaces missing");
+    const box = feet.getBoundingClientRect();
+    root.dispatchEvent(
+      new MouseEvent("mousemove", { clientX: box.left + box.width / 2, clientY: box.top + box.height / 2, bubbles: true }),
+    );
+    window.dispatchEvent(new MouseEvent("mouseleave"));
+  });
+  await page.clock.fastForward(800);
+  expect(await readOrbitTargetAngle(page)).toBeCloseTo(Math.PI / 2, 2);
+  await page.clock.fastForward(100);
+  expect(await readOrbitTargetAngle(page)).toBeCloseTo((Math.PI * 35) / 180, 5);
+});
+
+test("handoff ignores non-finite state without contaminating the orbit", async ({ page }) => {
+  await setOrbitAngle(page, 90);
+  const readState = () =>
+    page.evaluate(() => {
+      const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+      if (!root) return null;
+      const number = (name: string) => Number(root.getAttribute(name));
+      return {
+        angle: number("data-orbit-angle"),
+        velocity: number("data-orbit-angular-velocity"),
+        target: number("data-orbit-target-angle"),
+      };
+    });
+  const before = await readState();
+  expect(before).not.toBeNull();
+  expect(before?.angle).toBeCloseTo(Math.PI / 2, 5);
+  expect(before?.velocity).toBeCloseTo(1, 5);
+  for (const state of [
+    { angle: NaN, angularVelocity: 1 },
+    { angle: Infinity, angularVelocity: Infinity },
+  ]) {
+    await page.evaluate((state) => {
+      const root = document.querySelector<HTMLElement & { __homeOrbit?: { handoff: (state: { angle: number; angularVelocity: number }) => void } }>("[data-home-orbit-root]");
+      if (!root?.__homeOrbit) throw new Error("home orbit controller missing");
+      root.__homeOrbit.handoff(state);
+    }, state);
+  }
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  const after = await readState();
+  expect(after).not.toBeNull();
+  expect(after?.angle).toBeCloseTo(before!.angle, 5);
+  expect(after?.velocity).toBeCloseTo(before!.velocity, 5);
+  expect(after?.target).toBeCloseTo(before!.target, 5);
+  expect(Number.isFinite(after!.angle)).toBe(true);
+  expect(Number.isFinite(after!.velocity)).toBe(true);
+  expect(Number.isFinite(after!.target)).toBe(true);
+});
+
+test("touch drag below the horizontal threshold does not prevent the page scroll", async ({ page }) => {
+  await waitForOrbitReady(page);
+  await enableOrbitController(page);
+  const prevented = await page.evaluate(
+    () =>
+      new Promise<boolean>((resolve) => {
+        const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+        const feet = document.querySelector<HTMLElement>("[data-person-feet-anchor]") ?? document.querySelector<HTMLElement>("[data-orbit-person]");
+        if (!root || !feet) throw new Error("orbit surfaces missing");
+        const box = feet.getBoundingClientRect();
+        const startX = box.left + box.width / 2;
+        const startY = box.top + box.height / 2;
+        const handler = (event: Event) => {
+          window.removeEventListener("pointermove", handler);
+          resolve(event.defaultPrevented);
+        };
+        window.addEventListener("pointermove", handler);
+        root.dispatchEvent(
+          new PointerEvent("pointerdown", {
+            clientX: startX,
+            clientY: startY,
+            pointerId: 1,
+            pointerType: "touch",
+            isPrimary: true,
+            bubbles: true,
+            cancelable: true,
+          }),
+        );
+        root.dispatchEvent(
+          new PointerEvent("pointermove", {
+            clientX: startX + 11,
+            clientY: startY + 6,
+            pointerId: 1,
+            pointerType: "touch",
+            isPrimary: true,
+            bubbles: true,
+            cancelable: true,
+          }),
+        );
+      }),
+  );
+  expect(prevented).toBe(false);
 });

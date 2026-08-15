@@ -6,10 +6,10 @@
   --shadow-opacity: 0.075;
   --shadow-scale-x: 0.97;
   --shadow-scale-y: 0.98;
-  --orbit-person-frame-x: 0%;
-  --orbit-person-frame-y: 0%;
-  --orbit-dog-frame-x: 0%;
-  --orbit-dog-frame-y: 0%;
+  --person-col: 0;
+  --person-row: 0;
+  --dog-frame: 0;
+  --dog-direction: 0;
   --orbit-shadow-color: rgba(37, 35, 31, 0.16);
   --orbit-transition-duration: 180ms;
 
@@ -51,7 +51,9 @@
   inset: 0;
   background-image: var(--orbit-person-asset);
   background-repeat: no-repeat;
-  background-position: var(--orbit-person-frame-x) var(--orbit-person-frame-y);
+  background-position:
+    calc(var(--person-col) * 100% / 3)
+    calc(var(--person-row) * 100% / 2);
   background-size: 400% 300%;
 }
 
@@ -94,7 +96,9 @@
   height: 100%;
   background-image: var(--orbit-dog-asset);
   background-repeat: no-repeat;
-  background-position: var(--orbit-dog-frame-x) var(--orbit-dog-frame-y);
+  background-position:
+    calc(var(--dog-frame) * 100% / 3)
+    calc(var(--dog-direction) * 100% / 7);
   background-size: 400% 800%;
 }
 
@@ -121,4 +125,8 @@
   .home-orbit {
     transition: none;
   }
+}
+
+.intro__stage {
+  touch-action: pan-y;
 }
