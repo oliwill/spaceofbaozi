@@ -44,3 +44,6 @@ output/
 /baozi-space-a0-v-production-v*.zip
 /assets-master/baozi-space-a0-v-production-v*.zip
 /assets-master/baozi-space-a0-v-production-v*/
+
+# local handoff packages
+*.zip
