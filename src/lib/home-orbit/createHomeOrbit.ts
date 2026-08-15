@@ -139,11 +139,13 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
   let elapsedMovingSeconds = 0;
   let personAssetFailed = false;
   let enabled = false;
+  let introPreviewActive = false;
   let ready = false;
   let destroyed = false;
   let lastTimestamp: number | null = null;
   let rafId = 0;
   let restTimer: number | undefined;
+  let stoodTimer: number | undefined;
   let pointerSession: PointerSession | undefined;
   let mouseInsideInteraction = false;
 
@@ -261,6 +263,12 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
     if (restTimer === undefined) return;
     window.clearTimeout(restTimer);
     restTimer = undefined;
+  };
+
+  const clearStoodTimer = (): void => {
+    if (stoodTimer === undefined) return;
+    window.clearTimeout(stoodTimer);
+    stoodTimer = undefined;
   };
 
   const scheduleRest = (): void => {
@@ -382,9 +390,90 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
     state.angle = angle;
     state.angularVelocity = event.detail.angularVelocity;
     state.targetAngle = angle;
+    // Debug-set is an exact pose override: seed layer hysteresis from the new
+    // depth instead of inheriting whatever pose the intro handoff left behind.
+    previousLayer = Math.sin(angle) < 0 ? "behind" : "front";
     elapsedMovingSeconds = 0;
     resetGazeToRenderedAngle();
     render(0);
+  };
+
+  const handoff = (nextState: Pick<OrbitState, "angle" | "angularVelocity">): void => {
+    if (
+      destroyed ||
+      !Number.isFinite(nextState.angle) ||
+      !Number.isFinite(nextState.angularVelocity)
+    ) return;
+    const angle = normalizeAngle(nextState.angle);
+    state.angle = angle;
+    state.angularVelocity = nextState.angularVelocity;
+    state.targetAngle = angle;
+    lastTimestamp = null;
+    elapsedMovingSeconds = 0;
+    resetGazeToRenderedAngle();
+    render(0);
+  };
+
+  const enable = (): void => {
+    if (destroyed || enabled) return;
+    enabled = true;
+    lastTimestamp = null;
+    mouseInsideInteraction = false;
+    root.dataset.controlsEnabled = "true";
+  };
+
+  const disable = (): void => {
+    if (destroyed) return;
+    enabled = false;
+    lastTimestamp = null;
+    mouseInsideInteraction = false;
+    root.dataset.controlsEnabled = "false";
+    clearStoodTimer();
+    clearRestTimer();
+    releasePointerSession();
+  };
+
+  const onIntroOrbitHandoff = (event: Event): void => {
+    if (!(event instanceof CustomEvent) || !isOrbitDebugDetail(event.detail)) return;
+    handoff(event.detail);
+    introPreviewActive = false;
+    root.dataset.orbitActive = "true";
+  };
+
+  const onIntroPersonStood = (): void => {
+    introPreviewActive = true;
+    clearStoodTimer();
+    stoodTimer = window.setTimeout(() => {
+      stoodTimer = undefined;
+      enable();
+    }, HOME_ORBIT_CONTRACT.transition.controlEnableDelayMs);
+  };
+
+  const onIntroOrbitPreview = (): void => {
+    introPreviewActive = true;
+  };
+
+  const onIntroOrbitReset = (): void => {
+    introPreviewActive = false;
+    clearStoodTimer();
+    disable();
+    root.dataset.orbitActive = "false";
+    // Restore the canonical start pose so hidden orbit rects are measured from
+    // the same 35° state the next forward handoff will begin at.
+    state.angle = initialAngle;
+    state.angularVelocity = 0;
+    state.targetAngle = initialAngle;
+    lastDogDirection = 0;
+    lastPersonDirection = nearestPersonDirection(initialAngle);
+    filteredPersonAngle = initialAngle;
+    elapsedMovingSeconds = 0;
+    lastTimestamp = null;
+    resetGazeToRenderedAngle();
+    render(0);
+  };
+
+  const onIntroOrbitSettle = (): void => {
+    introPreviewActive = false;
   };
 
   const tick = (timestamp: number): void => {
@@ -393,7 +482,7 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
       ? 0
       : Math.min((timestamp - lastTimestamp) / 1000, HOME_ORBIT_CONTRACT.orbit.maxDtSeconds);
     lastTimestamp = timestamp;
-    if (ready && enabled && !reducedMotion) {
+    if (ready && enabled && !reducedMotion && !introPreviewActive) {
       state = stepOrbit(state, dtSeconds);
       render(dtSeconds);
     }
@@ -419,6 +508,11 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
   document.addEventListener("visibilitychange", onVisibilityChange);
   reducedMotionQuery.addEventListener("change", onReducedMotionChange);
   if (import.meta.env.DEV) window.addEventListener("baozi:orbit-debug-set", onDebugSet);
+  window.addEventListener("baozi:intro-orbit-handoff", onIntroOrbitHandoff);
+  window.addEventListener("baozi:intro-person-stood", onIntroPersonStood);
+  window.addEventListener("baozi:intro-orbit-reset", onIntroOrbitReset);
+  window.addEventListener("baozi:intro-orbit-preview", onIntroOrbitPreview);
+  window.addEventListener("baozi:intro-orbit-settle", onIntroOrbitSettle);
   rafId = window.requestAnimationFrame(tick);
 
   const dogProbe = createAssetProbe(dogSource);
@@ -432,42 +526,17 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
     if (!personAvailable) {
       personAssetFailed = true;
       root.dataset.personOrbitError = "true";
+      window.dispatchEvent(new CustomEvent("baozi:orbit-person-asset-error"));
     }
     ready = true;
     render(0);
+    window.dispatchEvent(new CustomEvent("baozi:orbit-ready"));
   });
 
   return {
-    handoff(nextState) {
-      if (
-        destroyed ||
-        !Number.isFinite(nextState.angle) ||
-        !Number.isFinite(nextState.angularVelocity)
-      ) return;
-      const angle = normalizeAngle(nextState.angle);
-      state.angle = angle;
-      state.angularVelocity = nextState.angularVelocity;
-      state.targetAngle = angle;
-      elapsedMovingSeconds = 0;
-      resetGazeToRenderedAngle();
-      render(0);
-    },
-    enable() {
-      if (destroyed || enabled) return;
-      enabled = true;
-      lastTimestamp = null;
-      mouseInsideInteraction = false;
-      root.dataset.controlsEnabled = "true";
-    },
-    disable() {
-      if (destroyed) return;
-      enabled = false;
-      lastTimestamp = null;
-      mouseInsideInteraction = false;
-      root.dataset.controlsEnabled = "false";
-      clearRestTimer();
-      releasePointerSession();
-    },
+    handoff,
+    enable,
+    disable,
     destroy() {
       if (destroyed) return;
       destroyed = true;
@@ -477,6 +546,7 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
       dogProbe.cancel();
       personProbe.cancel();
       clearRestTimer();
+      clearStoodTimer();
       releasePointerSession();
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseleave", onMouseLeave);
@@ -488,6 +558,11 @@ export function createHomeOrbit(root: HTMLElement, initial?: OrbitInitialState):
       root.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       reducedMotionQuery.removeEventListener("change", onReducedMotionChange);
+      window.removeEventListener("baozi:intro-orbit-handoff", onIntroOrbitHandoff);
+      window.removeEventListener("baozi:intro-person-stood", onIntroPersonStood);
+      window.removeEventListener("baozi:intro-orbit-reset", onIntroOrbitReset);
+      window.removeEventListener("baozi:intro-orbit-preview", onIntroOrbitPreview);
+      window.removeEventListener("baozi:intro-orbit-settle", onIntroOrbitSettle);
       if (import.meta.env.DEV) window.removeEventListener("baozi:orbit-debug-set", onDebugSet);
     },
   };

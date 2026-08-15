@@ -11,7 +11,6 @@
   --dog-frame: 0;
   --dog-direction: 0;
   --orbit-shadow-color: rgba(37, 35, 31, 0.16);
-  --orbit-transition-duration: 180ms;
 
   position: absolute;
   inset: 0;
@@ -20,12 +19,15 @@
   opacity: 0;
   overflow: clip;
   pointer-events: none;
-  transition: opacity var(--orbit-transition-duration) var(--ease-ui-out, ease-out);
 }
 
 .home-orbit[data-orbit-active="true"] {
   visibility: visible;
   opacity: 1;
+}
+
+.home-orbit[data-person-orbit-error="true"] .home-orbit__person-sprite {
+  visibility: hidden;
 }
 
 
@@ -121,11 +123,6 @@
 }
 
 
-@media (prefers-reduced-motion: reduce) {
-  .home-orbit {
-    transition: none;
-  }
-}
 
 .intro__stage {
   touch-action: pan-y;

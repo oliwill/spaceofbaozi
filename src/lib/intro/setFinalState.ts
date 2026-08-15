@@ -1,4 +1,7 @@
 export function setFinalState(root: HTMLElement, fallbackSrc = ""): void {
+  window.dispatchEvent(new CustomEvent("baozi:intro-orbit-reset"));
+  const orbitRoot = root.querySelector<HTMLElement>("[data-home-orbit-root]");
+  if (orbitRoot) orbitRoot.dataset.orbitActive = "false";
   root.dataset.introComplete = "true";
   root.dataset.introPhase = "complete";
   root.style.setProperty("--intro-progress", "1");

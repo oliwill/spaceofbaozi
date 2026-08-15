@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { selectDogSprite } from "@/lib/home-orbit/spriteSelector";
 
 async function scrollToIntroEnd(page: Page) {
   await page.evaluate(() => {
@@ -497,4 +498,405 @@ test("touch drag below the horizontal threshold does not prevent the page scroll
       }),
   );
   expect(prevented).toBe(false);
+});
+
+// ── Task 6: intro handoff (red until events/ownership land) ────────────────
+
+async function setIntroProgress(page: Page, value: number) {
+  await page.evaluate((progress) => {
+    const root = document.querySelector<HTMLElement>("[data-intro-root]");
+    if (!root) throw new Error("intro root missing");
+    scrollTo(0, root.offsetTop + (root.scrollHeight - innerHeight) * progress);
+  }, value);
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+}
+
+test("intro handoff keeps dog state continuous", async ({ page }) => {
+  await setOrbitAngle(page, 90, 0.5);
+  const readRect = () =>
+    page.locator("[data-dog-visual]").evaluate((node) => {
+      const rect = (node as HTMLElement).getBoundingClientRect();
+      return { x: rect.x, y: rect.y, w: rect.width, h: rect.height };
+    });
+  const before = await readRect();
+  await page.evaluate(() => {
+    window.dispatchEvent(
+      new CustomEvent("baozi:intro-orbit-handoff", {
+        detail: { angle: Math.PI / 2, angularVelocity: 0.5 },
+      }),
+    );
+  });
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+  const after = await readRect();
+  expect(Math.abs(after.x - before.x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(1);
+  expect(Math.abs(after.w - before.w)).toBeLessThanOrEqual(1);
+  expect(Math.abs(after.h - before.h)).toBeLessThanOrEqual(1);
+});
+
+test("pointer controls enable 300ms after stand", async ({ page }) => {
+  const root = page.locator("[data-home-orbit-root]");
+  await waitForOrbitReady(page);
+  await page.clock.install();
+  await page.evaluate(() => {
+    const element = document.querySelector<HTMLElement & { __homeOrbit?: { disable: () => void } }>("[data-home-orbit-root]");
+    if (!element?.__homeOrbit) throw new Error("home orbit controller missing");
+    element.__homeOrbit.disable();
+  });
+  await expect(root).toHaveAttribute("data-controls-enabled", "false");
+  await page.evaluate(() => {
+    window.dispatchEvent(new CustomEvent("baozi:intro-person-stood"));
+  });
+  await page.clock.fastForward(200);
+  await expect(root).toHaveAttribute("data-controls-enabled", "false");
+  await page.clock.fastForward(100);
+  await expect(root).toHaveAttribute("data-controls-enabled", "true");
+});
+
+test("home orbit takes intro ownership at 0.94 and keeps it at 1", async ({ page }) => {
+  await setIntroProgress(page, 0.94);
+  await expect(page.locator("[data-intro-root]")).toHaveAttribute("data-intro-progress", "0.940");
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  await expect(page.locator("[data-intro-person]")).toHaveAttribute("data-visible", "false");
+  await expect(page.locator("[data-intro-dog]")).toHaveAttribute("data-visible", "false");
+  const visibleCount = await page.evaluate(() => {
+    const isVisible = (selector: string): boolean => {
+      const element = document.querySelector<HTMLElement>(selector);
+      if (!element) return false;
+      const orbitRoot = element.closest<HTMLElement>("[data-home-orbit-root]");
+      return orbitRoot
+        ? orbitRoot.getAttribute("data-orbit-active") === "true"
+        : element.getAttribute("data-visible") === "true";
+    };
+    return {
+      persons: ["[data-intro-person]", "[data-orbit-person]"].filter(isVisible).length,
+      dogs: ["[data-intro-dog]", "[data-dog-visual]"].filter(isVisible).length,
+    };
+  });
+  expect(visibleCount).toEqual({ persons: 1, dogs: 1 });
+  const readDatasets = () =>
+    page.evaluate(() => {
+      const element = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+      if (!element) return null;
+      return {
+        angle: Number(element.getAttribute("data-orbit-angle")),
+        velocity: Number(element.getAttribute("data-orbit-angular-velocity")),
+      };
+    });
+  const datasets = await readDatasets();
+  expect(datasets).not.toBeNull();
+  expect(Number.isFinite(datasets?.angle)).toBe(true);
+  expect(Number.isFinite(datasets?.velocity)).toBe(true);
+  await setIntroProgress(page, 1);
+  await expect(page.locator("[data-intro-root]")).toHaveAttribute("data-intro-progress", "1.000");
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  const finalDatasets = await readDatasets();
+  expect(finalDatasets).not.toBeNull();
+  expect(Number.isFinite(finalDatasets?.angle)).toBe(true);
+  expect(Number.isFinite(finalDatasets?.velocity)).toBe(true);
+});
+
+test("home orbit hands ownership back when reverse-scrolled below 0.94 and re-handoffs forward", async ({ page }) => {
+  const root = page.locator("[data-home-orbit-root]");
+  await setIntroProgress(page, 1);
+  await expect(page.locator("[data-intro-root]")).toHaveAttribute("data-intro-progress", "1.000");
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  await setIntroProgress(page, 0.93);
+  await expect(page.locator("[data-intro-root]")).toHaveAttribute("data-intro-progress", "0.930");
+  await expect(root).toHaveAttribute("data-orbit-active", "false");
+  await expect(root).toHaveAttribute("data-controls-enabled", "false");
+  await expect(page.locator("[data-intro-person]")).toHaveAttribute("data-visible", "true");
+  await expect(page.locator("[data-intro-dog]")).toHaveAttribute("data-visible", "true");
+  await setIntroProgress(page, 1);
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+});
+
+type LifecycleWindow = Window & {
+  __stoodCount?: number;
+  __handoffCount?: number;
+  __stoodTime?: number | null;
+  __enableTime?: number | null;
+  __handoffDetail?: { angle: number; angularVelocity: number } | null;
+};
+
+test("home orbit intro lifecycle dispatches handoff and stood exactly once with a 300ms enable", async ({ page }) => {
+  await setIntroProgress(page, 0.93);
+  await page.evaluate(() => {
+    const windowAny = window as LifecycleWindow;
+    const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!root) throw new Error("home orbit root missing");
+    windowAny.__stoodCount = 0;
+    windowAny.__handoffCount = 0;
+    windowAny.__stoodTime = null;
+    windowAny.__enableTime = null;
+    windowAny.__handoffDetail = null;
+    window.addEventListener("baozi:intro-person-stood", () => {
+      windowAny.__stoodCount = (windowAny.__stoodCount ?? 0) + 1;
+      windowAny.__stoodTime = performance.now();
+      const observer = new MutationObserver(() => {
+        if (root.getAttribute("data-controls-enabled") === "true") {
+          observer.disconnect();
+          windowAny.__enableTime = performance.now();
+        }
+      });
+      observer.observe(root, { attributes: true, attributeFilter: ["data-controls-enabled"] });
+    });
+    window.addEventListener("baozi:intro-orbit-handoff", (event: Event) => {
+      windowAny.__handoffCount = (windowAny.__handoffCount ?? 0) + 1;
+      windowAny.__handoffDetail = (event as CustomEvent<{ angle: number; angularVelocity: number }>).detail;
+    });
+  });
+  await setIntroProgress(page, 0.94);
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-controls-enabled", "false");
+  await expect(root).toHaveAttribute("data-controls-enabled", "true");
+  await page.waitForFunction(() => (window as LifecycleWindow).__enableTime !== null);
+  const timing = await page.evaluate(() => {
+    const windowAny = window as LifecycleWindow;
+    return { stoodTime: windowAny.__stoodTime, enableTime: windowAny.__enableTime };
+  });
+  expect(timing.stoodTime).not.toBeNull();
+  expect(timing.enableTime).not.toBeNull();
+  const delay = (timing.enableTime ?? NaN) - (timing.stoodTime ?? NaN);
+  expect(delay).toBeGreaterThanOrEqual(280);
+  expect(delay).toBeLessThan(500);
+  const angleAt94 = await page.evaluate(() => {
+    const element = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    return element ? Number(element.getAttribute("data-orbit-angle")) : NaN;
+  });
+  await setIntroProgress(page, 1);
+  const angleAt1 = await page.evaluate(() => {
+    const element = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    return element ? Number(element.getAttribute("data-orbit-angle")) : NaN;
+  });
+  expect(Number.isFinite(angleAt94)).toBe(true);
+  expect(Number.isFinite(angleAt1)).toBe(true);
+  expect(Math.abs(angleAt1 - angleAt94)).toBeCloseTo(Math.PI, 2);
+  const counts = await page.evaluate(() => {
+    const windowAny = window as LifecycleWindow;
+    return {
+      stoodCount: windowAny.__stoodCount ?? 0,
+      handoffCount: windowAny.__handoffCount ?? 0,
+      handoffDetail: windowAny.__handoffDetail ?? null,
+    };
+  });
+  expect(counts.stoodCount).toBe(1);
+  expect(counts.handoffCount).toBe(1);
+  expect(counts.handoffDetail).not.toBeNull();
+  expect(Number.isFinite(counts.handoffDetail?.angle)).toBe(true);
+  expect(Number.isFinite(counts.handoffDetail?.angularVelocity)).toBe(true);
+  await setIntroProgress(page, 0.98);
+  await setIntroProgress(page, 1);
+  const countsAgain = await page.evaluate(() => {
+    const windowAny = window as LifecycleWindow;
+    return { stoodCount: windowAny.__stoodCount ?? 0, handoffCount: windowAny.__handoffCount ?? 0 };
+  });
+  expect(countsAgain.stoodCount).toBe(1);
+  expect(countsAgain.handoffCount).toBe(1);
+});
+
+test("home orbit person asset failure returns the intro person", async ({ page }) => {
+  await setIntroProgress(page, 1);
+  await expect(page.locator("[data-home-orbit-root]")).toHaveAttribute("data-orbit-active", "true");
+  await expect(page.locator("[data-intro-person]")).toHaveAttribute("data-visible", "false");
+  await page.evaluate(() => {
+    const root = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!root) throw new Error("home orbit root missing");
+    root.dataset.personOrbitError = "true";
+    window.dispatchEvent(new CustomEvent("baozi:orbit-person-asset-error"));
+  });
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  await expect(page.locator("[data-person-sprite]")).toBeHidden();
+  await expect(page.locator("[data-orbit-person]")).toBeVisible();
+  await expect(page.locator("[data-intro-person]")).toHaveAttribute("data-visible", "true");
+  await expect(page.locator("[data-intro-person]")).toBeVisible();
+});
+
+test("home orbit readiness gates the intro handoff", async ({ page }) => {
+  await setIntroProgress(page, 0.93);
+  const root = page.locator("[data-home-orbit-root]");
+  await page.evaluate(() => {
+    const element = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!element) throw new Error("home orbit root missing");
+    element.dataset.orbitReady = "false";
+  });
+  await setIntroProgress(page, 0.94);
+  await expect(root).toHaveAttribute("data-orbit-active", "false");
+  await expect(page.locator("[data-intro-person]")).toHaveAttribute("data-visible", "true");
+  await expect(page.locator("[data-intro-dog]")).toHaveAttribute("data-visible", "true");
+  await page.evaluate(() => {
+    const element = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!element) throw new Error("home orbit root missing");
+    element.dataset.orbitReady = "true";
+    window.dispatchEvent(new CustomEvent("baozi:orbit-ready"));
+  });
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  await expect(page.locator("[data-intro-person]")).toHaveAttribute("data-visible", "false");
+  await expect(page.locator("[data-intro-dog]")).toHaveAttribute("data-visible", "false");
+});
+
+test("home orbit and intro sprites share the same box across the ownership boundary", async ({ page }) => {
+  await setIntroProgress(page, 0.94);
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  const readRect = (selector: string) =>
+    page.evaluate((selector) => {
+      const element = document.querySelector<HTMLElement>(selector);
+      if (!element) return null;
+      const rect = element.getBoundingClientRect();
+      return { centerX: rect.left + rect.width / 2, bottom: rect.bottom, width: rect.width, height: rect.height };
+    }, selector);
+  const orbitPerson = await readRect("[data-orbit-person]");
+  const orbitDog = await readRect("[data-dog-visual]");
+  await setIntroProgress(page, 0.9394);
+  await expect(page.locator("[data-intro-person]")).toHaveAttribute("data-visible", "true");
+  await expect(page.locator("[data-intro-dog]")).toHaveAttribute("data-visible", "true");
+  const introPerson = await readRect("[data-intro-person]");
+  const introDog = await readRect("[data-intro-dog]");
+  expect(orbitPerson).not.toBeNull();
+  expect(orbitDog).not.toBeNull();
+  expect(introPerson).not.toBeNull();
+  expect(introDog).not.toBeNull();
+  for (const [orbit, intro] of [
+    [orbitPerson!, introPerson!],
+    [orbitDog!, introDog!],
+  ] as const) {
+    for (const key of ["centerX", "bottom", "width", "height"] as const) {
+      expect(Math.abs(orbit[key] - intro[key])).toBeLessThanOrEqual(4);
+    }
+  }
+});
+
+test("home orbit reverse preview freezes the handed-off angle and direction", async ({ page }) => {
+  await setIntroProgress(page, 1);
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  await setIntroProgress(page, 0.98);
+  const readAngle = () =>
+    page.evaluate(() => {
+      const element = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+      return element ? Number(element.getAttribute("data-orbit-angle")) : NaN;
+    });
+  const angleAt98 = await readAngle();
+  await page.evaluate(() => new Promise<void>((resolve) => {
+    let remaining = 5;
+    const next = () => {
+      remaining -= 1;
+      if (remaining > 0) requestAnimationFrame(next);
+      else resolve();
+    };
+    requestAnimationFrame(next);
+  }));
+  const angleAfterRafs = await readAngle();
+  expect(Number.isFinite(angleAt98)).toBe(true);
+  expect(angleAfterRafs).toBeCloseTo(angleAt98, 6);
+  const state = await page.evaluate(() => {
+    const element = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!element) return null;
+    return {
+      angle: Number(element.getAttribute("data-orbit-angle")),
+      direction: Number(element.getAttribute("data-dog-direction")),
+    };
+  });
+  expect(state).not.toBeNull();
+  const expectedDirection = selectDogSprite({
+    angle: state!.angle,
+    angularVelocity: -1,
+    radiusX: 200,
+    radiusY: 90,
+    elapsedMovingSeconds: 0,
+    lastDirection: state!.direction,
+  }).direction;
+  expect(state!.direction).toBe(expectedDirection);
+});
+
+test("home orbit intro skip after ownership hands back and finishes the intro", async ({ page }) => {
+  await setIntroProgress(page, 0.95);
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  await page.getByRole("button", { name: "跳过动画" }).click();
+  await expect(root).toHaveAttribute("data-orbit-active", "false");
+  await expect(root).toHaveAttribute("data-controls-enabled", "false");
+  await expect(page.locator("[data-intro-final-art]")).toBeVisible();
+  await expect(page.locator("[data-intro-root]")).toHaveAttribute("data-intro-complete", "true");
+});
+
+test("home orbit disposed person-error listener does not disturb the finished intro", async ({ page }) => {
+  await setIntroProgress(page, 0.95);
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  await page.getByRole("button", { name: "跳过动画" }).click();
+  await page.evaluate(() => {
+    const element = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!element) throw new Error("home orbit root missing");
+    element.dataset.personOrbitError = "true";
+    window.dispatchEvent(new CustomEvent("baozi:orbit-person-asset-error"));
+  });
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  await expect(page.locator("[data-intro-root]")).toHaveAttribute("data-intro-complete", "true");
+  await expect(page.locator("[data-intro-final-art]")).toBeVisible();
+  await expect(root).toHaveAttribute("data-orbit-active", "false");
+});
+
+test("home orbit person asset failure keeps the dog anchor grounded", async ({ page }) => {
+  await setIntroProgress(page, 1);
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  const readAnchor = () =>
+    page.evaluate(() => {
+      const element = document.querySelector<HTMLElement>("[data-orbit-anchor]");
+      if (!element) return null;
+      const rect = element.getBoundingClientRect();
+      return { x: rect.left + rect.width / 2, y: rect.bottom };
+    });
+  const before = await readAnchor();
+  await page.evaluate(() => {
+    const element = document.querySelector<HTMLElement>("[data-home-orbit-root]");
+    if (!element) throw new Error("home orbit root missing");
+    element.dataset.personOrbitError = "true";
+    window.dispatchEvent(new CustomEvent("baozi:orbit-person-asset-error"));
+  });
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  await expect(page.locator("[data-orbit-anchor]")).toBeVisible();
+  const after = await readAnchor();
+  expect(before).not.toBeNull();
+  expect(after).not.toBeNull();
+  expect(Math.abs(after!.x - before!.x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(after!.y - before!.y)).toBeLessThanOrEqual(1);
+  await expect(page.locator("[data-intro-person]")).toBeVisible();
+});
+
+test("home orbit reverse cycle keeps canonical ownership geometry", async ({ page }) => {
+  await setIntroProgress(page, 1);
+  await setIntroProgress(page, 0.9394);
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(page.locator("[data-intro-person]")).toHaveAttribute("data-visible", "true");
+  await expect(page.locator("[data-intro-dog]")).toHaveAttribute("data-visible", "true");
+  const readRect = (selector: string) =>
+    page.evaluate((selector) => {
+      const element = document.querySelector<HTMLElement>(selector);
+      if (!element) return null;
+      const rect = element.getBoundingClientRect();
+      return { centerX: rect.left + rect.width / 2, bottom: rect.bottom, width: rect.width, height: rect.height };
+    }, selector);
+  const introPerson = await readRect("[data-intro-person]");
+  const introDog = await readRect("[data-intro-dog]");
+  await setIntroProgress(page, 0.94);
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  const orbitPerson = await readRect("[data-orbit-person]");
+  const orbitDog = await readRect("[data-dog-visual]");
+  expect(introPerson).not.toBeNull();
+  expect(introDog).not.toBeNull();
+  expect(orbitPerson).not.toBeNull();
+  expect(orbitDog).not.toBeNull();
+  for (const [intro, orbit] of [
+    [introPerson!, orbitPerson!],
+    [introDog!, orbitDog!],
+  ] as const) {
+    for (const key of ["centerX", "bottom", "width", "height"] as const) {
+      expect(Math.abs(intro[key] - orbit[key])).toBeLessThanOrEqual(4);
+    }
+  }
 });
