@@ -1,0 +1,46 @@
+---
+import "@/components/home/home-orbit.css";
+
+interface Props {
+  personSprite?: string;
+  dogSprite?: string;
+}
+
+const {
+  personSprite = "/assets/orbit/runtime/person-look-12dir.webp",
+  dogSprite = "/assets/orbit/runtime/dog-orbit-run-8dir-4f.webp",
+} = Astro.props;
+
+const assetVariables = `--orbit-person-asset: url("${personSprite}"); --orbit-dog-asset: url("${dogSprite}");`;
+---
+
+<section
+  class="home-orbit"
+  data-home-orbit-root
+  data-orbit-ready="false"
+  data-controls-enabled="false"
+  data-reduced-motion="false"
+  data-orbit-active="false"
+  data-asset-error="false"
+  data-person-orbit-src={personSprite}
+  data-dog-orbit-src={dogSprite}
+  tabindex="0"
+  aria-label="包子和小狗的首页环绕场景"
+  style={assetVariables}
+>
+  <div class="home-orbit__person" data-orbit-person aria-hidden="true">
+    <div class="home-orbit__person-sprite" data-person-sprite></div>
+    <div class="home-orbit__person-feet" data-person-feet-anchor></div>
+  </div>
+
+  <div class="home-orbit__dog-anchor" data-orbit-anchor aria-hidden="true">
+    <div class="home-orbit__dog-shadow" data-dog-shadow></div>
+    <div class="home-orbit__dog-visual" data-dog-visual>
+      <div class="home-orbit__dog-sprite" data-dog-sprite></div>
+    </div>
+  </div>
+
+  <p class="home-orbit__fallback" data-orbit-fallback role="status" hidden>
+    环绕场景暂时无法显示。
+  </p>
+</section>

@@ -1,5 +1,6 @@
 ---
 import "@/components/intro/intro.css";
+import HomeOrbit from "@/components/home/HomeOrbit.astro";
 ---
 
 <section class="intro" data-intro-root data-intro-complete="true" data-intro-phase="complete" data-intro-progress="1.000">
@@ -8,6 +9,7 @@ import "@/components/intro/intro.css";
       <img class="intro__grass-image" data-intro-grass-image src="" alt="" hidden />
     </div>
     <div class="intro__scene intro__home" data-intro-scene="home" data-active="true">
+      <HomeOrbit />
       <main class="intro__sheet" id="main">
         <section class="intro__identity" aria-labelledby="intro-title">
           <p class="intro__eyebrow">下午好，我是包子</p>

@@ -57,6 +57,7 @@
   pointer-events: none;
 }
 .intro__scene[data-active="true"] { opacity: 1; }
+.intro__home[data-active="true"] { pointer-events: auto; }
 
 .intro__sheet {
   position: relative;

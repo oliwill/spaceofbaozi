@@ -1,0 +1,124 @@
+.home-orbit {
+  --orbit-x: 0px;
+  --orbit-y: 0px;
+  --dog-scale: 0.97;
+  --dog-z: 3;
+  --shadow-opacity: 0.075;
+  --shadow-scale-x: 0.97;
+  --shadow-scale-y: 0.98;
+  --orbit-person-frame-x: 0%;
+  --orbit-person-frame-y: 0%;
+  --orbit-dog-frame-x: 0%;
+  --orbit-dog-frame-y: 0%;
+  --orbit-shadow-color: rgba(37, 35, 31, 0.16);
+  --orbit-transition-duration: 180ms;
+
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  visibility: hidden;
+  opacity: 0;
+  overflow: clip;
+  pointer-events: none;
+  transition: opacity var(--orbit-transition-duration) var(--ease-ui-out, ease-out);
+}
+
+.home-orbit[data-orbit-active="true"] {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.home-orbit__person {
+  position: absolute;
+  left: 7.5%;
+  bottom: 20%;
+  z-index: 2;
+  width: clamp(250px, 29vh, 360px);
+  aspect-ratio: 384 / 342;
+}
+
+.home-orbit__person-feet {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.home-orbit__person-sprite {
+  position: absolute;
+  inset: 0;
+  background-image: var(--orbit-person-asset);
+  background-repeat: no-repeat;
+  background-position: var(--orbit-person-frame-x) var(--orbit-person-frame-y);
+  background-size: 400% 300%;
+}
+
+.home-orbit__dog-anchor {
+  position: absolute;
+  left: var(--person-feet-x, 20%);
+  top: var(--person-feet-y, 80%);
+  z-index: var(--dog-z);
+  width: clamp(76px, 10.7vh, 116px);
+  aspect-ratio: 4 / 3;
+  transform: translate3d(var(--orbit-x), var(--orbit-y), 0) translate(-50%, -100%);
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+.home-orbit__dog-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 72%;
+  height: 10%;
+  border-radius: 50%;
+  background: var(--orbit-shadow-color);
+  opacity: var(--shadow-opacity);
+  transform: translate(-50%, 50%) scale(var(--shadow-scale-x), var(--shadow-scale-y));
+  transform-origin: 50% 50%;
+  will-change: opacity, transform;
+}
+
+.home-orbit__dog-visual {
+  position: absolute;
+  inset: 0;
+  transform: scale(var(--dog-scale));
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+.home-orbit__dog-sprite {
+  width: 100%;
+  height: 100%;
+  background-image: var(--orbit-dog-asset);
+  background-repeat: no-repeat;
+  background-position: var(--orbit-dog-frame-x) var(--orbit-dog-frame-y);
+  background-size: 400% 800%;
+}
+
+.home-orbit__fallback {
+  position: absolute;
+  left: var(--person-feet-x, 20%);
+  top: var(--person-feet-y, 80%);
+  margin: 0;
+  color: var(--ink-soft, var(--ink-light));
+  font-size: var(--fs-small, 0.9rem);
+  transform: translate(-50%, -50%);
+}
+
+.home-orbit[data-asset-error="true"] .home-orbit__dog-anchor {
+  display: none;
+}
+
+.home-orbit[data-asset-error="true"] .home-orbit__fallback {
+  display: block;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .home-orbit {
+    transition: none;
+  }
+}
