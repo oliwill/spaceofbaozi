@@ -1,0 +1,36 @@
+/* oil-motion 启动页静态舞台（D-121/D-122）：点阵纸 + 全宽草地，角色与牵引绳由 CP3+ 挂载 */
+.intro-oil-stage {
+  --oil-grid-paper: #eef0ea;
+  --oil-dot: rgba(63, 78, 82, 0.14);
+  --oil-dot-gap: 24px;
+
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background-color: var(--oil-grid-paper);
+  background-image: radial-gradient(circle, var(--oil-dot) 1px, transparent 1px);
+  background-position: 0 0;
+  background-size: var(--oil-dot-gap) var(--oil-dot-gap);
+}
+
+/* 草地资产为 4:1 含约 32% 顶部透明；可见草高 ≈ 0.68 × 渲染高度。
+   规则：渲染高度取 max(25vw, 38svh) —— 25vw 保证宽度铺满（4:1 资产），
+   38svh 保证窄屏下可见草高 ≈ 26%（D-122 的约 24% 区间）。 */
+.intro-oil-stage__grass {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: max(25vw, 38svh);
+  width: auto;
+  max-width: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (max-aspect-ratio: 3/4) {
+  .intro-oil-stage {
+    --oil-dot-gap: 18px;
+  }
+}

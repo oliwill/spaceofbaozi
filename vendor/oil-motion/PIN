@@ -1,0 +1,4 @@
+repo: https://github.com/oil-oil/oil-motion
+commit: a5a384c804183d69529a85d2dcf84a7cfc99f7e4
+vendored: 2026-08-31
+scope: scripts/ + references/ + SKILL.md + LICENSE（demo 与 readme 资产未纳入）
