@@ -1,0 +1,99 @@
+# Motion Brief — baozi.space 启动页 oil-motion（D-121）
+# 状态：v1 草案，待包子批准（approved: true 前不得进入 Seedance 生成）
+# 说明：本文件包含两份独立 Motion Brief（人物 / 嘉乐），以 YAML 多文档分隔。
+#       字段对齐 docs/animation/oil-motion/motion-brief-template.yaml 与 concept-contract.yaml。
+#       背景归属 page：两份 Brief 均要求纯色键背景，草地 / 点阵纸 / 暖白大纸由网页静态层提供。
+
+---
+schemaVersion: 1
+actor: person
+briefVersion: v1
+approved: false                 # 包子批准前不得进入 Seedance 生成
+
+identity:
+  bible: design-assets/intro/oil-motion/source/identity/person-bible.png
+  keyframes: [K2, K3]           # 人物在 K2 被拉入、K3 失衡摔倒；K0/K1 无人，K4 已退出
+
+action:
+  name: pull-stumble-fall-right
+  direction: screen-right       # 固定侧视向右，全程不转向镜头
+  durationSeconds: 3
+  fps: 48                       # 插帧目标；Seedance 原生输出后构建期插帧
+  inPlace: true                 # 原地动作，屏幕内横向位移由程序控制
+  phases:
+    - 被向右拉拽，身体前倾，双脚快步跟上（约 0.0–1.2s）
+    - 失衡：上半身超前于双脚，手臂本能摆动，帽子保持佩戴（约 1.2–2.2s）
+    - 向右摔倒并向右滑出，侧身着地趋势，不朝镜头（约 2.2–3.0s）
+
+background:
+  type: solid-magenta-key
+  requirements:
+    - 均匀纯色洋红（#FF00FF），无阴影、地面、地平线、纹理、文字
+    - 不向白描边与浅色衣物投射彩色反射
+
+anchors:                        # 构建期逐帧标记
+  - id: hand                    # 手部（牵引绳端，取朝向嘉乐一侧的手）
+  - id: ground                  # 脚底锚点
+
+constraints:
+  camera: fixed                 # 固定机位、固定焦距，全身始终在画面内
+  scale: constant               # 人物尺度稳定，摔倒时不因透视放大
+  negative:                     # 引用 concept-contract.negative 并追加人物专属项
+    - 无草地、点阵纸、纸张、地平线、阴影地面、文字或界面
+    - 无镜头运动（推拉 / 摇移 / 缩放 / 透视变化）
+    - 无人物朝镜头跌落、无尾段放大、无旋转为正面
+    - 无多余肢体、变脸、换衣、渔夫帽或眼镜消失
+    - 无硬切、停顿、动作反向、慢动作定格、end-card
+    - 无第二角色、无球、无牵引绳进入画面
+    - 纯色键背景均匀，白描边不被色键污染
+    - 摔倒方向始终为屏幕右侧，无向前（镜头方向）扑倒
+
+delivery:
+  frames: 144                   # 3s × 48fps
+  atlas: alpha-atlas            # 紧裁切 Alpha 图集，桌面 / 移动各自尺寸
+
+---
+schemaVersion: 1
+actor: jiale
+briefVersion: v1
+approved: false
+
+identity:
+  bible: design-assets/intro/oil-motion/source/identity/jiale-bible.png
+  keyframes: [K1, K2, K3]       # 嘉乐 K1 追球进入，K3 前完全冲出右界；K0 无狗，K4 已退出
+
+action:
+  name: run-in-place-right
+  direction: screen-right       # 固定侧视向右奔跑
+  durationSeconds: 2
+  fps: 48
+  inPlace: true                 # 原地奔跑循环，横向位移由程序控制
+  phases:
+    - 四足奔跑步态循环，身体水平、头部朝右（全程）
+    - 步态可无缝循环，首尾帧姿态一致（供程序循环播放）
+
+background:
+  type: solid-magenta-key
+  requirements:
+    - 均匀纯色洋红（#FF00FF），无阴影、地面、地平线、纹理、文字
+    - 白毛不被色键污染，耳朵与尾巴轮廓清晰
+
+anchors:
+  - id: collar                  # 蓝色项圈（牵引绳端）
+  - id: ground                  # 脚底锚点（腾空帧取躯干最低点投影）
+
+constraints:
+  camera: fixed
+  scale: constant               # 奔跑中体型稳定，无呼吸式缩放
+  negative:
+    - 无草地、点阵纸、纸张、地平线、阴影地面、文字或界面
+    - 无镜头运动（推拉 / 摇移 / 缩放 / 透视变化）
+    - 无转身、无回头、无朝向镜头
+    - 无多余肢体、变脸、项圈颜色变化或消失、尾巴复制
+    - 无硬切、停顿、动作反向、慢动作定格、end-card
+    - 无第二角色、无球、无牵引绳进入画面
+    - 纯色键背景均匀，白毛 / 白描边不被色键污染
+
+delivery:
+  frames: 96                    # 2s × 48fps
+  atlas: alpha-atlas
