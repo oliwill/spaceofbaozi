@@ -248,7 +248,7 @@
 - 预算结果为 `alpha-atlas` 且所有硬门通过。
 - 洋红背景不进入最终网页；白、黑、深蓝和真实草地底色上无明显色边。
 - 图集加载后帧切换没有首帧虚影和尺寸跳动。
-- 如果预算选择 `chroma-video`，本阶段停止并从 D-122 起另立决策，不继续写 WebGL 运行时。
+- 如果预算选择 `chroma-video`，本阶段停止并从 D-123 起另立决策，不继续写 WebGL 运行时。
 
 ## CP4：正式素材生产
 
@@ -563,7 +563,7 @@ Retain the same uniform solid magenta background and all other negative constrai
 | Seedance 仍生成旧草地 | 母版出现任何草地或纸张 | 拒收；只提供纯色键关键帧和新 Prompt | 包子 / Codex |
 | 人物仍朝镜头摔 | 尾段尺度增大或转为正面 | 使用 P-S3 重生成；两轮失败后重做关键帧 | 包子 / Codex |
 | 色键损伤白毛 | 多底色出现洋红边或主体被误删 | 拒收母版或改用离线 matte；不调大运行时阈值 | Harness |
-| 图集超预算 | 超过 4096 或内存门禁 | 紧裁切、分离真实独立动作、重新预算；仍失败则从 D-122 起另立决策 | Harness / Codex |
+| 图集超预算 | 超过 4096 或内存门禁 | 紧裁切、分离真实独立动作、重新预算；仍失败则从 D-123 起另立决策 | Harness / Codex |
 | 滚动仍顿挫 | 多重缓动、帧未预载或重复写 DOM | 保留单一 smoothDamp、预解码、整数帧去重 | Harness |
 | 绳子漂移 | 视觉端点误差超过 2px | 修正逐帧锚点或 Manifest，不用肉眼偏移常量补丁 | Harness |
 | Home v2 角色突然重现 | 遮罩未覆盖即显示 Home | 延后 Home 可见性，不改 Home v2 构图 | Harness |

@@ -1153,6 +1153,7 @@
 - **球退出时机：** 球在动作全程领先嘉乐，先于嘉乐滚出右界（嘉乐追球出画）；`concept-contract.yaml` 时间线新增 0.60–0.74「球滚出右界」区间。
 - **桌面草地全宽：** 桌面草地由居中条带改为全宽、左右与底边三边出血、顶边约视口高 24%（900px 视口 ≈ y684），与移动端冻结首帧的全宽草地一致；角色地面线在草叶顶边下约 70px（桌面 ≈ y755）。理由：横穿叙事要求草地延伸到画框外，角色左进右出不踩白纸；点阵纸仍占上方约 75% 保持主体地位。最终草地几何在 CP3 静态层实现时按本决策冻结。
 - **受影响文档：** `docs/animation/oil-motion/concept-contract.yaml`（timeline 新增球出画区间）、`design-assets/intro/oil-motion/source/motion-brief.yaml`（双角色 approved）、`design-assets/intro/oil-motion/source/keyframes/`（桌面 K0–K4 以全宽草地重合成）、`AGENTS.md`、`README.md`、`baozi-space-prd.md`（阶段状态）、oil-motion 计划（当前进度表）。
+- **编号说明：** D-121 原文中「若预算结果选择 `chroma-video`，停止并建立新决策（D-122 起）」为前向引用；本条已占用 D-122 编号，该停止条件的后续决策编号改为「从 D-123 起」。oil-motion 计划（根目录与 `chatGPT/` 副本）中的对应引用已同步修正；不改写 D-121 原文。
 
 ## 变更规则
 
