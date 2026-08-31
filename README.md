@@ -2,25 +2,28 @@
 
 **中华一番包子铺** — 包子的个人网站、公开档案与个人工作空间。
 
-> 当前生产代码仍运行 D-105 数字手账版本；已确认的 v2.1 目标是低对比无限点阵环境、暖白大内容纸、五个一级入口，以及可跳过的水彩剪纸开场。旧实现是迁移基线，不再是设计依据。
+> 当前 `/` 仍运行 D-105 数字手账回滚基线；当前唯一生产方向是 D-121 的 oil-motion 帧映射方案：低对比点阵纸、暖白大纸、水彩草地由网页静态层提供，Seedance 只生成角色语义动作，以及已批准的 Home v2 人物与嘉乐。当前执行 CP0.5 架构与文档同步，关键帧与 Identity Bible 确认前不生成 Seedance 动作、不制作图集。
 
 ## 技术栈
 
-- Astro 5 静态站点 + Markdown Content Collections
-- 原生 CSS；开场使用 GSAP + ScrollTrigger、DOM/CSS Sprite 和 SVG leash
+- Astro 5 静态站点 + Markdown Content Collections + TypeScript
+- 原生 CSS；现有 A1 实验使用 GSAP / ScrollTrigger、DOM/CSS Sprite 和 SVG leash
+- 启动页采用 oil-motion 帧映射：GSAP/ScrollTrigger 管理滚动进度与降级，Alpha 图集 + DOM/CSS Sprite 渲染；Home v2 首选原生 Rive Web Runtime，均须按 CP1–CP7 检查点单独放行
 - Bun 包管理与脚本运行
-- Vitest / Playwright / Sharp 将在 A0-H 与 A1 接入
+- Vitest、Playwright 与 Sharp 负责行为、视觉和素材审计
 
 ## 产品与规范
 
 - 产品与内容责任：[`baozi-space-prd.md`](./baozi-space-prd.md) v2.1
 - 全站设计规范：[`docs/design/baozi-space-design-spec.md`](./docs/design/baozi-space-design-spec.md) v2.1
-- 开场动画与素材契约：[`docs/intro/`](./docs/intro/)
+- 启动页 oil-motion 计划：[`2026-08-21-baozi-space-oil-motion-project-plan.md`](./2026-08-21-baozi-space-oil-motion-project-plan.md)（D-121）
+- 旧混合动画设计（历史）：[`2026-08-18-baozi-space-hybrid-animation-design.md`](./2026-08-18-baozi-space-hybrid-animation-design.md)
+- 旧 CP0–CP7 检查点（历史）：[`2026-08-18-baozi-space-hybrid-animation-checkpoints.md`](./2026-08-18-baozi-space-hybrid-animation-checkpoints.md)
+- 现有 A1 动画与素材契约：[`docs/intro/`](./docs/intro/)（仅约束滚动 Sprite 基线与动作参考）
 - 项目重构路线：[`docs/plans/2026-08-13-v2.1-project-restructure.md`](./docs/plans/2026-08-13-v2.1-project-restructure.md)
-- A0-H / A1 双轨计划：[`docs/plans/2026-08-13-intro-dual-track-implementation.md`](./docs/plans/2026-08-13-intro-dual-track-implementation.md)
-- 决策记录：[`docs/project/decision-log.md`](./docs/project/decision-log.md)（最新 D-108）
-- 实物素材加工：[`baozi-space-assets.md`](./baozi-space-assets.md)
-- 废弃原型、V1 spec 和中间 handoff 已删除；历史决策由 Git 与 `decision-log.md` 保留
+- 决策记录：[`docs/project/decision-log.md`](./docs/project/decision-log.md)（最新 D-121）
+- D-105 回滚与历史方向：[`docs/legacy/d-105-home.md`](./docs/legacy/d-105-home.md)
+- 废弃 V1 spec 不得恢复；历史细节从 Git、legacy 归档与 `decision-log.md` 查阅
 
 ## 本地开发
 
@@ -70,20 +73,11 @@ tests/                    # A0-H / A1 接入 Vitest 与 Playwright
 
 ## 当前阶段
 
-A0-H、桌面 A1 实现与 A0-V v1.2 生产素材轨道已经完成：
+D-121 已把启动页开场从「整屏 Seedance 视频」改为 oil-motion 帧映射方案，当前执行 CP0.5：架构与文档同步。
 
-- v2.1 设计规范、纸上拼贴决策、动画契约和资产生产契约已经归位；
-- 六组 production Sprite、C2 透明水彩草地、最终静态图、Manifest、审计和原子发布已经落地，运行时图片负载 3,474,820 bytes；
-- `/lab/intro` 已覆盖可逆八拍、placeholder / production 双轨、跳过、reduced motion、失败回退和三个桌面视口；
-- D-112 已修复 1280×720 牵引绳坐标、人物动作局部计帧，并将小狗绕圈改为脚边原地停下；
-- 当前验证结果：unit 9/9、Playwright 16/16、Astro check 0 error、静态构建 24 页。
+- 点阵纸、暖白大纸与草地由网页静态层提供；Seedance 2.5 只在纯色键背景上生成角色语义动作；
+- oil-motion 固定到提交 `a5a384c804183d69529a85d2dcf84a7cfc99f7e4`；首选 alpha-atlas + DOM/CSS Sprite，WebGL 为停止条件；
+- 关键帧 K0–K4 与 Identity Bible 确认前，不生成 Seedance 动作、不制作图集；
+- Home v2 CP0 已批准的桌面 1440×900 / 移动 390×844 静态首屏保持不变。
 
-当前门禁仍是 A1 人工视觉确认，阶段 B 首页整合尚未放行。下一步：
-
-1. 复核修正版录屏中的牵引绳和人物尺度；
-2. 关闭 82% 换场连续性、前段节奏和草地视觉权重问题；
-3. 确认人物、小狗与草地的最终印刷／像素风格方向；
-4. 后续单独确认人物与小狗头部随指针移动的素材结构；
-5. A1 通过后进入阶段 B 首页重建。
-
-当前不做完整首页重写、内容集合迁移、移动端开场、冬季素材或 Cloudflare 发布。
+后续按《baozi.space 启动页 Oil Motion 项目管理计划》的 CP1–CP7 逐 Checkpoint 放行；不得提前生成素材、修改运行时或制作 Rive。

@@ -12,9 +12,9 @@
 
 1. `docs/design/baozi-space-design-spec.md` — v2.1 全站设计事实来源；
 2. `baozi-space-prd.md` — 产品目标、信息需求、内容责任和发布门禁；
-3. `docs/project/decision-log.md` — 已确认决策，最新 D-110；
-4. `docs/plans/2026-08-13-v2.1-project-restructure.md` — 全项目阶段路线；
-5. 当前阶段的具体计划和 `docs/intro/` 契约。
+3. `docs/project/decision-log.md` — 已确认决策，最新 D-121；
+4. 根目录 `2026-08-21-baozi-space-oil-motion-project-plan.md` 与 `docs/animation/oil-motion/` 契约 — 启动页当前 CP0.5–CP7 路线；
+5. 根目录 `2026-08-18-baozi-space-hybrid-animation-design.md` 与 `2026-08-18-baozi-space-hybrid-animation-checkpoints.md`（历史）、`docs/animation/intro-shot-list.md`、`docs/plans/2026-08-13-v2.1-project-restructure.md`、当前阶段计划和 `docs/intro/` 契约。
 
 发生冲突时，设计/构图/动效以 design spec 为准，内容责任/发布门禁以 PRD 为准，后续 Decision 覆盖早期 Decision。废弃原型、V1 spec 和原始 handoff 已删除；历史只从 Git 与 `decision-log.md` 查阅，不得恢复为执行入口。
 
@@ -24,11 +24,11 @@
 
 ## Current Scope
 
-A0-H、桌面 A1 实现与 A0-V production 素材审计 / 发布已完成（D-109 / D-110）。当前门禁是用户查看 `/lab/intro` 的 production 正式视觉并确认是否进入阶段 B。
+D-121 已于 2026-08-24 确认；当前阶段为 oil-motion CP0.5：架构与文档同步。
 
-- Manifest、placeholder、六张 production Sprite、最终静态图、审计 / 发布与回退路径均已落地；
-- 桌面 `/lab/intro` 已覆盖可逆八拍、小狗原地收尾、八节点 production 截图和三桌面视口；
-- 未经用户确认不得开始阶段 B 完整首页整合；仍不得顺手迁移内容集合、删除旧路由、实现移动端开场、制作冬季素材或部署 Cloudflare。
+- 当前 `/` 仍是 D-105 数字手账回滚基线；`/lab/intro` 仍是 D-115 动作参考；Home v2 CP0 静态首屏已批准（D-118）；
+- 启动页改为 oil-motion 帧映射：点阵纸、暖白纸、草地由网页静态层提供，Seedance 只生成角色语义动作，程序控制横向几何与牵引绳；
+- CP0.5 只允许同步文档、固定 oil-motion 上游 commit、建立 Concept Contract 与 Motion Brief 模板。不得生成 Seedance 动作、制作图集、修改网站动画、迁移内容、删除旧路由、制作冬季素材或部署 Cloudflare；WebGL / Canvas 仍为停止条件，不得静默引入。
 
 ## Architecture States
 
@@ -65,14 +65,13 @@ tests/{unit/intro,e2e}/
 
 ## Intro Hard Gates
 
-- 本地 harness 不生成、补画、inpaint 或重绘生产人物、小狗、球和手写资产。
+- CP0 不生成、补画、inpaint 或重绘生产人物、小狗、球和手写资产，也不创建视频、Rive 或 `handoff-final` 二进制素材。
 - `design-assets/intro/source/` 与 reference 永不复制到 `public/` 作为生产素材。
-- 默认模式必须是 production；缺失或无效时显示稳定 HTML 首页，不自动显示 placeholder。
+- 现有 A1 默认模式必须是 production；缺失或无效时显示稳定 HTML 首页，不自动显示 placeholder。
 - placeholder 只允许开发环境 `?assetMode=placeholder` 或测试显式加载。
-- 六张生产 Sheet 固定 4×2、每组 8 帧、真实 Alpha、角色朝右、总图片负载 ≤6MB。
-- 第一拍只有芥末黄小球；随后才出现狗和人物。主运动从左向右，禁止 `scaleX(-1)`。
-- 姿态 8–10fps，空间位移连续可逆；最终人物和小狗完全静止。
-- 运行时只用 Astro、GSAP、DOM/CSS Sprite 和 SVG leash；不加 React、Canvas、Three.js、PixiJS、Rive、Lottie、Lenis 或游戏引擎。
+- D-115 的六张生产 Sheet、八帧、Alpha、朝向与负载合同继续约束现有 A1 实验，不自动成为未来视频 / Rive 合同。
+- 未来混合方案仍保持第一拍只有球、主运动因果清楚、最终静止和关键资源 ≤6MB；具体素材合同从 CP1 起冻结。
+- React、Canvas、Three.js、PixiJS、Lottie、Lenis 和游戏引擎继续禁止。Rive 仅可在 CP4 人工放行后以原生 Web Runtime 制作隔离样片；启动页 alpha-atlas 预算若选择 `chroma-video`，必须停止并建立新决策，不得静默引入 WebGL / Canvas 运行时。CP0.5 不安装、不制作、不集成。
 
 ## Code Conventions
 

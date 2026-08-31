@@ -1,0 +1,40 @@
+# Motion Brief 模板
+# 用途：CP1 阶段为每个角色（人物 / 嘉乐）生成一份 Motion Brief，
+#       锁定动作时长、帧率、纯色键、锚点与负面要求。正式生成前必须由包子批准。
+# 交付位置：design-assets/intro/oil-motion/source/motion-brief.yaml
+
+schemaVersion: 1
+actor: ""                       # person | jiale
+briefVersion: v1
+approved: false                 # 包子批准前不得进入 Seedance 生成
+
+identity:
+  bible: ""                     # 指向 Identity Bible 源文件（design-assets 非公开路径）
+  keyframes: []                 # 引用 concept-contract.keyframes 中本角色出现的帧
+
+action:
+  name: ""                      # 动作名
+  direction: screen-right       # 固定侧视向右
+  durationSeconds: 0            # 生成时长（嘉乐约 2s，人物约 3s）
+  fps: 48                       # 插帧目标
+  inPlace: true                 # 原地动作，横向位移由程序控制
+
+background:
+  type: solid-magenta-key       # 纯色键背景
+  requirements:
+    - 均匀纯色，无阴影、地面、地平线、纹理、文字
+    - 不向白毛 / 白描边投射彩色反射
+
+anchors:                        # 逐帧标记锚点
+  - id: hand                    # 人物手部（牵引绳端）
+  - id: collar                  # 嘉乐项圈（牵引绳端）
+  - id: ground                  # 脚底锚点
+
+constraints:
+  camera: fixed                 # 固定机位、固定焦距
+  scale: constant               # 主体尺度稳定
+  negative: []                  # 引用 concept-contract.negative，可追加角色专属项
+
+delivery:
+  frames: 0                     # 目标帧数
+  atlas: alpha-atlas            # 交付格式

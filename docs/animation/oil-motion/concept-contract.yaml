@@ -1,0 +1,129 @@
+# baozi.space 启动页 oil-motion Concept Contract
+# 状态：CP0.5 锁定（D-121，2026-08-24）
+# 说明：本文件是启动页角色动作生产的唯一契约。背景归属、参数空间、驱动方式与交付格式
+#       一旦锁定，下游 Motion Brief、Prompt 与运行时都必须遵守；未锁定前不得开始素材生产。
+#       字段语义对齐 oil-motion 的 references/delivery-selection.md 与 references/runtime.md。
+
+schemaVersion: 1
+project: baozi.space
+scope: intro-start-page
+decision: D-121
+upstream:
+  repo: https://github.com/oil-oil/oil-motion
+  commit: a5a384c804183d69529a85d2dcf84a7cfc99f7e4
+
+# 背景归属：page —— 主体必须透明复用。点阵纸、暖白大纸与草地由网页静态层提供，
+# Seedance 不生成任何背景。此字段无默认值，未锁定即停止（delivery-selection.md §1）。
+background_owner: page
+
+# 参数空间：一维线性进度（0..1），滚动驱动，可正向 / 停止 / 反向。
+parameter_space: linear
+
+# 驱动与时间控制（runtime.md：控制器只由 time_control 决定）
+driver: scroll
+time_control: scrub
+runtime:
+  controller: frame-scrub
+  renderer: css-sprite            # alpha-atlas 对应 DOM/CSS Sprite（background-position）
+  timeline: build/timeline.json   # 页面只读取编译生成的时间线，不维护第二份时间常量
+
+# 交付格式（由 motion_budget.py --strict 决定，见 delivery-selection.md）
+delivery:
+  preferred: alpha-atlas
+  stopOn: chroma-video            # 预算选择 chroma-video 时停止并新建决策，不静默引入 WebGL/Canvas
+  forbidden:
+    - baked-video
+    - webgl
+    - canvas
+
+# 帧率与负载预算
+fps: 48
+budget:
+  desktopAssetBytes: 4718592      # 4.5MB
+  mobileAssetBytes: 3670016       # 3.5MB
+  criticalFirstLoadBytes: 6291456 # 6MB
+  maxAtlasDimension: 4096
+  desktopDecodeMiB: 96
+  mobileDecodeMiB: 64
+
+# 角色
+actors:
+  jiale:
+    id: jiale
+    label: 嘉乐（白色比熊犬）
+    action: run-in-place-right        # 朝右原地奔跑
+    durationSeconds: 2
+    targetFrames: 96
+    anchors:
+      - collar                         # 项圈锚点（牵引绳端）
+      - ground                         # 脚底锚点
+  person:
+    id: person
+    label: 人物（包子）
+    action: pull-stumble-fall-right    # 被向右拉拽—失衡—向右摔倒
+    durationSeconds: 3
+    targetFrames: 144
+    anchors:
+      - hand                           # 手部锚点（牵引绳端）
+      - ground                         # 脚底锚点
+
+# 关键帧 K0–K4（左进右出，狗先出、人后摔出）
+keyframes:
+  - id: K0
+    desc: 空场，球尚未进入
+  - id: K1
+    desc: 黄色球先进入，嘉乐从左追入
+  - id: K2
+    desc: 绳子拉紧，人物从左被带入
+  - id: K3
+    desc: 嘉乐已越过右边界，人物向右失衡摔倒
+  - id: K4
+    desc: 嘉乐与人物均从右侧完全退出，舞台为空
+
+# 主时间线（归一化进度）
+timeline:
+  - from: 0.00
+    to: 0.08
+    event: 静态场景
+  - from: 0.08
+    to: 0.22
+    event: 黄色球从左侧进入
+  - from: 0.16
+    to: 0.52
+    event: 嘉乐追球进入
+  - from: 0.30
+    to: 0.78
+    event: 人物被拉入并尝试保持平衡
+  - from: 0.72
+    to: 0.86
+    event: 嘉乐完全冲出右侧
+  - from: 0.80
+    to: 0.95
+    event: 人物向右摔滑并完全退出
+  - from: 0.95
+    to: 1.00
+    event: 暖白纸遮罩进入 Home v2
+
+# 程序化几何（不得烧入角色图集）
+procedural:
+  - horizontalTranslation   # 屏幕内横向位移
+  - ballRotation            # 球旋转
+  - scale                   # 程序尺度（来自 Manifest / 时间线常量）
+  - leashPath               # SVG 三次贝塞尔牵引绳
+  - exitBoundary            # 退出边界与暖白纸遮罩
+
+# 负面要求（硬门，违反即拒收）
+negative:
+  - 无草地、点阵纸、纸张、地平线、阴影地面、文字或界面
+  - 无镜头运动（推拉 / 摇移 / 缩放 / 透视变化）
+  - 无人物朝镜头跌落、无尾段放大、无旋转为正面
+  - 无多余肢体、变脸、换衣、帽子或眼镜消失、项圈变化、尾巴复制
+  - 无硬切、停顿、动作反向、慢动作定格、end-card
+  - 无第二角色、无球、无牵引绳进入角色帧
+  - 纯色键背景均匀（洋红），白毛 / 白描边不被色键污染
+
+# Home v2（保持不变）
+homeV2:
+  unchanged: true
+  desktop: 1440x900
+  mobile: 390x844

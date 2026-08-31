@@ -1,0 +1,66 @@
+---
+import "@/components/home/home-orbit.css";
+
+const personSprite = "/assets/orbit/runtime/person-look-12dir.webp";
+const dogSprite = "/assets/orbit/runtime/dog-orbit-run-8dir-4f.webp";
+---
+
+<div
+  class="home-orbit"
+  data-home-orbit-root
+  data-orbit-ready="false"
+  data-orbit-active="false"
+  data-controls-enabled="false"
+  data-reduced-motion="false"
+  data-person-orbit-src={personSprite}
+  data-dog-orbit-src={dogSprite}
+  tabindex="0"
+  aria-label="嘉乐围绕人物互动插画；可用左右方向键调整位置"
+>
+  <div class="home-orbit__person" data-orbit-person aria-hidden="true">
+    <span
+      class="home-orbit__person-sprite"
+      data-person-sprite
+      data-sprite-visible="true"
+      style={`background-image: url("${personSprite}")`}
+    ></span>
+    <span
+      class="home-orbit__person-sprite-crossfade"
+      data-person-sprite-crossfade
+      data-sprite-visible="false"
+      style={`background-image: url("${personSprite}")`}
+    ></span>
+    <i class="home-orbit__person-feet" data-person-feet-anchor></i>
+  </div>
+  <div class="home-orbit__anchor" data-orbit-anchor aria-hidden="true">
+    <i class="home-orbit__shadow" data-dog-shadow></i>
+    <span class="home-orbit__dog" data-dog-visual>
+      <i
+        class="home-orbit__dog-sprite"
+        data-dog-sprite
+        data-sprite-visible="true"
+        style={`background-image: url("${dogSprite}")`}
+      ></i>
+      <i
+        class="home-orbit__dog-sprite-crossfade"
+        data-dog-sprite-crossfade
+        data-sprite-visible="false"
+        style={`background-image: url("${dogSprite}")`}
+      ></i>
+    </span>
+  </div>
+  <p class="home-orbit__fallback" data-orbit-fallback hidden>嘉乐暂时跑去玩了。</p>
+</div>
+
+<script>
+  import {
+    createHomeOrbit,
+    type HomeOrbitController,
+  } from "@/lib/home-orbit/createHomeOrbit";
+
+  type OrbitRoot = HTMLElement & { __homeOrbit?: HomeOrbitController };
+  const orbitRoot = document.querySelector<OrbitRoot>("[data-home-orbit-root]");
+  if (orbitRoot && !orbitRoot.__homeOrbit) {
+    orbitRoot.__homeOrbit = createHomeOrbit(orbitRoot);
+  }
+</script>
