@@ -1,5 +1,5 @@
 # baozi.space 启动页 oil-motion Concept Contract
-# 状态：CP0.5 锁定（D-121，2026-08-24）
+# 状态：CP0.5 锁定（D-121，2026-08-24）；D-122（2026-08-31）补充球出画区间
 # 说明：本文件是启动页角色动作生产的唯一契约。背景归属、参数空间、驱动方式与交付格式
 #       一旦锁定，下游 Motion Brief、Prompt 与运行时都必须遵守；未锁定前不得开始素材生产。
 #       字段语义对齐 oil-motion 的 references/delivery-selection.md 与 references/runtime.md。
@@ -91,6 +91,9 @@ timeline:
   - from: 0.16
     to: 0.52
     event: 嘉乐追球进入
+  - from: 0.60
+    to: 0.74
+    event: 球领先滚出右界（嘉乐追球出画，D-122）
   - from: 0.30
     to: 0.78
     event: 人物被拉入并尝试保持平衡

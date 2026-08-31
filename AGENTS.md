@@ -12,7 +12,7 @@
 
 1. `docs/design/baozi-space-design-spec.md` — v2.1 全站设计事实来源；
 2. `baozi-space-prd.md` — 产品目标、信息需求、内容责任和发布门禁；
-3. `docs/project/decision-log.md` — 已确认决策，最新 D-121；
+3. `docs/project/decision-log.md` — 已确认决策，最新 D-122；
 4. 根目录 `2026-08-21-baozi-space-oil-motion-project-plan.md` 与 `docs/animation/oil-motion/` 契约 — 启动页当前 CP0.5–CP7 路线；
 5. 根目录 `2026-08-18-baozi-space-hybrid-animation-design.md` 与 `2026-08-18-baozi-space-hybrid-animation-checkpoints.md`（历史）、`docs/animation/intro-shot-list.md`、`docs/plans/2026-08-13-v2.1-project-restructure.md`、当前阶段计划和 `docs/intro/` 契约。
 
@@ -24,11 +24,11 @@
 
 ## Current Scope
 
-D-121 已于 2026-08-24 确认；当前阶段为 oil-motion CP0.5：架构与文档同步。
+D-122 已于 2026-08-31 确认 CP1 交付（Identity Bible、K0–K4 双视口关键帧、Motion Brief、Seedance Prompt v1），并细化球先于嘉乐出画与桌面草地全宽；当前阶段为 oil-motion CP2：Seedance 动作 Pilot。
 
 - 当前 `/` 仍是 D-105 数字手账回滚基线；`/lab/intro` 仍是 D-115 动作参考；Home v2 CP0 静态首屏已批准（D-118）；
 - 启动页改为 oil-motion 帧映射：点阵纸、暖白纸、草地由网页静态层提供，Seedance 只生成角色语义动作，程序控制横向几何与牵引绳；
-- CP0.5 只允许同步文档、固定 oil-motion 上游 commit、建立 Concept Contract 与 Motion Brief 模板。不得生成 Seedance 动作、制作图集、修改网站动画、迁移内容、删除旧路由、制作冬季素材或部署 Cloudflare；WebGL / Canvas 仍为停止条件，不得静默引入。
+- CP2 由包子按批准的 Motion Brief 与 Seedance Prompt 执行 Pilot 生成：人物先行，每角色首轮最多 3 条候选，只生成纯色键背景上的角色动作。Harness 不得提前制作图集、修改网站动画、迁移内容、删除旧路由、制作冬季素材或部署 Cloudflare；WebGL / Canvas 仍为停止条件，不得静默引入。
 
 ## Architecture States
 

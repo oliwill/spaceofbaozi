@@ -8,7 +8,7 @@
 schemaVersion: 1
 actor: person
 briefVersion: v1
-approved: false                 # 包子批准前不得进入 Seedance 生成
+approved: true                  # D-122（2026-08-31）包子批准
 
 identity:
   bible: design-assets/intro/oil-motion/source/identity/person-bible.png
@@ -56,7 +56,7 @@ delivery:
 schemaVersion: 1
 actor: jiale
 briefVersion: v1
-approved: false
+approved: true                  # D-122（2026-08-31）包子批准
 
 identity:
   bible: design-assets/intro/oil-motion/source/identity/jiale-bible.png

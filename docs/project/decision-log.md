@@ -1,6 +1,6 @@
 # baozi.space V2 · 决策记录
 
-**最后更新：** 2026-08-19
+**最后更新：** 2026-08-31
 
 **规则：** 这里只记录已经确认、会约束后续工作的决策；想法和待讨论项放在 PRD 的 Open Questions 中。
 
@@ -1145,6 +1145,14 @@
 - **覆盖关系：** 覆盖 D-116 的「开场为 5–7 秒预渲染视频正常向前播放」与 D-120 的 Seedance 整屏生成输入；D-116 的 Home v2 静态首屏基线、Rive / 16 方位回退边界与「不引入 Three.js」继续有效。CP0 已冻结的 Home v2 角色区域、位置、尺寸与两角色关系保持不变。
 - **受影响文档：** `docs/project/decision-log.md`（本条）、`docs/design/baozi-space-design-spec.md`（顶部生产方向、0.1、第 7 章、第 16 章）、`baozi-space-prd.md`（0.3、4.1、4.2）、`README.md`、`AGENTS.md`（Current Scope）、根目录混合动画设计与检查点文档（标记为历史并指向 oil-motion 计划）、`docs/animation/oil-motion/`（新建 Concept Contract、Motion Brief 模板与素材目录说明）、`docs/legacy/d-105-home.md`（补充历史归档）。
 - **待办：** 本决策只完成 CP0.5 文档同步；CP1 关键帧 / Identity Bible、CP2 Seedance Pilot 与后续运行时按《Oil Motion 项目管理计划》逐 Checkpoint 放行，不提前生成素材或修改 `src` 运行时代码。
+
+### D-122 · CP1 批准、球先于嘉乐出画与桌面草地全宽
+
+- **状态：** Accepted（2026-08-31，依据包子对 CP1 草案评审的三项确认）
+- **CP1 批准：** `design-assets/intro/oil-motion/source/` 下的 Identity Bible（person / jiale）、K0–K4 双视口关键帧、Motion Brief（`approved: true`）与 Seedance Prompt v1 全部通过评审，进入 CP2 Pilot；人物 Pilot 先行，每角色首轮最多 3 条候选。
+- **球退出时机：** 球在动作全程领先嘉乐，先于嘉乐滚出右界（嘉乐追球出画）；`concept-contract.yaml` 时间线新增 0.60–0.74「球滚出右界」区间。
+- **桌面草地全宽：** 桌面草地由居中条带改为全宽、左右与底边三边出血、顶边约视口高 24%（900px 视口 ≈ y684），与移动端冻结首帧的全宽草地一致；角色地面线在草叶顶边下约 70px（桌面 ≈ y755）。理由：横穿叙事要求草地延伸到画框外，角色左进右出不踩白纸；点阵纸仍占上方约 75% 保持主体地位。最终草地几何在 CP3 静态层实现时按本决策冻结。
+- **受影响文档：** `docs/animation/oil-motion/concept-contract.yaml`（timeline 新增球出画区间）、`design-assets/intro/oil-motion/source/motion-brief.yaml`（双角色 approved）、`design-assets/intro/oil-motion/source/keyframes/`（桌面 K0–K4 以全宽草地重合成）、`AGENTS.md`、`README.md`、`baozi-space-prd.md`（阶段状态）、oil-motion 计划（当前进度表）。
 
 ## 变更规则
 
