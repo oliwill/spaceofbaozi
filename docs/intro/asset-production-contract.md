@@ -1,5 +1,7 @@
 # baozi.space 启动素材生产契约
 
+> **Approved for A1 historical implementation only. Does not govern D-121 oil-motion production.**
+
 状态：Approved  
 版本：1.0  
 日期：2026-08-13  

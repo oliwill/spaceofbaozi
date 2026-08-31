@@ -1,0 +1,57 @@
+---
+import "@/components/home-v2/home-v2-preview.css";
+
+const navItems = [
+  { label: "文章", href: "/blog" },
+  { label: "照片", href: "/photos" },
+  { label: "书影音", href: "/books" },
+  { label: "项目", href: "/projects" },
+  { label: "关于", href: "/about" },
+];
+---
+
+<section class="home-v2" aria-labelledby="home-v2-title">
+  <div class="home-v2__paper">
+    <header class="home-v2__header">
+      <p class="home-v2__weather"><span aria-hidden="true">○</span> 下午好 · 8月19日</p>
+      <nav class="home-v2__nav" aria-label="主要栏目">
+        {navItems.map((item, index) => (
+          <a class:list={["home-v2__tab", { "home-v2__tab--active": index === 0 }]} href={item.href}>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    </header>
+
+    <main class="home-v2__hero">
+      <section class="home-v2__identity">
+        <p class="home-v2__kicker">个人档案 · 001</p>
+        <h1 class="home-v2__title" id="home-v2-title">
+          <span>你好，</span>
+          <span>我是包子。</span>
+        </h1>
+        <p class="home-v2__city"><span>居住地</span><strong>上海</strong></p>
+        <p class="home-v2__intro">这里记录写作、照片、书影音，<br class="home-v2__desktop-break" />还有一些正在做的事。</p>
+        <a class="home-v2__start" href="/blog">
+          <span>从文章开始</span><span aria-hidden="true">↗</span>
+        </a>
+      </section>
+
+      <figure class="home-v2__portrait" data-role-layout="frozen" aria-label="包子与嘉乐的水彩剪纸静态构图">
+        <span class="home-v2__wash" aria-hidden="true"></span>
+        <span class="home-v2__person" aria-hidden="true"></span>
+        <span class="home-v2__dog-shadow" aria-hidden="true"></span>
+        <span class="home-v2__dog" aria-hidden="true"></span>
+      </figure>
+    </main>
+
+    <section class="home-v2__blog-peek" aria-labelledby="home-v2-blog-title">
+      <div>
+        <p>01 / 文章</p>
+        <h2 id="home-v2-blog-title">文章</h2>
+      </div>
+      <p>最近写下的文章与短记</p>
+      <span aria-hidden="true">↓</span>
+    </section>
+  </div>
+</section>

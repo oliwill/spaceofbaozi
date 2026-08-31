@@ -1,0 +1,124 @@
+{
+  "version": 2,
+  "status": "frozen",
+  "desktop": {
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "dotGridOrigin": {
+      "px": [
+        0,
+        0
+      ],
+      "normalized": [
+        0,
+        0
+      ]
+    },
+    "dotGridSpacing": {
+      "px": 24,
+      "normalized": 0.016667
+    },
+    "personFootPivot": {
+      "px": [
+        991.063,
+        698.813
+      ],
+      "normalized": [
+        0.688238,
+        0.776458
+      ]
+    },
+    "jialeCenter": {
+      "px": [
+        1178.609,
+        641.063
+      ],
+      "normalized": [
+        0.818479,
+        0.712292
+      ]
+    },
+    "jialeFootPivot": {
+      "px": [
+        1178.609,
+        698.813
+      ],
+      "normalized": [
+        0.818479,
+        0.776458
+      ]
+    },
+    "nextSectionTop": {
+      "px": 806,
+      "normalized": 0.895556
+    },
+    "stableGeometry": true,
+    "uiHidden": true,
+    "diff": {
+      "changedPixels": 29403,
+      "changedOutsideUiRegions": 0
+    }
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "dotGridOrigin": {
+      "px": [
+        0,
+        0
+      ],
+      "normalized": [
+        0,
+        0
+      ]
+    },
+    "dotGridSpacing": {
+      "px": 18,
+      "normalized": 0.046154
+    },
+    "personFootPivot": {
+      "px": [
+        179.734,
+        736.203
+      ],
+      "normalized": [
+        0.460857,
+        0.872279
+      ]
+    },
+    "jialeCenter": {
+      "px": [
+        298.281,
+        695.328
+      ],
+      "normalized": [
+        0.764824,
+        0.823848
+      ]
+    },
+    "jialeFootPivot": {
+      "px": [
+        298.281,
+        736.203
+      ],
+      "normalized": [
+        0.764824,
+        0.872279
+      ]
+    },
+    "nextSectionTop": {
+      "px": 766,
+      "normalized": 0.907583
+    },
+    "stableGeometry": true,
+    "uiHidden": true,
+    "diff": {
+      "changedPixels": 20994,
+      "changedOutsideUiRegions": 0
+    }
+  }
+}

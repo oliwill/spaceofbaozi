@@ -1,0 +1,44 @@
+---
+import HomeV2Preview from "@/components/home-v2/HomeV2Preview.astro";
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#eef0ea" />
+    <title>Home v2 静态首屏 · baozi.space</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#home-preview">跳到 Home v2 预览</a>
+    <div id="home-preview">
+    <script is:inline>
+      const captureMode = new URL(window.location.href).searchParams.get("capture");
+      if (captureMode === "review" || captureMode === "video-plate") {
+        document.body.dataset.homeV2Capture = captureMode;
+      }
+    </script>
+      <HomeV2Preview />
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: #eef0ea; }
+  body { margin: 0; }
+  a { color: inherit; }
+  .skip-link {
+    position: fixed;
+    top: 8px;
+    left: 16px;
+    z-index: 100;
+    padding: 10px 14px;
+    color: #fffdf7;
+    background: #25231f;
+    transform: translateY(-160%);
+  }
+  .skip-link:focus { transform: translateY(0); }
+</style>

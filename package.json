@@ -17,6 +17,7 @@
     "assets:intro:audit:incoming": "node scripts/intro-assets/audit-assets.mjs incoming-production",
     "assets:intro:audit:production": "node scripts/intro-assets/audit-assets.mjs production",
     "assets:intro:publish": "node scripts/intro-assets/publish-production.mjs",
+    "assets:intro:cp1": "node scripts/intro-assets/export-cp1.mjs",
     "publish": "node scripts/subset-fonts.mjs && git add -A && git commit -m \"content: update\" && git push"
   },
   "dependencies": {

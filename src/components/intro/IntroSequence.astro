@@ -1,5 +1,6 @@
 ---
 import "@/components/intro/intro.css";
+import HomeOrbit from "@/components/home/HomeOrbit.astro";
 ---
 
 <section class="intro" data-intro-root data-intro-complete="true" data-intro-phase="complete" data-intro-progress="1.000">
@@ -11,12 +12,13 @@ import "@/components/intro/intro.css";
       <main class="intro__sheet" id="main">
         <section class="intro__identity" aria-labelledby="intro-title">
           <p class="intro__eyebrow">下午好，我是包子</p>
-          <h1 class="intro__title" id="intro-title">欢迎来到我的个人空间</h1>
+          <h1 class="intro__title" id="intro-title"><span>欢迎来到</span><span>我的个人空间</span></h1>
           <p class="intro__summary">这里记录写作、照片、书影音与正在做的事。正式首页仍在建设，实验页只验证开场动作。</p>
           <a class="intro__home-link" href="/">返回当前首页 →</a>
         </section>
       </main>
       <img class="intro__final-art" data-intro-final-art src="" alt="" hidden />
+      <HomeOrbit />
     </div>
 
     <svg class="intro__leash" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
@@ -32,6 +34,10 @@ import "@/components/intro/intro.css";
       <div class="intro__sprite" data-intro-sprite="person"></div>
     </div>
 
+    <p class="intro__scroll-cue" data-intro-scroll-cue hidden>
+      <span aria-hidden="true">↓</span>
+      <span class="intro__sr-only">向下滚动继续动画</span>
+    </p>
     <button class="intro__skip" type="button" data-intro-skip>跳过动画</button>
     <output class="intro__debug" data-intro-debug hidden></output>
   </div>
@@ -51,12 +57,14 @@ import "@/components/intro/intro.css";
     const skip = root.querySelector<HTMLButtonElement>("[data-intro-skip]");
     const debug = new URL(window.location.href).searchParams.get("debugIntro") === "1";
     const debugOutput = root.querySelector<HTMLOutputElement>("[data-intro-debug]");
+    const scrollCue = root.querySelector<HTMLElement>("[data-intro-scroll-cue]");
     if (debugOutput) debugOutput.hidden = !debug;
 
     const finish = (fallbackSrc = "") => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       setFinalState(root, fallbackSrc);
       if (skip) skip.hidden = true;
+      if (scrollCue) scrollCue.hidden = true;
     };
 
     skip?.addEventListener("click", () => {
@@ -73,6 +81,7 @@ import "@/components/intro/intro.css";
         .then((manifest) => {
           root.dataset.introComplete = "false";
           if (skip) skip.hidden = false;
+          if (scrollCue) scrollCue.hidden = false;
           createIntroTimeline({
             root,
             manifest,
@@ -80,6 +89,8 @@ import "@/components/intro/intro.css";
             onComplete: () => {
               sessionStorage.setItem(SESSION_KEY, "1");
               root.dataset.introComplete = "true";
+              if (skip) skip.hidden = true;
+              if (scrollCue) scrollCue.hidden = true;
             },
           });
         })

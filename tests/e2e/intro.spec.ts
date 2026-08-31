@@ -7,6 +7,7 @@ async function setProgress(page: Page, progress: number) {
     if (!root) throw new Error("intro root missing");
     scrollTo(0, root.offsetTop + (root.scrollHeight - innerHeight) * value);
   }, progress);
+  await page.waitForFunction((expected) => document.querySelector<HTMLElement>("[data-intro-root]")?.dataset.introProgress === expected, progress.toFixed(3));
   await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
 }
 
@@ -29,18 +30,24 @@ test("ball appears before dog and person", async ({ page }) => {
   await expect(page.locator("[data-intro-dog]")).toHaveAttribute("data-visible", "true");
 });
 
-test("grass stays at the bottom and scene states are exclusive", async ({ page }) => {
-  await setProgress(page, 0.65);
+test("grass hands off continuously to the home sheet", async ({ page }) => {
   const grass = page.locator("[data-intro-scene='grass']");
+  const home = page.locator("[data-intro-scene='home']");
+  await setProgress(page, 0.65);
   await expect(grass).toHaveAttribute("data-active", "true");
-  await expect(page.locator("[data-intro-scene='home']")).toHaveAttribute("data-active", "false");
+  await expect(home).toHaveAttribute("data-active", "false");
   const grassBox = await grass.boundingBox();
   expect(grassBox).not.toBeNull();
   expect(Math.abs((grassBox?.y ?? 0) + (grassBox?.height ?? 0) - 900)).toBeLessThan(2);
 
+  await setProgress(page, 0.8);
+  await expect(grass).toHaveAttribute("data-active", "true");
+  await expect(home).toHaveAttribute("data-active", "true");
+  expect(Number(await home.evaluate((element) => getComputedStyle(element).opacity))).toBeGreaterThan(0);
+
   await setProgress(page, 0.82);
   await expect(grass).toHaveAttribute("data-active", "false");
-  await expect(page.locator("[data-intro-scene='home']")).toHaveAttribute("data-active", "true");
+  await expect(home).toHaveAttribute("data-active", "true");
 });
 
 test("all narrative checkpoints are deterministic and reversible", async ({ page }, testInfo) => {
@@ -55,19 +62,32 @@ test("all narrative checkpoints are deterministic and reversible", async ({ page
   }
 });
 
-test("dog settles beside the person without orbiting", async ({ page }) => {
+test("dog completes a perspective half-lap around the person", async ({ page }) => {
   const points = [];
-  for (const progress of [0.94, 0.955, 0.97, 0.985, 1]) {
+  for (const progress of [0.9, 0.925, 0.95, 0.975, 1]) {
     await setProgress(page, progress);
-    points.push(await page.locator("[data-intro-dog]").evaluate((element) => ({
-      x: Number((element as HTMLElement).dataset.pathX),
-      y: Number((element as HTMLElement).dataset.pathY),
-      transform: getComputedStyle(element).transform,
+    points.push(await page.locator("[data-home-orbit-root]").evaluate((element) => ({
+      angle: Number((element as HTMLElement).dataset.orbitAngle),
+      scale: Number((element as HTMLElement).dataset.dogScale),
+      layer: (element as HTMLElement).dataset.orbitLayer,
     })));
   }
-  expect(Math.max(...points.map(({ x }) => x)) - Math.min(...points.map(({ x }) => x))).toBeLessThan(2);
-  expect(Math.max(...points.map(({ y }) => y)) - Math.min(...points.map(({ y }) => y))).toBeLessThan(2);
-  expect(points.every(({ transform }) => transform === "none" || !transform.includes("rotate"))).toBe(true);
+  expect(Math.max(...points.map(({ angle }) => angle)) - Math.min(...points.map(({ angle }) => angle))).toBeGreaterThan(2);
+  expect(Math.max(...points.map(({ scale }) => scale)) - Math.min(...points.map(({ scale }) => scale))).toBeGreaterThan(0.1);
+  expect(new Set(points.map(({ layer }) => layer))).toEqual(new Set(["behind", "front"]));
+});
+
+test("final actors settle in the left identity region and remain still", async ({ page }) => {
+  await setProgress(page, 1);
+  const orbit = page.locator("[data-home-orbit-root]");
+  const person = page.locator("[data-orbit-person]");
+  const firstAngle = await orbit.getAttribute("data-orbit-angle");
+  const personBox = await person.boundingBox();
+  expect(personBox).not.toBeNull();
+  expect((personBox?.x ?? 1440) + (personBox?.width ?? 0) / 2).toBeLessThan(1440 * 0.5);
+  await page.waitForTimeout(2_000);
+  await expect(orbit).toHaveAttribute("data-orbit-angle", firstAngle ?? "");
+  await expect(page.getByRole("button", { name: "跳过动画" })).toBeHidden();
 });
 
 test("leash uses the live viewport coordinate system", async ({ browser }) => {
@@ -103,6 +123,59 @@ test("leash uses the live viewport coordinate system", async ({ browser }) => {
   await context.close();
 });
 
+test("leash follows rotated person anchors across the trip interval", async ({ browser }) => {
+  for (const viewport of [
+    { width: 1280, height: 720 },
+    { width: 1440, height: 900 },
+    { width: 1920, height: 1080 },
+  ]) {
+    const context = await browser.newContext({ viewport });
+    const page = await context.newPage();
+    await page.goto("/lab/intro");
+    for (const progress of [0.65, 0.7, 0.72, 0.75, 0.78, 0.8, 0.819]) {
+      await setProgress(page, progress);
+      const endpointErrors = await page.evaluate(async () => {
+        const manifest = await fetch("/assets/intro/production/intro-manifest.json").then((response) => response.json());
+        const stage = document.querySelector<HTMLElement>("[data-intro-stage]")!;
+        const path = document.querySelector<SVGPathElement>("[data-intro-leash]")!;
+        const stageRect = stage.getBoundingClientRect();
+        const project = (wrapperSelector: string, spriteSelector: string, anchor: readonly [number, number]) => {
+          const wrapper = document.querySelector<HTMLElement>(wrapperSelector)!;
+          const sprite = document.querySelector<HTMLElement>(spriteSelector)!;
+          const matrix = new DOMMatrix(getComputedStyle(wrapper).transform);
+          const originX = sprite.offsetWidth * 0.5;
+          const originY = sprite.offsetHeight;
+          const localX = sprite.offsetWidth * anchor[0];
+          const localY = sprite.offsetHeight * anchor[1];
+          const relativeX = localX - originX;
+          const relativeY = localY - originY;
+          return {
+            x: wrapper.offsetLeft + originX + matrix.a * relativeX + matrix.c * relativeY + matrix.e - stageRect.left,
+            y: wrapper.offsetTop + originY + matrix.b * relativeX + matrix.d * relativeY + matrix.f - stageRect.top,
+          };
+        };
+        const personFrame = Number(document.querySelector<HTMLElement>("[data-intro-sprite='person']")!.dataset.frame);
+        const dogFrame = Number(document.querySelector<HTMLElement>("[data-intro-sprite='dog']")!.dataset.frame);
+        const person = project("[data-intro-person]", "[data-intro-sprite='person']", manifest.assets.personTrip.anchors[personFrame].hand);
+        const collar = project("[data-intro-dog]", "[data-intro-sprite='dog']", manifest.assets.dogRun.anchors[dogFrame].collar);
+        const start = path.getPointAtLength(0);
+        const end = path.getPointAtLength(path.getTotalLength());
+        return {
+          hand: Math.hypot(start.x - person.x, start.y - person.y),
+          collar: Math.hypot(end.x - collar.x, end.y - collar.y),
+        };
+      });
+      expect(endpointErrors.hand, `${viewport.width}x${viewport.height} @ ${progress}`).toBeLessThan(2);
+      expect(endpointErrors.collar, `${viewport.width}x${viewport.height} @ ${progress}`).toBeLessThan(2);
+    }
+    for (const progress of [0.819, 0.8, 0.75, 0.7, 0.65]) {
+      await setProgress(page, progress);
+      await expect(page.locator("[data-intro-leash]")).toHaveAttribute("opacity", "1");
+    }
+    await context.close();
+  }
+});
+
 test("trip sequence starts from its first frame", async ({ page }) => {
   await setProgress(page, 0.65);
   await expect(page.locator("[data-intro-sprite='person']")).toHaveAttribute("data-frame", "0");
@@ -116,6 +189,7 @@ test("skip stores session completion and reveals stable content", async ({ page 
   expect(await page.evaluate(() => sessionStorage.getItem("baozi-intro-complete"))).toBe("1");
   await expect(page.locator("[data-intro-scene='home']")).toHaveAttribute("data-active", "true");
   await expect(page.locator("[data-intro-final-art]")).toHaveAttribute("src", "/assets/intro/production/intro-final-still.webp");
+  await expect(page.getByRole("button", { name: "跳过动画" })).toBeHidden();
 });
 
 test("production assets load by default", async ({ page }) => {
@@ -184,15 +258,22 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 1440, height: 900
     const context = await browser.newContext({ reducedMotion: "reduce", viewport });
     const page = await context.newPage();
     await page.goto("/lab/intro");
-    const identity = await page.locator(".intro__identity").boundingBox();
+    const identity = await page.locator(".intro__identity > *").evaluateAll((elements) => {
+      const boxes = elements.map((element) => element.getBoundingClientRect());
+      return {
+        x: Math.min(...boxes.map((box) => box.x)),
+        y: Math.min(...boxes.map((box) => box.y)),
+        right: Math.max(...boxes.map((box) => box.right)),
+        bottom: Math.max(...boxes.map((box) => box.bottom)),
+      };
+    });
     const finalArt = await page.locator("[data-intro-final-art]").boundingBox();
-    expect(identity).not.toBeNull();
     expect(finalArt).not.toBeNull();
-    const overlaps = identity !== null && finalArt !== null
+    const overlaps = finalArt !== null
       && identity.x < finalArt.x + finalArt.width
-      && identity.x + identity.width > finalArt.x
+      && identity.right > finalArt.x
       && identity.y < finalArt.y + finalArt.height
-      && identity.y + identity.height > finalArt.y;
+      && identity.bottom > finalArt.y;
     expect(overlaps).toBe(false);
     await page.screenshot({ path: testInfo.outputPath(`production-final-${viewport.width}x${viewport.height}.png`) });
     await context.close();

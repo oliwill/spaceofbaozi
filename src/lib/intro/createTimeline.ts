@@ -3,10 +3,23 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { IntroAsset, IntroManifest } from "@/lib/intro/assetManifest";
 import { frameAtProgress } from "@/lib/intro/frameAtProgress";
 import { leashPath } from "@/lib/intro/leashPath";
+import { projectActorAnchor } from "@/lib/intro/projectActorAnchor";
+import { groundAnchorOffset } from "@/lib/intro/groundAnchor";
+
+type IntroMeasurements = {
+  width: number;
+  height: number;
+  personOrigin: { x: number; y: number };
+  dogOrigin: { x: number; y: number };
+  personSize: { width: number; height: number };
+  dogSize: { width: number; height: number };
+};
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const INTRO_CHECKPOINTS = [0, 0.08, 0.25, 0.45, 0.65, 0.82, 0.94, 1] as const;
+export const INTRO_ORBIT_START = 0.9;
+export const INTRO_IDENTITY_X_RATIO = 0.28;
+export const INTRO_CHECKPOINTS = [0, 0.08, 0.25, 0.45, 0.65, 0.82, INTRO_ORBIT_START, 1] as const;
 
 type IntroTimelineOptions = {
   root: HTMLElement;
@@ -28,7 +41,7 @@ function phaseAt(progress: number): string {
   if (progress < 0.65) return "run";
   if (progress < 0.78) return "trip";
   if (progress < 0.82) return "transition";
-  if (progress < 0.94) return "stand";
+  if (progress < INTRO_ORBIT_START) return "stand";
   if (progress < 1) return "settle";
   return "complete";
 }
@@ -65,6 +78,7 @@ export function createIntroTimeline({ root, manifest, onComplete, debug = false 
   const personSprite = root.querySelector<HTMLElement>("[data-intro-sprite='person']");
   const leash = root.querySelector<SVGPathElement>("[data-intro-leash]");
   const debugOutput = root.querySelector<HTMLElement>("[data-intro-debug]");
+  const scrollCue = root.querySelector<HTMLElement>("[data-intro-scroll-cue]");
   const finalArt = root.querySelector<HTMLImageElement>("[data-intro-final-art]");
   if (!stage || !grass || !grassImage || !home || !ballWrapper || !dogWrapper || !personWrapper || !ballSprite || !dogSprite || !personSprite || !leash || !finalArt) {
     throw new Error("intro stage DOM is incomplete");
@@ -74,55 +88,78 @@ export function createIntroTimeline({ root, manifest, onComplete, debug = false 
   grass.dataset.assetMode = manifest.mode;
   grassImage.hidden = !grassAsset;
   if (grassAsset) grassImage.src = grassAsset.src;
+  root.style.setProperty("--intro-identity-x", `${INTRO_IDENTITY_X_RATIO * 100}%`);
 
   const state = { progress: 0 };
+  let measurements: IntroMeasurements | null = null;
   let completed = false;
+  let orbitActive = false;
+  let orbitHandoffSent = false;
+  const readMeasurements = (): IntroMeasurements => ({
+    width: stage.clientWidth,
+    height: stage.clientHeight,
+    personOrigin: { x: personWrapper.offsetLeft, y: personWrapper.offsetTop },
+    dogOrigin: { x: dogWrapper.offsetLeft, y: dogWrapper.offsetTop },
+    personSize: { width: personSprite.offsetWidth, height: personSprite.offsetHeight },
+    dogSize: { width: dogSprite.offsetWidth, height: dogSprite.offsetHeight },
+  });
+  const getMeasurements = (): IntroMeasurements => {
+    measurements ??= readMeasurements();
+    return measurements;
+  };
   const render = () => {
     const progress = clamp(state.progress);
-    const width = stage.clientWidth;
-    const height = stage.clientHeight;
     const phase = phaseAt(progress);
-    const isStableProductionState = progress === 1 && manifest.mode === "production";
+    const orbitPhase = range(progress, INTRO_ORBIT_START, 1);
     root.style.setProperty("--intro-progress", String(progress));
     root.dataset.introProgress = progress.toFixed(3);
     root.dataset.introPhase = phase;
     root.dataset.introComplete = String(progress === 1);
+    if (scrollCue) scrollCue.hidden = progress > 0.01;
     const grassExitPhase = range(progress, grassExitStart, grassExitEnd);
     grass.dataset.active = String(progress < grassExitEnd);
     grass.style.transform = `translate3d(0, ${grassExitPhase * 100}%, 0)`;
-    home.dataset.active = String(progress >= grassExitEnd);
-    finalArt.hidden = !isStableProductionState;
-    if (isStableProductionState) finalArt.src = manifest.fallback;
+    const homeEnterPhase = range(progress, 0.78, 0.84);
+    home.dataset.active = String(progress >= 0.78);
+    home.style.opacity = String(homeEnterPhase);
+    home.style.transform = `translate3d(0, ${mix(24, 0, homeEnterPhase)}px, 0)`;
+    finalArt.hidden = true;
     const ballPhase = range(progress, 0, 0.25);
     const runPhase = range(progress, 0.08, 0.82);
     const pulledPhase = range(progress, 0.25, 0.65);
     const tripPhase = range(progress, 0.65, 0.82);
-    const standPhase = range(progress, 0.82, 0.94);
-    const settlePhase = range(progress, 0.94, 1);
+    const standPhase = range(progress, 0.82, INTRO_ORBIT_START);
+    const settlePhase = range(progress, INTRO_ORBIT_START, 1);
+    const dogAsset = progress >= INTRO_ORBIT_START ? manifest.assets.dogSettle : manifest.assets.dogRun;
+    const personAsset = progress >= 0.82 ? manifest.assets.personStand : progress >= 0.65 ? manifest.assets.personTrip : manifest.assets.personRun;
+    const ballFrame = applySprite(ballSprite, manifest.assets.ballBounce, ballPhase);
+    const dogFrame = applySprite(dogSprite, dogAsset, progress >= INTRO_ORBIT_START ? settlePhase : runPhase);
+    const personFrame = applySprite(personSprite, personAsset, personAsset === manifest.assets.personRun ? pulledPhase : personAsset === manifest.assets.personTrip ? tripPhase : standPhase);
+    const layout = getMeasurements();
+    const dogGroundOffset = groundAnchorOffset(dogAsset.anchors, dogFrame, layout.dogSize);
+    const personRotation = progress < 0.82
+      ? mix(0, 18, range(progress, 0.65, 0.82))
+      : mix(18, 0, standPhase);
+    const personGroundOffset = groundAnchorOffset(personAsset.anchors, personFrame, layout.personSize, personRotation);
     const ballState: ActorState = {
-      x: mix(-width * 0.12, width * 0.88, ballPhase),
-      y: -Math.sin(ballPhase * Math.PI * 4) * height * 0.035,
+      x: mix(-layout.width * 0.12, layout.width * 0.88, ballPhase),
+      y: -Math.sin(ballPhase * Math.PI * 4) * layout.height * 0.035,
       rotation: ballPhase * 540,
       visible: progress < 0.45,
     };
     const dogState: ActorState = progress < 0.82
-      ? { x: mix(-width * 0.25, width * 1.28, runPhase), y: 0, rotation: 0, visible: progress >= 0.08 }
+      ? { x: mix(-layout.width * 0.25, layout.width * 1.28, runPhase), y: dogGroundOffset, rotation: 0, visible: progress >= 0.08 }
       : {
-          x: width * 0.68,
-          y: -height * 0.01,
+          x: mix(-layout.width * 0.08, layout.width * 0.21, standPhase),
+          y: -layout.height * 0.01 + dogGroundOffset,
           rotation: 0,
-          visible: !isStableProductionState,
+          visible: progress < INTRO_ORBIT_START,
         };
     const personState: ActorState = progress < 0.82
-      ? { x: mix(-width * 0.38, width * 1.08, range(progress, 0.25, 0.82)), y: progress >= 0.65 ? height * range(progress, 0.65, 0.82) * 0.1 : 0, rotation: mix(0, 18, range(progress, 0.65, 0.82)), visible: progress >= 0.25 }
-      : { x: mix(width * 0.42, width * 0.56, standPhase), y: mix(height * 0.08, 0, standPhase), rotation: mix(18, 0, standPhase), visible: !isStableProductionState };
+      ? { x: mix(-layout.width * 0.38, layout.width * 1.08, range(progress, 0.25, 0.82)), y: progress >= 0.65 ? layout.height * range(progress, 0.65, 0.82) * 0.1 + personGroundOffset : personGroundOffset, rotation: personRotation, visible: progress >= 0.25 }
+      : { x: mix(-layout.width * 0.12, layout.width * INTRO_IDENTITY_X_RATIO, standPhase), y: mix(layout.height * 0.08, 0, standPhase) + personGroundOffset, rotation: personRotation, visible: progress < INTRO_ORBIT_START };
 
-    const dogAsset = progress >= 0.94 ? manifest.assets.dogSettle : manifest.assets.dogRun;
-    const personAsset = progress >= 0.82 ? manifest.assets.personStand : progress >= 0.65 ? manifest.assets.personTrip : manifest.assets.personRun;
-    const ballFrame = applySprite(ballSprite, manifest.assets.ballBounce, ballPhase);
-    const dogFrame = applySprite(dogSprite, dogAsset, progress >= 0.94 ? settlePhase : runPhase);
-    const personFrame = applySprite(personSprite, personAsset, personAsset === manifest.assets.personRun ? pulledPhase : personAsset === manifest.assets.personTrip ? tripPhase : standPhase);
-    leash.ownerSVGElement?.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    leash.ownerSVGElement?.setAttribute("viewBox", `0 0 ${layout.width} ${layout.height}`);
     applyActor(ballWrapper, ballState);
     applyActor(dogWrapper, dogState);
     applyActor(personWrapper, personState);
@@ -135,13 +172,47 @@ export function createIntroTimeline({ root, manifest, onComplete, debug = false 
     const dogAnchor = dogAsset.anchors[dogFrame]?.collar;
     const leashVisible = personState.visible && dogState.visible && progress < 0.82 && personAnchor && dogAnchor;
     if (leashVisible) {
-      const hand = { x: personState.x + personSprite.offsetWidth * personAnchor[0], y: personWrapper.offsetTop + personState.y + personSprite.offsetHeight * personAnchor[1] };
-      const collar = { x: dogState.x + dogSprite.offsetWidth * dogAnchor[0], y: dogWrapper.offsetTop + dogState.y + dogSprite.offsetHeight * dogAnchor[1] };
+      const hand = projectActorAnchor({
+        wrapperOrigin: layout.personOrigin,
+        spriteSize: layout.personSize,
+        anchor: personAnchor,
+        translate: { x: personState.x, y: personState.y },
+        rotationDeg: personState.rotation,
+      });
+      const collar = projectActorAnchor({
+        wrapperOrigin: layout.dogOrigin,
+        spriteSize: layout.dogSize,
+        anchor: dogAnchor,
+        translate: { x: dogState.x, y: dogState.y },
+        rotationDeg: dogState.rotation,
+      });
+      personWrapper.dataset.handX = hand.x.toFixed(3);
+      personWrapper.dataset.handY = hand.y.toFixed(3);
+      dogWrapper.dataset.collarX = collar.x.toFixed(3);
+      dogWrapper.dataset.collarY = collar.y.toFixed(3);
       leash.setAttribute("d", leashPath(hand, collar, mix(4, 28, range(progress, 0.25, 0.45))));
       leash.setAttribute("opacity", "1");
     }
     else {
       leash.setAttribute("opacity", "0");
+    }
+    if (progress >= INTRO_ORBIT_START) {
+      const angle = (215 + orbitPhase * 180) * Math.PI / 180;
+      window.dispatchEvent(new CustomEvent("baozi:intro-orbit-update", {
+        detail: { angle, angularVelocity: progress < 1 ? Math.PI : 0 },
+      }));
+      orbitActive = true;
+      if (progress === 1 && !orbitHandoffSent) {
+        window.dispatchEvent(new CustomEvent("baozi:intro-orbit-handoff", {
+          detail: { angle, angularVelocity: 0 },
+        }));
+        window.dispatchEvent(new CustomEvent("baozi:intro-person-stood"));
+        orbitHandoffSent = true;
+      }
+    } else if (orbitActive) {
+      window.dispatchEvent(new CustomEvent("baozi:intro-orbit-reset"));
+      orbitActive = false;
+      orbitHandoffSent = false;
     }
     if (debug && debugOutput) debugOutput.textContent = `${phase} · ${progress.toFixed(3)} · frames ${ballFrame}/${dogFrame}/${personFrame}`;
     if (progress === 1 && !completed) {
@@ -151,6 +222,14 @@ export function createIntroTimeline({ root, manifest, onComplete, debug = false 
       completed = false;
     }
   };
+
+  const resizeObserver = new ResizeObserver(() => {
+    measurements = null;
+    render();
+  });
+  resizeObserver.observe(stage);
+  resizeObserver.observe(personSprite);
+  resizeObserver.observe(dogSprite);
 
   const timeline = gsap.timeline({ paused: true });
   timeline.to(state, { progress: 1, duration: 1, ease: "none", onUpdate: render });

@@ -1,0 +1,198 @@
+{
+  "version": 2,
+  "status": "passed",
+  "captures": {
+    "desktop": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "dotGridOrigin": {
+        "px": [
+          0,
+          0
+        ],
+        "normalized": [
+          0,
+          0
+        ]
+      },
+      "dotGridSpacing": {
+        "px": 24,
+        "normalized": 0.016667
+      },
+      "personFootPivot": {
+        "px": [
+          991.063,
+          698.813
+        ],
+        "normalized": [
+          0.688238,
+          0.776458
+        ]
+      },
+      "jialeCenter": {
+        "px": [
+          1178.609,
+          641.063
+        ],
+        "normalized": [
+          0.818479,
+          0.712292
+        ]
+      },
+      "jialeFootPivot": {
+        "px": [
+          1178.609,
+          698.813
+        ],
+        "normalized": [
+          0.818479,
+          0.776458
+        ]
+      },
+      "nextSectionTop": {
+        "px": 806,
+        "normalized": 0.895556
+      },
+      "stableGeometry": true,
+      "uiHidden": true,
+      "diff": {
+        "changedPixels": 29403,
+        "changedOutsideUiRegions": 0
+      }
+    },
+    "mobile": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "dotGridOrigin": {
+        "px": [
+          0,
+          0
+        ],
+        "normalized": [
+          0,
+          0
+        ]
+      },
+      "dotGridSpacing": {
+        "px": 18,
+        "normalized": 0.046154
+      },
+      "personFootPivot": {
+        "px": [
+          179.734,
+          736.203
+        ],
+        "normalized": [
+          0.460857,
+          0.872279
+        ]
+      },
+      "jialeCenter": {
+        "px": [
+          298.281,
+          695.328
+        ],
+        "normalized": [
+          0.764824,
+          0.823848
+        ]
+      },
+      "jialeFootPivot": {
+        "px": [
+          298.281,
+          736.203
+        ],
+        "normalized": [
+          0.764824,
+          0.872279
+        ]
+      },
+      "nextSectionTop": {
+        "px": 766,
+        "normalized": 0.907583
+      },
+      "stableGeometry": true,
+      "uiHidden": true,
+      "diff": {
+        "changedPixels": 20994,
+        "changedOutsideUiRegions": 0
+      }
+    }
+  },
+  "assets": {
+    "frames/intro-first-desktop.png": {
+      "width": 1440,
+      "height": 900,
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "alphaMin": 255,
+      "alphaMax": 255,
+      "sha256": "0a1bc795e88f40c42861f150e6fb534c25430f72425a4fdd890444b232d0e275"
+    },
+    "frames/handoff-final-desktop.png": {
+      "width": 1440,
+      "height": 900,
+      "format": "png",
+      "channels": 3,
+      "hasAlpha": false,
+      "alphaMin": null,
+      "alphaMax": null,
+      "sha256": "28e91c8ff9846f26358ca8b22d13d551ce7fa9ab223e348ff76f23f9ea016b8a"
+    },
+    "frames/intro-first-mobile.png": {
+      "width": 390,
+      "height": 844,
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "alphaMin": 255,
+      "alphaMax": 255,
+      "sha256": "c373e566f46d3b0f9432f531aba322ad07ed2e531230459df506be6b60f22dde"
+    },
+    "frames/handoff-final-mobile.png": {
+      "width": 390,
+      "height": 844,
+      "format": "png",
+      "channels": 3,
+      "hasAlpha": false,
+      "alphaMin": null,
+      "alphaMax": null,
+      "sha256": "bcf899066bdf1bd928079201a96c8cefc94869701295bde103dffcd7ec68690b"
+    },
+    "reference/person-reference.png": {
+      "width": 2400,
+      "height": 1351,
+      "format": "png",
+      "channels": 3,
+      "hasAlpha": false,
+      "alphaMin": null,
+      "alphaMax": null,
+      "sha256": "339ff2cb3c0ce1b5d88ffc8415f49cf968c998592984896102b23b885d4ba674"
+    },
+    "reference/jiale-reference.png": {
+      "width": 2400,
+      "height": 1351,
+      "format": "png",
+      "channels": 3,
+      "hasAlpha": false,
+      "alphaMin": null,
+      "alphaMax": null,
+      "sha256": "722d3da24ffa63dfe0e12599a57a06a444af9599d4d68452674295806c2a9ac7"
+    },
+    "reference/style-reference.png": {
+      "width": 2400,
+      "height": 1400,
+      "format": "png",
+      "channels": 4,
+      "hasAlpha": true,
+      "alphaMin": 255,
+      "alphaMax": 255,
+      "sha256": "4a211aca0167f536ea1d386c2d3f461f2aebf471b7ccaf7d9e75aac936403e79"
+    }
+  }
+}
