@@ -80,8 +80,10 @@ tests/{unit/intro,e2e}/
 - Astro frontmatter 承担构建期数据，无运行时全局 store 或 DI。
 - 客户端行为优先 TypeScript 模块；旧全站原生脚本仍在 `public/scripts/`，阶段迁移时干净删除。
 - 原生 CSS，无 Tailwind。v2.1 新 token 来自 design spec；不得继续扩展 BaoziHand / IoskeleyMono 旧字体系统。
-- 中文界面与注释；注释只写不明显的约束，并引用相关 D-xxx 或契约。
+- 代码自解释：命名表意、函数保持短小，不写解释性注释。注释只用于代码无法表达的约束，一句话、不写段落，并引用相关 D-xxx 或契约。界面与必要注释用中文。
 - 不引入 `any`；未知输入用 `unknown` 与验证函数。
+- 单文件不超过 500 行。现有例外：`src/styles/global.css`（D-105 遗留，阶段 C 迁移时拆分）、`src/components/home-v2/home-v2-preview.css`（CP5 接入运行时拆分）。
+- `src/` 按领域分目录组织：`components/<area>/`、`lib/<area>/`、`pages/<section>/`。新代码进入对应领域目录，不在层根平铺。
 - 新增/修改 frontmatter 字段必须同步 schema、模板、所有消费页面和发布门禁。
 
 ## Content Gates
@@ -118,3 +120,4 @@ bun run assets:intro:audit:production
 - 额外 smoke viewport：1280×720、1920×1080；reduced motion 单独截图。
 - 生产素材：自动审计 + 48 帧 contact sheet 人工检查 + 总负载声明。
 - UI 变更必须浏览器实测，不以构建通过代替视觉和交互验证。
+- 截图与录屏只作为评审材料；AI 不以自己的视觉判断放行视觉变更，视觉与构图的通过权在包子的 checkpoint 人工评审。
