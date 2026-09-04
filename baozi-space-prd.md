@@ -58,7 +58,7 @@
 |---|---|
 | 技术骨架 | Astro 5 静态站可构建；`/` 已切换为场景式 IA（D-123/D-124）：三场景一屏滚动串联 + Lenis + React islands + motion |
 | Home v2 | 作为场景 2 视觉基线（D-118 冻结构图复用），不再是独立首页 |
-| 启动页开场 | 场景 1 仍为 D-121 oil-motion alpha-atlas scrub；CP2 Seedance Pilot 由包子执行 |
+| 启动页开场 | 场景 1 仍为 D-121 oil-motion alpha-atlas scrub；动作素材为 image2 静态姿态帧（D-128），姿态缺口由包子补充 |
 | A1 `/lab/intro` | D-115 滚动 Sprite 实验保留为动作参考，不再是新开场方向 |
 | 目标 IA | 四入口（Blog / Photos / Resume / Projects）已确认并落地；thoughts→blog、ai-works→projects 迁移已执行（301 写入 `public/_redirects`）；书影音保留为归档路由 |
 | 用户正式内容 | 尚未完整批准，不满足生产发布门禁 |
@@ -70,7 +70,7 @@
 - 无限点阵只是环境，不是可拖拽或缩放的无限画布。
 - 正式页面使用真实 HTML、语义链接和稳定 URL，不把关键信息烤进图片或视频。
 - 用户个人事实、经历、介绍和正式内容不得由 AI 虚构。
-- 当前只执行 oil-motion CP0.5 架构与文档同步；关键帧与 Identity Bible 确认前，不生成 Seedance 动作、不制作图集、不修改现有动画实现。
+- 动作姿态帧经 D-128 确认由 image2 静态生成；Identity Bible 与姿态清单外的形象不得虚构，缺图一律向包子申请补充。
 
 ---
 

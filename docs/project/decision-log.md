@@ -1214,6 +1214,19 @@
 - **替代关系：** 无（新增，落实 D-026 门禁与阶段 C 迁移表 §4）；批准清单的发布规则不变，本条使其在代码层强制执行。
 - **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`src/content.config.ts`、`src/lib/content/gates.ts`（新建）、`src/components/layout/EntryList.astro`、`BookSpread.astro`、`SectionLayout.astro`、`src/pages/{index,blog,blog/[...slug],blog/tag/[tag],photos,photos/[...slug],books,books/[...slug],drinks,drinks/[...slug],music,music/[...slug],about,about/[...slug],projects,projects/[slug]}`、`src/content/_templates/blog-post.md`、`tests/unit/content/gates.test.ts`、`docs/project/content-approval-register.md`。
 
+### D-128 · 启动页动作素材弃用 Seedance 视频，改 image2 静态姿态帧
+
+- **状态：** Accepted（2026-09-04，依据包子指令「放弃通过 Seedance 生成，直接用 image2 生成的图片；缺失的图片由包子用 image2 补充」）
+- **改变原因：** CP2 的纯色键视频生成路线在执行前被放弃；整屏 Seedance 三版此前已被拒收（D-121），视频路线的身份稳定性风险不可接受。
+- **决定：**
+  - 动作素材来源改为 image2 静态姿态图 + 2026-08-31 已确认素材包；不再有视频候选、插帧与首末帧核验。
+  - 下游管线不变：清理 / 透明化 / 紧裁切 → alpha-atlas → DOM/CSS Sprite 滚动 scrub。D-121 的 `background_owner=page`、`driver=scroll`、K0–K4、SVG 牵引绳、WebGL / Canvas 停止条件全部继续有效。
+  - CP2 重定义为「姿态帧清单 → image2 生成 → Harness 核验入库」。首轮基线使用已构建图集：人物 4 帧（neutral / run / pulled-lean / fall-slide-right）、嘉乐 4 帧跑循环（contact / stretch / gathered / airborne）、球静态帧（旋转由程序驱动）。
+  - 已知姿态缺口（包子用 image2 按需补充）：**人物「踉跄」中间帧**（pulled-lean → fall-slide-right 之间，落实 D-119「先踉跄再摔倒」）；可选：摔倒触地帧。新帧规格：透明背景 PNG、侧面朝右全身、与 Identity Bible 比例一致、最长边 ≥1500px。
+  - `seedance-person-v1.txt` / `seedance-jiale-v1.txt`、`chatGPT/deliverables/seedance-upload-ready/` 降为历史参考，不再作为执行入口。
+- **替代关系：** 取代 D-121 中「Seedance 2.5 只生成纯色键背景上的语义动作」一条与计划 CP2 的视频生成定义；D-121 其余约束与 CP0/CP1 冻结项不变。
+- **受影响文档：** `docs/project/decision-log.md`（本条）、`2026-08-21-baozi-space-oil-motion-project-plan.md`（状态、CP2 节、职责）、`AGENTS.md`、`README.md`、`baozi-space-prd.md`、`docs/animation/oil-motion/concept-contract.yaml`（注释口径）。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。

@@ -73,11 +73,11 @@ tests/                    # A0-H / A1 接入 Vitest 与 Playwright
 
 ## 当前阶段
 
-D-121 已把启动页开场从「整屏 Seedance 视频」改为 oil-motion 帧映射方案；CP1 关键帧与 Identity Bible 已批准（D-122），当前进入 CP2 Seedance 动作 Pilot。
+D-121 已把启动页开场从「整屏 Seedance 视频」改为 oil-motion 帧映射方案；CP1 关键帧与 Identity Bible 已批准（D-122）；D-128（2026-09-04）进一步把动作素材从 Seedance 视频改为 image2 静态姿态帧，首轮基线图集已入库（person / jiale 各 4 帧 + 球），姿态缺口由包子按需补充。
 
-- 点阵纸、暖白大纸与草地由网页静态层提供；Seedance 2.5 只在纯色键背景上生成角色语义动作；
+- 点阵纸、暖白大纸与草地由网页静态层提供；AI 工具只生成角色姿态，不生成任何背景、文字或导航；
 - oil-motion 固定到提交 `a5a384c804183d69529a85d2dcf84a7cfc99f7e4`；首选 alpha-atlas + DOM/CSS Sprite，WebGL 为停止条件；
-- CP1 关键帧 K0–K4、Identity Bible、Motion Brief 与 Seedance Prompt 已批准（D-122）；CP2 只生成纯色键背景上的角色动作候选，不制作图集、不改运行时；
+- CP1 关键帧 K0–K4 与 Identity Bible 已批准（D-122）；CP2 重定义为姿态帧清单核验（D-128），不再有视频候选；
 - Home v2 CP0 已批准的桌面 1440×900 / 移动 390×844 静态首屏保持不变。
 
 后续按《baozi.space 启动页 Oil Motion 项目管理计划》的 CP1–CP7 逐 Checkpoint 放行；不得提前生成素材、修改运行时或制作 Rive。

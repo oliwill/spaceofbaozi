@@ -28,7 +28,7 @@
 
 - 当前 `/` 从 D-105 数字手账基线替换为场景壳（SceneRoot）：三场景在一屏滚动序列内串连，Lenis 平滑滚动驱动，场景动效用 React islands + motion（数据仍由 Astro 构建期注入）；
 - 场景 1 仍是 oil-motion 启动页：点阵纸、暖白纸、草地由网页静态层提供，alpha-atlas CSS sprite + ScrollTrigger scrub，K0–K4 球→嘉乐→人左进右出→摔入首页；人物与嘉乐资产已冻结（D-118/D-119/D-120）；
-- oil-motion CP2 Seedance Pilot 仍由包子按已批准 Motion Brief 执行；Harness 不提前制作图集或部署 Cloudflare；WebGL / Canvas 仍为停止条件，不得静默引入；
+- 动作素材路线已改为 image2 静态姿态帧（D-128），不再有 Seedance 视频 Pilot；姿态缺口由包子用 image2 按需补充，Harness 核验入库；WebGL / Canvas 仍为停止条件，不得静默引入；
 - 书影音（books/music/movies/drinks）集合保留，退出主导航，作为归档路由存在；thoughts 并入 blog、ai-works 并入 projects，逐条 301 迁移（P6）。
 
 ## Architecture States
