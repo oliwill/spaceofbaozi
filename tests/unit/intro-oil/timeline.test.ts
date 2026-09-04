@@ -41,6 +41,14 @@ describe("stateAtProgress（CP5 主时间线）", () => {
     expect(stateAtProgress(0.65).person.frameId).toBe("pulled-lean");
     expect(stateAtProgress(0.9).person.frameId).toBe("fall-slide-right");
   });
+  it("遮罩 95–98% 进入，98% 时盖满；Home v2 交接层只在 98% 后显现（CP6）", () => {
+    expect(stateAtProgress(0.94).maskOpacity).toBe(0);
+    expect(stateAtProgress(0.965).maskOpacity).toBeCloseTo(0.5, 1);
+    expect(stateAtProgress(0.98).maskOpacity).toBe(1);
+    expect(stateAtProgress(0.97).plateOpacity).toBe(0);
+    expect(stateAtProgress(0.99).plateOpacity).toBeCloseTo(0.5, 1);
+    expect(stateAtProgress(1).plateOpacity).toBe(1);
+  });
 
   it("嘉乐跑循环帧索引始终在 0..3", () => {
     for (let i = 0; i <= 100; i++) {
@@ -48,12 +56,6 @@ describe("stateAtProgress（CP5 主时间线）", () => {
       expect(f).toBeGreaterThanOrEqual(0);
       expect(f).toBeLessThanOrEqual(3);
     }
-  });
-
-  it("遮罩只在 95% 之后进入，100% 时完全不透明", () => {
-    expect(stateAtProgress(0.94).maskOpacity).toBe(0);
-    expect(stateAtProgress(0.975).maskOpacity).toBeCloseTo(0.5, 1);
-    expect(stateAtProgress(1).maskOpacity).toBe(1);
   });
 
   it("牵引绳在人物摔倒完全退出后隐藏", () => {

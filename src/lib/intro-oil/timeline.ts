@@ -1,5 +1,5 @@
 // CP5 主时间线（oil-motion 计划 §CP5 建议主时间线 + D-122 球先于嘉乐出画）。
-// 纯函数：同一个归一化进度同时决定球、嘉乐、人物、牵引绳与遮罩状态。
+// 纯函数：同一个归一化进度同时决定球、嘉乐、人物、牵引绳、遮罩与 Home v2 交接层。
 
 export interface TimelineConfig {
   /** 各角色横向位置的视口宽度百分比锚点 */
@@ -29,7 +29,8 @@ export const P = {
   personPulled: [0.55, 0.72],
   personStumble: [0.72, 0.8],
   personFall: [0.8, 0.95],
-  mask: [0.95, 1],
+  mask: [0.95, 0.98],
+  plate: [0.98, 1],
 } as const;
 
 export type PersonFrameId = "neutral" | "run" | "pulled-lean" | "fall-slide-right";
@@ -47,6 +48,8 @@ export interface IntroTimelineState {
   person: ActorState & { frameId: PersonFrameId };
   leashVisible: boolean;
   maskOpacity: number;
+  /** Home v2 定帧交接层（CP6：遮罩盖满后才显现，避免角色瞬间重现） */
+  plateOpacity: number;
 }
 
 function lerp(p: number, range: readonly [number, number], from: number, to: number): number {
@@ -111,5 +114,6 @@ export function stateAtProgress(raw: number, cfg: TimelineConfig = TIMELINE): In
     // 牵引绳：人物进场时松、拉拽期绷紧、摔倒滑出后再隐藏（manifest leash.hiddenAfter）
     leashVisible: p > P.personEnter[0] && p <= P.personFall[1],
     maskOpacity: p <= P.mask[0] ? 0 : lerp(p, P.mask, 0, 1),
+    plateOpacity: p <= P.plate[0] ? 0 : lerp(p, P.plate, 0, 1),
   };
 }

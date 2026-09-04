@@ -79,13 +79,15 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     leashPath: stage.querySelector<SVGPathElement>('[data-io="leash-path"]')!,
     mask: stage.querySelector<HTMLElement>('[data-io="mask"]')!,
     skip: stage.querySelector<HTMLButtonElement>('[data-io="skip"]')!,
+    plate: stage.querySelector<HTMLIFrameElement>('[data-io="plate"]')!,
   };
   const grass = stage.querySelector<HTMLImageElement>(".intro-oil-stage__grass")!;
   const track = stage.closest<HTMLElement>("[data-io-scroll]")!;
 
   if (reduceMotion) {
-    // CP6 降级：reduced motion 直接落终态（遮罩盖住舞台，等交接 Home v2）
+    // CP6 降级：reduced motion 直接落终态（Home v2 定帧，不播滚动动画）
     layers.mask.style.opacity = "1";
+    layers.plate.style.opacity = "1";
     layers.skip.style.display = "none";
     return;
   }
@@ -181,6 +183,7 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     }
 
     layers.mask.style.opacity = state.maskOpacity.toFixed(3);
+    layers.plate.style.opacity = state.plateOpacity.toFixed(3);
   }
 
   function tick(now: number): void {
