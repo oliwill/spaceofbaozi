@@ -4,12 +4,30 @@ import "@/components/intro-oil/intro-oil.css";
 const grassSrc = "/assets/intro/production/environment/intro-grass.webp";
 ---
 
-<section class="intro-oil-stage" data-intro-oil-stage aria-label="启动页舞台预览">
-  <img
-    class="intro-oil-stage__grass"
-    src={grassSrc}
-    alt=""
-    aria-hidden="true"
-    draggable="false"
-  />
-</section>
+<div class="io-scroll" data-io-scroll>
+  <section class="intro-oil-stage" data-intro-oil-stage aria-label="oil-motion 启动页舞台">
+    <img
+      class="intro-oil-stage__grass"
+      src={grassSrc}
+      alt=""
+      aria-hidden="true"
+      draggable="false"
+    />
+    <!-- 角色层默认隐藏，运行时就绪后逐层点亮；无 JS 时保留静态点阵 + 草地 -->
+    <div class="io-sprite io-ball" data-io="ball" aria-hidden="true"></div>
+    <div class="io-sprite io-jiale" data-io="jiale" aria-hidden="true"></div>
+    <svg class="io-leash" data-io="leash" aria-hidden="true">
+      <path data-io="leash-path" fill="none" />
+    </svg>
+    <div class="io-sprite io-person" data-io="person" aria-hidden="true"></div>
+    <div class="io-mask" data-io="mask" aria-hidden="true"></div>
+    <button class="io-skip" data-io="skip" type="button">跳过开场 →</button>
+  </section>
+</div>
+
+<script>
+  import { initIntroOilRuntime } from "@/components/intro-oil/runtime";
+
+  const stage = document.querySelector<HTMLElement>("[data-intro-oil-stage]");
+  if (stage) initIntroOilRuntime(stage);
+</script>

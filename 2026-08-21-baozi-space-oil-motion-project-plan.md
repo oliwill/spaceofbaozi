@@ -77,6 +77,8 @@
 | D-121 文档同步 | 已通过 | CP0.5 出口评审 2026-08-31 通过：单一路线、历史标记、WebGL 停止条件 |
 | CP1 关键帧与 Identity Bible | 已批准 | D-122（2026-08-31）：双角色 Bible、K0–K4 双视口、Motion Brief、Prompt v1 |
 | 角色动作素材 | 首轮基线已入库 | D-128（2026-09-04）：弃用 Seedance 视频，改 image2 静态姿态帧；人物踉跄中间帧等缺口由包子按需补充 |
+| CP3 图集预算与挂载 | 已通过 | 预算预检 + `/lab/intro-oil` 静态舞台（92f214f）；alpha-atlas 路线，无 chroma-video 停止条件触发 |
+| CP5 运行时主时间线 | 待评审 | 2026-09-04 实现：ScrollTrigger targetProgress → smoothDamp → stateAtProgress 纯函数 → DOM；八进度点 + 反向 + 移动 + reduced-motion 实测通过；截图在 `design-assets/lab-review/intro-oil/`，视觉通过权归包子 |
 
 **关键路径：** D-121 → Identity Bible / K0–K4 → 人物 Pilot → Alpha Atlas 预算 → 正式素材 → 运行时 → 五视口 QA → 发布。
 
