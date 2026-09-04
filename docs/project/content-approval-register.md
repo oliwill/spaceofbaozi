@@ -56,7 +56,7 @@
 | Blog | `src/content/blog/welcome-to-baozi-space.md` | 已知占位 | 公开 | Draft | 用户已确认不展示；阶段 C 设为草稿或另行 Retire |
 | Blog | `src/content/blog/jiangjian-niuxiaopai.md` | 迁移旧内容 | 公开 | Pending | |
 | Blog | `src/content/blog/niuwei-gutang.md` | 迁移旧内容 | 公开 | Pending | |
-| Blog | `src/content/blog/ryoutei-menu-05.md` | 迁移旧内容；Blog 首发设计样本（`Design-ready / Publication pending`） | 公开 | Edit → 待 Approve | 2026-09-04 已完成登记修订：引文引号修正并署名「——又吉直树《火花》」；Milkboy 统一为 Milk Boy 并补 [M-1 官方 2019 记录](https://www.m-1gp.com/archive/2019/)；补充 description 与 tags；轻度校对三处衍字/标点。链接检查：BV1yy4y14775、BV1K441197xF、网易云、小宇宙均 200；BV1zJ411s7gU curl 返回 412（B 站反爬，需浏览器人工确认）。差异待包子复核后 Approve |
+| Blog | `src/content/blog/ryoutei-menu-05.md` | 迁移旧内容；Blog 首发设计样本 | 公开 | **Approve**（2026-09-04） | 2026-09-04 登记修订完成并由包子批准：引文署名「——又吉直树《火花》」、Milk Boy 正名 + M-1 官方来源、description/tags、三处校对。Blog 首发门禁计数：1 |
 | Blog | `src/content/blog/roasted-chicken-wings.md` | 迁移旧内容 | 公开 | Pending | |
 | Blog | `src/content/blog/biomed-supply-chain.md` | 迁移/现有内容 | 公开 | Pending | |
 | Blog | `src/content/blog/unsplash-daily-image.md` | 迁移/现有内容 | 公开 | Pending | |
