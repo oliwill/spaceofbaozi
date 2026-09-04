@@ -1,0 +1,42 @@
+---
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import ShellLayout from "@/components/layout/ShellLayout.astro";
+
+export const getStaticPaths = (async () => {
+  const entries = await getCollection("projects", ({ data }) => !data.draft);
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<ShellLayout title={`${entry.data.title} · 项目 · baozi.space`} description={entry.data.intro}>
+  <article class="section-shell paper-page">
+    <header class="section-header">
+      <span class="section-kicker">Projects · 项目</span>
+      <h1>{entry.data.title}</h1>
+      <p class="entry-meta">
+        <time datetime={entry.data.date.toISOString()}>
+          {entry.data.date.toLocaleDateString("zh-CN")}
+        </time>
+      </p>
+      <p>{entry.data.intro}</p>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    {entry.data.link && (
+      <p class="link-out">
+        <a href={entry.data.link} target="_blank" rel="noopener noreferrer">
+          项目链接 ↗
+        </a>
+      </p>
+    )}
+    <a class="back-list" href="/projects">← 全部项目</a>
+  </article>
+</ShellLayout>

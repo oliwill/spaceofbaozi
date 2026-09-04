@@ -5,7 +5,9 @@
 更新时间：2026-08-19  
 适用范围：品牌、信息架构、视觉、内容、动效、插画素材、响应式与前端实现
 
-**当前生产方向：B-lite 点阵纸 + 水彩草地 + 人物与嘉乐。** 开场执行 oil-motion 帧映射路线（决策 D-121，见根目录《baozi.space 启动页 Oil Motion 项目管理计划》与 `docs/animation/oil-motion/`）：点阵纸、暖白大纸与草地由网页静态层提供，Seedance 2.5 只在纯色键背景上生成角色语义动作，oil-motion 负责帧级生产与滚动进度映射，程序负责横向几何与牵引绳。旧「5–7 秒整屏 Seedance 视频」路线已标记为历史。当前处于 CP0.5：架构与文档同步；关键帧与 Identity Bible 确认前，不生成 Seedance 动作、不制作图集、不改动动画实现。
+**当前生产方向：B-lite 点阵纸 + 水彩草地 + 人物与嘉乐。** 开场执行 oil-motion 帧映射路线（决策 D-121，见根目录《baozi.space 启动页 Oil Motion 项目管理计划》与 `docs/animation/oil-motion/`）：点阵纸、暖白大纸与草地由网页静态层提供，Seedance 2.5 只在纯色键背景上生成角色语义动作，oil-motion 负责帧级生产与滚动进度映射，程序负责横向几何与牵引绳。旧「5–7 秒整屏 Seedance 视频」路线已标记为历史。
+
+**IA 与运行时：** 站点已切换为场景式 IA（D-123/D-124）：启动页 → 首页 → 项目矩阵三场景一屏滚动串联（Lenis 平滑滚动 + React islands + motion），首页主 tab 为 Blog / Photos / Resume / Projects；文章、相册（含灯箱）、简历、项目页为传统文档页。启动页仍为 alpha-atlas CSS sprite（D-121），Canvas / WebGL 仍是停止条件。
 
 ---
 

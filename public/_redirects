@@ -1,0 +1,12 @@
+# baozi.space URL 迁移（阶段 C，D-123）：逐条 301，Cloudflare Pages 读取
+/thoughts/friends-reunion  /blog/friends-reunion  301
+/thoughts/listenhub-embed  /blog/listenhub-embed  301
+/thoughts/oppenheimer-cast  /blog/oppenheimer-cast  301
+/thoughts/read-me  /blog/read-me  301
+/thoughts/reading-outline  /blog/reading-outline  301
+/thoughts/spring-visit  /blog/spring-visit  301
+/thoughts/webpage-as-room  /blog/webpage-as-room  301
+/thoughts  /blog  301
+/ai-works/first-experiment  /projects/first-experiment  301
+/ai-works  /projects  301
+/about/me  /resume  301

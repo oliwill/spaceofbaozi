@@ -1,13 +1,34 @@
 ---
 import { getCollection } from "astro:content";
-import SectionLayout from "@/components/layout/SectionLayout.astro";
+import ShellLayout from "@/components/layout/ShellLayout.astro";
 import EntryList from "@/components/layout/EntryList.astro";
+import Lightbox from "@/components/photos/Lightbox";
 import { getSection } from "@/lib/sections";
 
 const section = getSection("photos")!;
 const entries = await getCollection("photos");
+
+// 灯箱数据：只取有封面的公开相册（D-031：alt 必填，用标题充当）
+const lightboxItems = entries
+  .filter((entry) => !entry.data.draft && entry.data.cover)
+  .sort((a, b) => +b.data.date - +a.data.date)
+  .map((entry) => ({
+    slug: entry.id,
+    title: entry.data.title,
+    src: entry.data.cover!,
+    alt: entry.data.title,
+    description: entry.data.description || undefined,
+  }));
 ---
 
-<SectionLayout section={section}>
-  <EntryList entries={entries} />
-</SectionLayout>
+<ShellLayout title="照片 · baozi.space" description={section.desc}>
+  <div class="section-shell paper-page">
+    <header class="section-header">
+      <span class="section-kicker">{section.number} · {section.zh}</span>
+      <h1>{section.title}</h1>
+      <p>{section.desc}</p>
+    </header>
+    <EntryList entries={entries} emptyHint="相册整理好后会出现在这里。目前只有一张待放入的真实照片。" />
+  </div>
+  <Lightbox client:load items={lightboxItems} />
+</ShellLayout>

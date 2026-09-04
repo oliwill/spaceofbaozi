@@ -1,13 +1,13 @@
 ---
-import type { CollectionEntry, CollectionKey } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import type { EntrySchemaCollectionKey } from "@/lib/sections";
 
 interface Props {
-  entries: CollectionEntry<CollectionKey>[];
+  entries: CollectionEntry<EntrySchemaCollectionKey>[];
   emptyHint?: string;
   /** 传入时标签渲染为筛选链接（如 "/blog/tag"，仅 blog 列表传入） */
   tagBaseHref?: string;
 }
-
 const {
   entries,
   emptyHint = "这一页还在等待真实内容。你可以用 Markdown 往对应 content 目录里加条目。",
@@ -37,6 +37,7 @@ const sorted = [...entries]
               src={entry.data.cover}
               alt={entry.data.title}
               loading="lazy"
+              decoding="async"
             />
           )}
           <div class="entry-meta">

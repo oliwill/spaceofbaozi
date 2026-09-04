@@ -1,0 +1,426 @@
+---
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#eef0ea" />
+    <title>toss 手法评审 demo · baozi.space</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到 demo 内容</a>
+    <p class="review-badge">评审 demo：toss 手法 · 不进生产 · 向下滚动看 B</p>
+
+    <main id="main">
+      <section class="word-demo" aria-labelledby="word-demo-title">
+        <div class="word-demo__paper">
+          <p class="demo-kicker">A · 词级 stagger 入场</p>
+          <h1 id="word-demo-title" class="word-demo__title" aria-label="你好，我是包子。">
+            <span class="toss-word" aria-hidden="true"><span class="toss-word__inner">你好，</span></span>
+            <span class="toss-word" aria-hidden="true"><span class="toss-word__inner">我是</span></span>
+            <span class="toss-word" aria-hidden="true"><span class="toss-word__inner">包子。</span></span>
+          </h1>
+          <p class="demo-note">
+            每个词从自己的遮罩盒内上浮：y 100% → 0，opacity 0 → 1，0.06s 错峰，0.6s 完成。
+          </p>
+          <div class="demo-actions">
+            <button class="demo-button" type="button" data-word-replay>重播词级入场</button>
+            <span class="demo-status" data-word-status aria-live="polite">页面加载时已自动播放一次</span>
+            <a class="demo-next" href="#clip-demo">向下看 clip-path 转场 ↓</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="clip-demo" id="clip-demo" aria-labelledby="clip-demo-title">
+        <div class="clip-demo__stage">
+          <p class="clip-demo__underlay" aria-hidden="true">下一场景 · 点阵纸</p>
+          <div class="clip-demo__target" aria-hidden="true"></div>
+          <div class="clip-demo__hud" aria-hidden="true">
+            <span data-clip-phase>等待滚动：画面静止</span>
+            <span class="clip-demo__percent" data-clip-progress>0%</span>
+            <span class="clip-demo__meter"><i data-clip-bar></i></span>
+          </div>
+          <article class="clip-demo__card">
+            <p class="demo-kicker">B · clip-path 圆角收缩转场</p>
+            <h2 id="clip-demo-title">滚动到 65% 后，纸面收进虚线框</h2>
+            <p>
+              0–65% 静止；65–78% 收缩到虚线目标框；78–100% 上移淡出，露出下层点阵纸。
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      import { animate, stagger } from "motion";
+      import { gsap } from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const replayButton = document.querySelector<HTMLButtonElement>("[data-word-replay]");
+      const wordStatus = document.querySelector<HTMLElement>("[data-word-status]");
+      const clipPhase = document.querySelector<HTMLElement>("[data-clip-phase]");
+      const clipProgress = document.querySelector<HTMLElement>("[data-clip-progress]");
+      const clipBar = document.querySelector<HTMLElement>("[data-clip-bar]");
+      let wordAnimation: ReturnType<typeof animate> | null = null;
+
+      const playWords = (source: "load" | "replay") => {
+        wordAnimation?.stop();
+        wordAnimation = animate(
+          ".toss-word__inner",
+          { y: ["100%", "0%"], opacity: [0, 1] },
+          { delay: stagger(0.06), duration: 0.6, ease: [0.6, 0, 0, 0.6] },
+        );
+        if (wordStatus) wordStatus.textContent = source === "load" ? "已自动播放一次" : "已重播";
+      };
+
+      const updateClipHud = (progress: number) => {
+        if (!clipPhase || !clipProgress || !clipBar) return;
+        const percent = Math.round(progress * 100);
+        clipProgress.textContent = `${percent}%`;
+        clipBar.style.transform = `scaleX(${progress})`;
+        clipPhase.textContent = progress < 0.65
+          ? "0–65%：画面保持静止"
+          : progress < 0.78
+            ? "65–78%：clip-path 收进虚线框"
+            : progress < 1
+              ? "78–100%：整体上移并淡出"
+              : "100%：下一场景露出";
+      };
+
+      if (reduced) {
+        if (replayButton) {
+          replayButton.disabled = true;
+          replayButton.textContent = "reduced-motion 已显示终态";
+        }
+        if (wordStatus) wordStatus.textContent = "静态终态";
+        updateClipHud(1);
+        if (clipPhase) clipPhase.textContent = "reduced-motion：直接显示终态";
+      } else {
+        playWords("load");
+        replayButton?.addEventListener("click", () => playWords("replay"));
+        updateClipHud(0);
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: ".clip-demo",
+              start: "top top",
+              end: "bottom bottom",
+              scrub: true,
+              onUpdate: (self) => updateClipHud(self.progress),
+            },
+          })
+          .to(
+            ".clip-demo__card",
+            {
+              clipPath: "inset(8% 6% round 24px)",
+              ease: "none",
+              duration: 0.13,
+            },
+            0.65,
+          )
+          .to(
+            ".clip-demo__card",
+            { yPercent: -30, opacity: 0.2, ease: "none", duration: 0.22 },
+            0.78,
+          );
+      }
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: #eef0ea;
+  }
+
+  body {
+    margin: 0;
+    color: #25231f;
+    background-color: #eef0ea;
+    background-image: radial-gradient(circle, rgba(63, 78, 82, 0.14) 1px, transparent 1px);
+    background-size: 24px 24px;
+    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  }
+
+  .skip-link {
+    position: fixed;
+    top: 8px;
+    left: 16px;
+    z-index: 100;
+    padding: 10px 14px;
+    color: #fffdf7;
+    background: #25231f;
+    transform: translateY(-160%);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  .review-badge {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    z-index: 20;
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px solid rgba(37, 35, 31, 0.14);
+    border-radius: 999px;
+    color: #67635b;
+    background: rgba(255, 253, 247, 0.9);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    transform: translateX(-50%);
+    backdrop-filter: blur(6px);
+  }
+
+  .word-demo {
+    display: grid;
+    min-height: 100svh;
+    padding: clamp(5rem, 12vh, 8rem) clamp(1.5rem, 5vw, 5rem) clamp(2rem, 6vh, 4rem);
+    place-items: center;
+  }
+
+  .word-demo__paper {
+    width: min(100%, 980px);
+    padding: clamp(2.5rem, 8vw, 6rem);
+    background: #fffdf7;
+    box-shadow: 0 8px 30px rgba(46, 48, 42, 0.1);
+  }
+
+  .demo-kicker {
+    margin: 0 0 1rem;
+    color: #b8513d;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .word-demo__title {
+    margin: 0;
+    font-family: "Songti SC", "STSong", "SimSun", serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 500;
+    line-height: 1.12;
+  }
+
+  .toss-word {
+    display: inline-block;
+    overflow: hidden;
+    border-bottom: 2px solid rgba(184, 81, 61, 0.28);
+    background: rgba(215, 170, 63, 0.08);
+    vertical-align: bottom;
+  }
+
+  .toss-word__inner {
+    display: inline-block;
+    will-change: transform, opacity;
+  }
+
+  .demo-note {
+    max-width: 38rem;
+    margin: 2rem 0 0;
+    color: #67635b;
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+  .demo-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .demo-button,
+  .demo-next {
+    padding: 0.65rem 0.85rem;
+    border: 1px solid rgba(37, 35, 31, 0.16);
+    border-radius: 999px;
+    color: #284d5b;
+    background: #fffdf7;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+
+  .demo-button {
+    cursor: pointer;
+  }
+
+  .demo-button:disabled {
+    cursor: default;
+    opacity: 0.55;
+  }
+
+  .demo-status {
+    color: #67635b;
+    font-size: 0.82rem;
+  }
+
+  .clip-demo {
+    min-height: 300vh;
+    scroll-margin-top: 0;
+  }
+
+  .clip-demo__stage {
+    position: sticky;
+    top: 0;
+    display: grid;
+    height: 100svh;
+    overflow: hidden;
+    place-items: center;
+    isolation: isolate;
+  }
+
+  .clip-demo__underlay {
+    z-index: 1;
+    margin: 0;
+    color: rgba(63, 78, 82, 0.42);
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+  }
+
+  .clip-demo__target {
+    position: absolute;
+    inset: 8% 6%;
+    z-index: 3;
+    border: 1px dashed rgba(40, 77, 91, 0.55);
+    border-radius: 24px;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .clip-demo__hud {
+    position: absolute;
+    top: 64px;
+    left: 50%;
+    z-index: 4;
+    display: grid;
+    grid-template-columns: auto auto 120px;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 8px 10px;
+    border: 1px solid rgba(37, 35, 31, 0.14);
+    border-radius: 999px;
+    color: #67635b;
+    background: rgba(255, 253, 247, 0.92);
+    font-size: 12px;
+    transform: translateX(-50%);
+    backdrop-filter: blur(6px);
+  }
+
+  .clip-demo__percent {
+    min-width: 3ch;
+    color: #284d5b;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .clip-demo__meter {
+    width: 120px;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(40, 77, 91, 0.14);
+  }
+
+  .clip-demo__meter i {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #284d5b;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .clip-demo__card {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    align-content: center;
+    padding: clamp(2rem, 7vw, 7rem);
+    background: #fffdf7;
+    box-shadow: 0 8px 30px rgba(46, 48, 42, 0.1);
+    clip-path: inset(0 0 round 0);
+    will-change: transform, opacity, clip-path;
+  }
+
+  .clip-demo__card h2 {
+    max-width: 12em;
+    margin: 0;
+    font-family: "Songti SC", "STSong", "SimSun", serif;
+    font-size: clamp(2.4rem, 6vw, 5.5rem);
+    font-weight: 500;
+    line-height: 1.16;
+  }
+
+  .clip-demo__card p:last-child {
+    max-width: 35rem;
+    margin: 1.5rem 0 0;
+    color: #67635b;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 767px) {
+    .review-badge {
+      max-width: calc(100vw - 2rem);
+      white-space: nowrap;
+    }
+
+    .word-demo__paper {
+      padding: 2rem 1.25rem;
+    }
+
+    .clip-demo__hud {
+      grid-template-columns: 1fr auto;
+      width: calc(100vw - 2rem);
+      border-radius: 16px;
+    }
+
+    .clip-demo__meter {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    .clip-demo__card {
+      padding: 5.5rem 1.25rem 2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .toss-word__inner {
+      opacity: 1;
+      transform: none;
+    }
+
+    .clip-demo__card {
+      clip-path: inset(8% 6% round 24px);
+      opacity: 0.2;
+      transform: translateY(-30%);
+    }
+  }
+  astro-dev-toolbar {
+    display: none !important;
+  }
+
+</style>

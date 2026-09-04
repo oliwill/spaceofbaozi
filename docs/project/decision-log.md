@@ -1,6 +1,6 @@
 # baozi.space V2 · 决策记录
 
-**最后更新：** 2026-08-31
+**最后更新：** 2026-09-01
 
 **规则：** 这里只记录已经确认、会约束后续工作的决策；想法和待讨论项放在 PRD 的 Open Questions 中。
 
@@ -1153,7 +1153,54 @@
 - **球退出时机：** 球在动作全程领先嘉乐，先于嘉乐滚出右界（嘉乐追球出画）；`concept-contract.yaml` 时间线新增 0.60–0.74「球滚出右界」区间。
 - **桌面草地全宽：** 桌面草地由居中条带改为全宽、左右与底边三边出血、顶边约视口高 24%（900px 视口 ≈ y684），与移动端冻结首帧的全宽草地一致；角色地面线在草叶顶边下约 70px（桌面 ≈ y755）。理由：横穿叙事要求草地延伸到画框外，角色左进右出不踩白纸；点阵纸仍占上方约 75% 保持主体地位。最终草地几何在 CP3 静态层实现时按本决策冻结。
 - **受影响文档：** `docs/animation/oil-motion/concept-contract.yaml`（timeline 新增球出画区间）、`design-assets/intro/oil-motion/source/motion-brief.yaml`（双角色 approved）、`design-assets/intro/oil-motion/source/keyframes/`（桌面 K0–K4 以全宽草地重合成）、`AGENTS.md`、`README.md`、`baozi-space-prd.md`（阶段状态）、oil-motion 计划（当前进度表）。
-- **编号说明：** D-121 原文中「若预算结果选择 `chroma-video`，停止并建立新决策（D-122 起）」为前向引用；本条已占用 D-122 编号，该停止条件的后续决策编号改为「从 D-123 起」。oil-motion 计划（根目录与 `chatGPT/` 副本）中的对应引用已同步修正；不改写 D-121 原文。
+### D-123 · 场景式 IA 重构
+
+- **状态：** Accepted（2026-09-03，依据《baozi-scene-ia-rebuild-plan.md》评审通过）
+- **决定：** 站点架构从 v2.1「五入口文档式」重构为「一屏下滑切换专场」的场景式站点（参考 toss.im 的 sticky 场景串联）：启动页 → 首页 → 项目矩阵三个场景在一屏滚动序列内串连；文章、相册（含灯箱）、简历、单项目页保持传统文档页。
+- **导航：** 首页主 tab 改为 Blog / Photos / Resume / Projects，取代 v2.1 的 Blog / Photos / Shelf / Projects / About 五入口（D-106 / D-118 的 IA 与导航项被本条取代）。书影音（books/music/movies/drinks）集合保留，退出主导航，作为归档路由存在，内容可由文章关联访问。
+- **内容集合：** 复用现有 blog / photos / about；新建 projects 集合（schema：title、intro、date、link?、draft、approved?、cover?）。thoughts 并入 blog、ai-works 并入 projects，逐条 301 迁移（执行阶段 C 迁移表）。
+- **替代关系：** 本条取代 D-106 的「Blog / Photos / Shelf / Projects / About 五入口 IA」与 D-118 导航语义中的入口集合；D-118 的纸质索引标签视觉语义、角色区域冻结、主入口文案「从文章开始」继续有效。home-v2 静态首屏仍是 CP0 已批准的基线视觉，被场景 2 复用而非重做。
+- **受影响文档：** `docs/project/decision-log.md`（本条）、`docs/design/baozi-space-design-spec.md`（顶部生产方向、0.1 核心决定表、2.1 一级导航）、`baozi-space-prd.md`（0.3、4.x）、`README.md`、`AGENTS.md`（Current Scope、Intro Hard Gates、Code Conventions）、`src/lib/sections.ts`（SECTIONS 入口调整）。
+
+### D-124 · 引入 React islands + motion + lenis
+
+- **状态：** Accepted（2026-09-03，与 D-123 同批通过）
+- **决定：** 放开 D-121 / D-106 的「不引入 React / Lenis」禁令：站点壳与场景动效用 `@astrojs/react` islands + `motion`（framer-motion）+ `lenis` 平滑滚动实现；React 仅用于需要交互动效的场景与灯箱，数据仍由 Astro 构建期注入，React 不承担数据获取。
+- **保留：** oil-motion 启动页仍为 alpha-atlas CSS sprite（D-121），不改为 Canvas 帧序列或视频；Canvas / WebGL 运行时与游戏引擎仍是停止条件，不因本条引入；不引入 Tailwind、Three.js。
+- **替代关系：** D-121 中「不引入 Lenis / React」与 D-106「继续禁止 React」被本条取代；D-121 的 alpha-atlas / CSS-sprite 交付、K0–K4、WebGL 停止条件、Home v2 角色区冻结继续有效。React islands 只用于场景壳与灯箱等交互动效点，Astro 静态输出与 Markdown Content Collections 基线（D-008）不变。
+
+### D-125 · 场景转场用滚动驱动填满 sticky pin 死区
+
+- **状态：** Accepted（2026-09-01，依据 1440×900 滚轮探针 + sharp 像素差分实测，确认 min-height:300vh + sticky 舞台存在约 200vh 死区）
+- **改变原因：** D-123 的场景壳采用「超高容器 + 内部 sticky 舞台」模式（sticky stage，参考 toss.im）。实测发现每个场景 pin 区间内约 200vh 滚动但画面零变化——典型的 sticky 陷阱：用户会感觉页面卡住。本决策用滚动驱动的过渡把 pin 长度「赚」回来，落实用户选定的方案 B（保留 pin，给过渡补滚动驱动）。
+- **决定：**
+  - **首页离场（场景 2）：** 暖白纸 `.home-v2` 在场景 2 的 pin 区间被 GSAP ScrollTrigger `scrub` 上移 `yPercent:-68` 并 `opacity→0.12` 离场，露出背后的点阵纸，作为进入项目矩阵的视觉过渡。
+  - **项目矩阵拼装（场景 3）：** 卡片存在时 `.scene-projects__card` 用 `gsap.from` + `stagger:0.12` 随滚动逐张拼装；**无卡片（草稿 / 空状态）时对整块 `.scene-projects` 面板做 `yPercent:16 + opacity:0.5→1` 的 scrub 揭示**。两种分支 `end` 均取 `bottom bottom`，覆盖整个 pin，保证无论内容是否就绪该场景始终有连续运动。
+  - **与 Lenis 共用：** `lenis.ts` 已把 `ScrollTrigger.update` 回灌到 Lenis 每帧滚动，scrub 无偏差。
+  - **reduced-motion：** 仅 `(prefers-reduced-motion: no-preference)` 下建 tween；reduced-motion 用户直接看终态（`.home-v2` 保持完整可见、项目内容静态可见），不降级布局。
+  - **水合时序：** React islands 为 `client:idle`，首屏脚本用 `requestAnimationFrame` poll（最多 120 帧）等待 `.scene--home .home-v2` 与 `.scene--projects .scene-projects` 就绪后再建触发器，避免岛未注入时漏建。
+- **内容现状：** `projects` 集合当前 3 条均为 `draft:true`，首页矩阵渲染空状态「正在整理」，故项目区转场走面板揭示分支；草稿发布后自动切换为卡片拼装分支，无需改代码。
+- **替代关系：** 无（新增，补 D-123 场景壳的转场实现细节）；`SceneProjects.tsx` 移除 `motion` 的 `whileInView` 以避免与 GSAP 抢同一卡片的 `transform/opacity`。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`src/lib/scroll/sceneScroll.ts`（新增 `initSceneScroll`）、`src/components/scene/SceneRoot.astro`（接入 `initSceneScroll`，在 `initLenis()` 之后）、`src/components/scene/SceneProjects.tsx`（改静态结构、由 GSAP 驱动）、`src/components/scene/scene.css`（`.scene--home/.scene--projects` 点阵纸衔接背景、`.home-v2` `will-change`）。
+- **验证：** `bun run check` 0 错误、`bun run build` 27 页通过；探针死步（delta<0.05，场景区间 y 300–7150）由 4 步降至 0；reduced-motion 路径无 JS 报错、内容可见。视觉与构图通过权归包子 checkpoint 评审。
+
+### D-126 · toss.im 手法映射与采用清单
+
+- **状态：** Accepted（2026-09-01）
+- **依据：** toss.im/en-us CDP 技术分析结论（帧序列 = 138 AVIF + createImageBitmap + 650vh sticky 轨道 + useScroll/useSpring；导航 = scrollY 差值 + spring y:-100%；文字 = hero-word 逐词 stagger；转场 = 65–78% clip-path inset round 收缩 + 78–100% translate3d 飞出）。
+- **采用（本轮实现）：**
+  - 滚动方向侦测导航显隐：阈值 6px 防抖，顶部 80px 内恒显示。
+  - whileTap 按压反馈：`opacity: 0.6` + spring `duration: 0.4, bounce: 0.2`。
+  - 灯箱相邻图预载。
+  - Astro prefetch 主 tab 四页 + intro manifest preload。
+- **采用（先 /lab demo 评审）：** 词级 stagger 文字入场；clip-path 圆角收缩场景转场。通过包子 checkpoint 评审前不进入场景壳。
+- **拒绝：**
+  - Canvas 2d 帧序列：违反 D-121 / D-124 的 Canvas 停止条件；继续使用 CSS sprite alpha-atlas。
+  - Lottie：未解禁。
+  - WebGL / Three.js：继续作为停止条件。
+  - `useScroll + useSpring` 双层滚动数值平滑：D-114 实测 numeric scrub 停在 0.983 已拒绝；Lenis 惯性已提供平滑，禁止叠加第二层 lerp。
+  - 手写 IntersectionObserver 解码门控：toss 为 138 帧 AVIF 管线所需；当前相册量级用原生 `loading="lazy"` 足够，不引入过度工程。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`src/lib/scroll/navHide.ts`、`src/components/layout/ShellLayout.astro`、`src/components/layout/shell.css`、`src/components/scene/SceneHome.tsx`、`src/components/photos/Lightbox.tsx`、`src/lib/photos/lightboxPreload.ts`、`src/components/layout/EntryList.astro`、`astro.config.mjs`、`src/pages/index.astro`、`src/pages/lab/toss-motion.astro`、`tests/unit/scroll/navHide.test.ts`、`tests/unit/photos/lightboxPreload.test.ts`、`design-assets/lab-review/toss-motion/`。
 
 ## 变更规则
 

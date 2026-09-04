@@ -1,0 +1,62 @@
+---
+import "@/styles/global.css";
+import "@/components/layout/shell.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = "baozi.space — 中华一番包子铺",
+  description = "包子的个人空间：写作、照片、书影音与正在做的事。",
+  noindex = false,
+} = Astro.props;
+
+// 与首页场景 tab 同源的极简索引导航（D-123）
+const NAV = [
+  { label: "文章", href: "/blog" },
+  { label: "照片", href: "/photos" },
+  { label: "简历", href: "/resume" },
+  { label: "项目", href: "/projects" },
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f3ef" />
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+  </head>
+  <body class="shell-body">
+    <a class="skip-link" href="#main">跳到正文</a>
+    <header class="shell-nav">
+      <a class="shell-brand" href="/">baozi.space</a>
+      <nav class="shell-links" aria-label="主要栏目">
+        {NAV.map((item) => (
+          <a href={item.href} data-astro-prefetch="viewport">{item.label}</a>
+        ))}
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <script>
+      import { initLenis } from "@/lib/scroll/lenis";
+      import { initNavHide } from "@/lib/scroll/navHide";
+
+      const lenis = initLenis();
+      const nav = document.querySelector<HTMLElement>(".shell-nav");
+      if (nav) initNavHide(lenis, nav);
+    </script>
+  </body>
+</html>

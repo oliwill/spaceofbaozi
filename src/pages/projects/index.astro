@@ -1,29 +1,53 @@
 ---
-import BaseLayout from "@/components/layout/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import ShellLayout from "@/components/layout/ShellLayout.astro";
+
+// /projects 传统列表页：项目矩阵已内嵌首页场景 3，本页作为 link 兜底入口（D-123）
+const projects = (await getCollection("projects", ({ data }) => !data.draft))
+  .sort((a, b) => +b.data.date - +a.data.date);
+
+const fmtDate = (d: Date) => d.toLocaleDateString("zh-CN");
 ---
 
-<BaseLayout
-  title="Project · baozi.space"
-  description="记录我参与、完成和持续试验的项目。"
-  bodyClass="section-body"
-  noindex
->
-  <div class="section-shell">
-    <header class="section-topbar">
-      <a class="brand-mark" href="/">
-        <strong>baozi.space</strong> · 中华一番包子铺
-      </a>
-      <a class="back-home" href="/">← 返回手账首页</a>
+<ShellLayout title="项目 · baozi.space" description="参与、完成与持续试验的项目。" noindex>
+  <div class="section-shell paper-page">
+    <header class="section-header">
+      <span class="section-kicker">Projects · 项目</span>
+      <h1>项目</h1>
+      <p>参与、完成与持续试验的项目。</p>
     </header>
-    <div class="section-header">
-      <span class="section-kicker">03 · 项目</span>
-      <h1>Project</h1>
-      <p>记录我参与、完成和持续试验的项目。</p>
-    </div>
-    <div class="empty-state">
-      <p><strong>正在整理。</strong></p>
-      <p>这个栏目正在等待第一批真实内容，整理好后会出现在这里。</p>
-    </div>
-    <p class="footer-note">继续往下翻，这本手账还会更厚。</p>
+    {
+      projects.length === 0 ? (
+        <div class="empty-state">
+          <p>
+            <strong>正在整理。</strong>
+          </p>
+          <p>第一批项目整理好后会出现在这里。</p>
+        </div>
+      ) : (
+        <ul class="entry-list">
+          {projects.map((project) => (
+            <li class="entry-card">
+              <div class="entry-meta">
+                <time datetime={project.data.date.toISOString()}>
+                  {fmtDate(project.data.date)}
+                </time>
+              </div>
+              <h2>
+                <a
+                  class="entry-link"
+                  href={project.data.link ?? `/projects/${project.id}`}
+                  {...(project.data.link ? { target: "_blank" } : {})}
+                >
+                  {project.data.title}
+                </a>
+              </h2>
+              <p>{project.data.intro}</p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <p class="footer-note">项目矩阵在首页第三场景；这里是传统列表兜底入口。</p>
   </div>
-</BaseLayout>
+</ShellLayout>

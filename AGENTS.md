@@ -12,7 +12,7 @@
 
 1. `docs/design/baozi-space-design-spec.md` — v2.1 全站设计事实来源；
 2. `baozi-space-prd.md` — 产品目标、信息需求、内容责任和发布门禁；
-3. `docs/project/decision-log.md` — 已确认决策，最新 D-122；
+3. `docs/project/decision-log.md` — 已确认决策，最新 D-124；
 4. 根目录 `2026-08-21-baozi-space-oil-motion-project-plan.md` 与 `docs/animation/oil-motion/` 契约 — 启动页当前 CP0.5–CP7 路线；
 5. 根目录 `2026-08-18-baozi-space-hybrid-animation-design.md` 与 `2026-08-18-baozi-space-hybrid-animation-checkpoints.md`（历史）、`docs/animation/intro-shot-list.md`、`docs/plans/2026-08-13-v2.1-project-restructure.md`、当前阶段计划和 `docs/intro/` 契约。
 
@@ -24,11 +24,12 @@
 
 ## Current Scope
 
-D-122 已于 2026-08-31 确认 CP1 交付（Identity Bible、K0–K4 双视口关键帧、Motion Brief、Seedance Prompt v1），并细化球先于嘉乐出画与桌面草地全宽；当前阶段为 oil-motion CP2：Seedance 动作 Pilot。
+场景式 IA 重构（D-123 / D-124）已确认并进入执行：站点改为「启动页 → 首页 → 项目矩阵」三场景下滑串联的场景式架构，首页主 tab 为 Blog / Photos / Resume / Projects；文章、相册（含灯箱）、简历、单项目页保持传统文档页。
 
-- 当前 `/` 仍是 D-105 数字手账回滚基线；`/lab/intro` 仍是 D-115 动作参考；Home v2 CP0 静态首屏已批准（D-118）；
-- 启动页改为 oil-motion 帧映射：点阵纸、暖白纸、草地由网页静态层提供，Seedance 只生成角色语义动作，程序控制横向几何与牵引绳；
-- CP2 由包子按批准的 Motion Brief 与 Seedance Prompt 执行 Pilot 生成：人物先行，每角色首轮最多 3 条候选，只生成纯色键背景上的角色动作。Harness 不得提前制作图集、修改网站动画、迁移内容、删除旧路由、制作冬季素材或部署 Cloudflare；WebGL / Canvas 仍为停止条件，不得静默引入。
+- 当前 `/` 从 D-105 数字手账基线替换为场景壳（SceneRoot）：三场景在一屏滚动序列内串连，Lenis 平滑滚动驱动，场景动效用 React islands + motion（数据仍由 Astro 构建期注入）；
+- 场景 1 仍是 oil-motion 启动页：点阵纸、暖白纸、草地由网页静态层提供，alpha-atlas CSS sprite + ScrollTrigger scrub，K0–K4 球→嘉乐→人左进右出→摔入首页；人物与嘉乐资产已冻结（D-118/D-119/D-120）；
+- oil-motion CP2 Seedance Pilot 仍由包子按已批准 Motion Brief 执行；Harness 不提前制作图集或部署 Cloudflare；WebGL / Canvas 仍为停止条件，不得静默引入；
+- 书影音（books/music/movies/drinks）集合保留，退出主导航，作为归档路由存在；thoughts 并入 blog、ai-works 并入 projects，逐条 301 迁移（P6）。
 
 ## Architecture States
 
@@ -61,7 +62,7 @@ src/pages/lab/intro.astro
 tests/{unit/intro,e2e}/
 ```
 
-阶段 C 的目标内容与路由为 Blog / Photos / Shelf / Projects / About。Thoughts 并入 Blog；Books / Movies / Music 并入 Shelf；AI Works 并入 Projects；Drinks 逐条确认去向。
+阶段 C 的目标内容与路由为 Blog / Photos / Resume / Projects（D-123 取代原五入口）。Thoughts 并入 Blog；AI Works 并入 Projects；Books / Movies / Music 保留为归档路由退出主导航；Drinks 逐条确认去向。
 
 ## Intro Hard Gates
 
@@ -71,7 +72,7 @@ tests/{unit/intro,e2e}/
 - placeholder 只允许开发环境 `?assetMode=placeholder` 或测试显式加载。
 - D-115 的六张生产 Sheet、八帧、Alpha、朝向与负载合同继续约束现有 A1 实验，不自动成为未来视频 / Rive 合同。
 - 未来混合方案仍保持第一拍只有球、主运动因果清楚、最终静止和关键资源 ≤6MB；具体素材合同从 CP1 起冻结。
-- React、Canvas、Three.js、PixiJS、Lottie、Lenis 和游戏引擎继续禁止。Rive 仅可在 CP4 人工放行后以原生 Web Runtime 制作隔离样片；启动页 alpha-atlas 预算若选择 `chroma-video`，必须停止并建立新决策，不得静默引入 WebGL / Canvas 运行时。CP0.5 不安装、不制作、不集成。
+- Canvas / WebGL 运行时与游戏引擎禁止（D-121）；React 仅允许用于场景壳与灯箱等交互动效 islands（D-124）；Lenis 用于全站平滑滚动（D-124）；启动页仍为 alpha-atlas CSS sprite（D-121）。Rive 仅可在 CP4 人工放行后以原生 Web Runtime 制作隔离样片；启动页 alpha-atlas 预算若选择 `chroma-video`，必须停止并建立新决策（D-123 起），不得静默引入 WebGL / Canvas 运行时。
 
 ## Code Conventions
 
@@ -80,6 +81,7 @@ tests/{unit/intro,e2e}/
 - Astro frontmatter 承担构建期数据，无运行时全局 store 或 DI。
 - 客户端行为优先 TypeScript 模块；旧全站原生脚本仍在 `public/scripts/`，阶段迁移时干净删除。
 - 原生 CSS，无 Tailwind。v2.1 新 token 来自 design spec；不得继续扩展 BaoziHand / IoskeleyMono 旧字体系统。
+- React islands 仅用于需要交互动效的场景与灯箱；数据仍由 Astro 构建期注入，React 不承担数据获取（D-124）。
 - 代码自解释：命名表意、函数保持短小，不写解释性注释。注释只用于代码无法表达的约束，一句话、不写段落，并引用相关 D-xxx 或契约。界面与必要注释用中文。
 - 不引入 `any`；未知输入用 `unknown` 与验证函数。
 - 单文件不超过 500 行。现有例外：`src/styles/global.css`（D-105 遗留，阶段 C 迁移时拆分）、`src/components/home-v2/home-v2-preview.css`（CP5 接入运行时拆分）。

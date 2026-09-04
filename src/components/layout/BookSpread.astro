@@ -1,26 +1,26 @@
 ---
+import type { CollectionEntry } from "astro:content";
+import type { SectionMeta, EntrySchemaCollectionKey } from "@/lib/sections";
 import { getCollection, render } from "astro:content";
-import type { CollectionEntry, CollectionKey } from "astro:content";
-import type { SectionMeta } from "@/lib/sections";
 
 interface Props {
   section: SectionMeta;
-  entry: CollectionEntry<CollectionKey>;
+  entry: CollectionEntry<EntrySchemaCollectionKey>;
   navVariant: "tags" | "album-index" | "none";
 }
 
 const { section, entry, navVariant } = Astro.props;
 const { Content } = await render(entry);
 
-// 回列表路由：D-021 迁移前 AI Works 详情在 /ai-works/<id>，列表页已在 /projects
-const listHref = section.key === "ai-works" ? "/projects" : section.href;
+const listHref = section.href;
 
 // 左侧导航数据
 let tags: { name: string; count: number; active: boolean }[] = [];
 let albumIndex: { id: string; title: string; active: boolean }[] = [];
 
 if (navVariant !== "none") {
-  const all = await getCollection(section.collection, ({ data }) => !data.draft);
+  // BookSpread 只服务 entrySchema 集合（projects 独立 schema 不进本书视图）
+  const all = await getCollection(section.collection as EntrySchemaCollectionKey, ({ data }) => !data.draft);
 
   if (navVariant === "tags") {
     const counts = new Map<string, number>();

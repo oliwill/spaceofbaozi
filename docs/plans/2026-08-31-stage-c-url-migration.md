@@ -1,8 +1,10 @@
 # 阶段 C · URL 迁移与重定向表
 
-**状态：** 草案，待包子确认后进入阶段 C 执行
+**状态：** 已执行（2026-09-03，D-123 场景式 IA 重构按本表默认选项执行；Shelf 相关条目作废，见下）
 **日期：** 2026-08-31
-**依据：** D-021（逐条永久跳转）、D-106（IA 收缩为 Blog / Photos / Shelf / Projects / About，覆盖 D-015 的三独立页面）、`2026-08-13-v2.1-project-restructure.md`
+**依据：** D-021（逐条永久跳转）、D-123（场景式 IA：Blog / Photos / Resume / Projects 四入口，取代 D-106 五入口；书影音保留为归档路由）、`2026-08-13-v2.1-project-restructure.md`
+
+> **D-123 执行说明（2026-09-03）：** thoughts 内容已并入 blog（7 条）、ai-works 并入 projects（first-experiment），旧路由已删除并写入 `public/_redirects`（301）；`/about/me` 重定向目标由 `/about` 改为 `/resume`（D-123）。books/music/movies/drinks 集合保留、退出主导航、作为归档路由，不建 shelf、不做迁移；drinks 不再下线。原「开放问题」按此执行，不再等待包子逐条确认。
 
 ## 1. 栏目级映射
 

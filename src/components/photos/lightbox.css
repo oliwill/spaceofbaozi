@@ -1,0 +1,122 @@
+/* 相册灯箱（D-123/D-031） */
+
+.lightbox {
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+}
+
+.lightbox[open] {
+  display: grid;
+  place-items: center;
+}
+
+.lightbox::backdrop {
+  background: rgba(37, 35, 31, 0.72);
+}
+
+.lightbox__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 45%, rgba(37, 35, 31, 0.82), rgba(20, 18, 16, 0.9));
+}
+
+.lightbox__frame {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 1100px);
+  max-height: 88vh;
+}
+
+.lightbox__figure {
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+}
+
+.lightbox__figure img {
+  display: block;
+  max-width: 100%;
+  max-height: 76vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+  background: #fff;
+}
+
+.lightbox__figure figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  color: rgba(255, 253, 247, 0.92);
+  font-size: 0.9rem;
+}
+
+.lightbox__figure figcaption span {
+  color: rgba(255, 253, 247, 0.62);
+}
+
+.lightbox__nav,
+.lightbox__close {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 253, 247, 0.35);
+  border-radius: 50%;
+  background: rgba(37, 35, 31, 0.5);
+  color: #fffdf7;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.lightbox__nav--prev {
+  left: -58px;
+  top: 42%;
+}
+
+.lightbox__nav--next {
+  right: -58px;
+  top: 42%;
+}
+
+.lightbox__close {
+  top: -56px;
+  right: -8px;
+}
+
+.lightbox__nav:hover,
+.lightbox__close:hover {
+  background: rgba(37, 35, 31, 0.78);
+}
+
+@media (max-width: 767px) {
+  .lightbox__frame {
+    width: 94vw;
+  }
+
+  .lightbox__nav--prev {
+    left: 8px;
+    top: auto;
+    bottom: 24px;
+  }
+
+  .lightbox__nav--next {
+    right: 8px;
+    top: auto;
+    bottom: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox__figure {
+    transition: none;
+  }
+}

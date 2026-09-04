@@ -2,7 +2,7 @@
 
 **中华一番包子铺** — 包子的个人网站、公开档案与个人工作空间。
 
-> 当前 `/` 仍运行 D-105 数字手账回滚基线；当前唯一生产方向是 D-121 的 oil-motion 帧映射方案：低对比点阵纸、暖白大纸、水彩草地由网页静态层提供，Seedance 只生成角色语义动作，以及已批准的 Home v2 人物与嘉乐。当前执行 CP0.5 架构与文档同步，关键帧与 Identity Bible 确认前不生成 Seedance 动作、不制作图集。
+> 当前 `/` 已切换为场景式 IA（D-123/D-124）：启动页 → 首页 → 项目矩阵三场景一屏滚动串联（Lenis 平滑滚动 + React islands + motion），文章、相册（含灯箱）、简历、项目页为传统文档页；首页主 tab 为 Blog / Photos / Resume / Projects。场景 1 仍是 D-121 oil-motion 启动页（alpha-atlas CSS sprite + ScrollTrigger scrub）；Home v2 静态首屏为场景 2 视觉基线。
 
 ## 技术栈
 
@@ -21,7 +21,7 @@
 - 旧 CP0–CP7 检查点（历史）：[`2026-08-18-baozi-space-hybrid-animation-checkpoints.md`](./2026-08-18-baozi-space-hybrid-animation-checkpoints.md)
 - 现有 A1 动画与素材契约：[`docs/intro/`](./docs/intro/)（仅约束滚动 Sprite 基线与动作参考）
 - 项目重构路线：[`docs/plans/2026-08-13-v2.1-project-restructure.md`](./docs/plans/2026-08-13-v2.1-project-restructure.md)
-- 决策记录：[`docs/project/decision-log.md`](./docs/project/decision-log.md)（最新 D-121）
+- 决策记录：[`docs/project/decision-log.md`](./docs/project/decision-log.md)（最新 D-124）
 - D-105 回滚与历史方向：[`docs/legacy/d-105-home.md`](./docs/legacy/d-105-home.md)
 - 废弃 V1 spec 不得恢复；历史细节从 Git、legacy 归档与 `decision-log.md` 查阅
 

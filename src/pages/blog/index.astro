@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import SectionLayout from "@/components/layout/SectionLayout.astro";
+import ShellLayout from "@/components/layout/ShellLayout.astro";
 import EntryList from "@/components/layout/EntryList.astro";
 import { getSection } from "@/lib/sections";
 
@@ -8,6 +8,13 @@ const section = getSection("blog")!;
 const entries = await getCollection("blog");
 ---
 
-<SectionLayout section={section}>
-  <EntryList entries={entries} tagBaseHref="/blog/tag" />
-</SectionLayout>
+<ShellLayout title="文章 · baozi.space" description={section.desc}>
+  <div class="section-shell paper-page">
+    <header class="section-header">
+      <span class="section-kicker">{section.number} · {section.zh}</span>
+      <h1>{section.title}</h1>
+      <p>{section.desc}</p>
+    </header>
+    <EntryList entries={entries} tagBaseHref="/blog/tag" />
+  </div>
+</ShellLayout>

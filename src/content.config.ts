@@ -13,6 +13,16 @@ const entrySchema = z.object({
   featured: z.boolean().default(false),
 });
 
+const projectSchema = z.object({
+  title: z.string(),
+  intro: z.string(),
+  date: z.coerce.date(),
+  link: z.string().url().optional(),
+  draft: z.boolean().default(false),
+  approved: z.boolean().default(false),
+  cover: z.string().optional(),
+});
+
 function makeCollection(name: string) {
   return defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: `./src/content/${name}` }),
@@ -22,11 +32,13 @@ function makeCollection(name: string) {
 
 export const collections = {
   blog: makeCollection("blog"),
-  thoughts: makeCollection("thoughts"),
   photos: makeCollection("photos"),
   drinks: makeCollection("drinks"),
   books: makeCollection("books"),
   music: makeCollection("music"),
   about: makeCollection("about"),
-  "ai-works": makeCollection("ai-works"),
+  projects: defineCollection({
+    loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/projects" }),
+    schema: projectSchema,
+  }),
 };

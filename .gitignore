@@ -23,12 +23,25 @@ Thumbs.db
 .chrome-concept-profile/
 .agents/
 .od-skills/
+.mimosa/
+.video_agent/
+.workbuddy/
 
 # local temp
 .tmp-*.html
+.tmp-*.png
 install*.log
 build*.log
 
+# 本地评审录屏与外部生成样本（保留本地，不入库）
+/jimeng/
+/screenshot/
+
+# 外部交付包（zip 与解压目录保留本地）
+/baozi-space-b-lite-assets-*.zip
+/baozi-space-harness-handoff-*.zip
+/assets-master/deliverables/
+/assets-master/*.zip
 fonts-src/
 
 # Gridea export archive (migrated into src/content, kept locally)

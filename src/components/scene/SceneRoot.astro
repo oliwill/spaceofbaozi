@@ -1,0 +1,39 @@
+---
+import IntroSequence from "@/components/intro/IntroSequence.astro";
+import SceneHome from "@/components/scene/SceneHome";
+import SceneProjects from "@/components/scene/SceneProjects";
+import type { SceneProject } from "@/components/scene/types";
+import "@/components/scene/scene.css";
+
+interface Props {
+  projects: SceneProject[];
+}
+
+const { projects } = Astro.props;
+---
+
+<div class="scene-root" id="main">
+  <!-- 场景 1：oil-motion 启动页（alpha-atlas + ScrollTrigger scrub，K0–K4，D-121/D-122） -->
+  <IntroSequence />
+
+  <!-- 场景 2：首页（Home v2 冻结构图，D-118） -->
+  <section class="scene scene--home" data-scene="home">
+    <div class="scene__stage">
+      <SceneHome client:idle />
+    </div>
+  </section>
+
+  <!-- 场景 3：项目矩阵（D-123） -->
+  <section class="scene scene--projects" data-scene="projects">
+    <div class="scene__stage">
+      <SceneProjects client:idle projects={projects} />
+    </div>
+  </section>
+</div>
+
+<script>
+  import { initLenis } from "@/lib/scroll/lenis";
+  import { initSceneScroll } from "@/lib/scroll/sceneScroll";
+  initLenis();
+  initSceneScroll();
+</script>

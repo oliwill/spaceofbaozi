@@ -1,258 +1,42 @@
 ---
-import BaseLayout from "@/components/layout/BaseLayout.astro";
+import "@/styles/global.css";
+import SceneRoot from "@/components/scene/SceneRoot.astro";
 import { getCollection } from "astro:content";
-import { greetingByHour } from "@/lib/sections";
-import "@/styles/home.css";
 
-// ===== 数据（计划步骤 4：五页各自取最近条目，movies 集合不存在 → 静态空态） =====
-type Dated = { data: { date: Date; draft?: boolean } };
-const byDateDesc = <T extends Dated>(a: T, b: T) => +b.data.date - +a.data.date;
-const notDraft = (e: Dated) => !e.data.draft;
-
-const blogAll = (await getCollection("blog", notDraft)).sort(byDateDesc);
-// 精选（D-022）：blog 内 featured 优先，置于 P.01 首位并贴「精选」胶带
-const featured = blogAll.find((e) => e.data.featured);
-const blogRecent = featured
-  ? [featured, ...blogAll.filter((e) => e !== featured)].slice(0, 4)
-  : blogAll.slice(0, 4);
-
-const photosRecent = (await getCollection("photos", notDraft)).sort(byDateDesc).slice(0, 4);
-const bookRecent = (await getCollection("books", notDraft)).sort(byDateDesc).slice(0, 3);
-const musicRecent = (await getCollection("music", notDraft)).sort(byDateDesc).slice(0, 3);
-const projectRecent = (await getCollection("ai-works", notDraft)).sort(byDateDesc).slice(0, 4);
-
-const fmtDate = (d: Date) => d.toLocaleDateString("zh-CN");
-const greeting = greetingByHour();
-
-// 页首日期轨（SSR 构建日期，与旧首页一致）
-const now = new Date();
-const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-const ssrDay = now.getDate();
-const ssrWeekday = WEEKDAYS[now.getDay()];
-const ssrMonthYear = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+// 场景 3 数据（D-124：Astro 构建期注入，React 不取数）
+const projects = (await getCollection("projects", ({ data }) => !data.draft))
+  .sort((a, b) => +b.data.date - +a.data.date)
+  .map((entry) => ({
+    slug: entry.id,
+    title: entry.data.title,
+    intro: entry.data.intro,
+    link: entry.data.link,
+  }));
 ---
 
-<BaseLayout
-  title="baozi.space — 中华一番包子铺"
-  description="中华一番包子铺：一本会不断变厚的数字手账，收录包子的文章、摄影、书影音记录与项目。"
-  bodyClass="home-body"
->
-  <!-- ============ 封面：sticky 全屏，下滑时被内页纸面盖过 = 开本 ============ -->
-  <div class="cover" id="cover">
-    <img class="cover-art" src="/assets/home/cover@A.webp" alt="" />
-    <div class="cover-shade" aria-hidden="true"></div>
-    <div class="cover-title">
-      <p class="cover-greeting">{greeting}，欢迎光临</p>
-      <h1 class="cover-name">中华一番包子铺</h1>
-      <p class="cover-sub">一本会不断变厚的数字手账</p>
-      <p class="cover-hint">往下滚动，打开这本手账 ↓</p>
-    </div>
-  </div>
-
-  <main id="main">
-    <!-- ============ P.01 Blog ============ -->
-    <section class="paper-page" aria-label="Blog 文章">
-      <header class="page-head">
-        <div class="date-rail">
-          <span class="dr-day">{ssrDay}</span>
-          <span class="dr-meta">
-            <span class="dr-weekday">{ssrWeekday}</span>
-            <span class="dr-month">{ssrMonthYear}</span>
-          </span>
-        </div>
-        <p class="page-label"><span class="pl-zh">文章</span><span class="pl-en">Blog</span></p>
-      </header>
-
-      <div class="page-body">
-        {
-          blogRecent.map((entry, i) => (
-            <a class="journal-entry entry" href={`/${entry.collection}/${entry.id}`}>
-              {entry === featured && <span class="tape tape-featured">精选</span>}
-              {entry.data.cover && (
-                <img class="je-cover" src={entry.data.cover} alt="" loading={i === 0 ? "eager" : "lazy"} />
-              )}
-              <span class="je-text">
-                <span class="je-meta">
-                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
-                </span>
-                <strong class="je-title">{entry.data.title}</strong>
-                {entry.data.description && <span class="je-desc">{entry.data.description}</span>}
-              </span>
-            </a>
-          ))
-        }
-        <a class="page-more" href="/blog">全部文章 → /blog</a>
-      </div>
-
-      <footer class="page-foot">
-        <span class="pf-num">01</span>
-        <span class="pf-label">BLOG</span>
-        <span class="pf-meta">BAOZI.SPACE</span>
-      </footer>
-    </section>
-
-    <!-- ============ P.02 Photos ============ -->
-    <section class="paper-page" aria-label="Photos 摄影">
-      <header class="page-head">
-        <p class="page-label"><span class="pl-zh">摄影</span><span class="pl-en">Photos</span></p>
-      </header>
-
-      <div class="page-body">
-        {
-          photosRecent.map((entry) => (
-            <a class="journal-entry entry" href={`/${entry.collection}/${entry.id}`}>
-              {entry.data.cover && <img class="je-cover" src={entry.data.cover} alt="" loading="lazy" />}
-              <span class="je-text">
-                <span class="je-meta">
-                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
-                </span>
-                <strong class="je-title">{entry.data.title}</strong>
-                {entry.data.description && <span class="je-desc">{entry.data.description}</span>}
-              </span>
-            </a>
-          ))
-        }
-        <a class="page-more" href="/photos">全部相册 → /photos</a>
-      </div>
-
-      <footer class="page-foot">
-        <span class="pf-num">02</span>
-        <span class="pf-label">PHOTOS</span>
-        <span class="pf-meta">BAOZI.SPACE</span>
-      </footer>
-    </section>
-
-    <!-- ============ P.03 书影音 ============ -->
-    <section class="paper-page" aria-label="书影音记录">
-      <header class="page-head">
-        <p class="page-label"><span class="pl-zh">书影音</span><span class="pl-en">Notes</span></p>
-      </header>
-
-      <div class="page-body media-grid">
-        <div class="media-col">
-          <p class="media-title">书</p>
-          {
-            bookRecent.map((entry) => (
-              <a class="media-item entry" href={`/${entry.collection}/${entry.id}`}>
-                {entry.data.cover && <img class="mi-cover" src={entry.data.cover} alt="" loading="lazy" />}
-                <span class="mi-text">
-                  <strong>{entry.data.title}</strong>
-                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
-                </span>
-              </a>
-            ))
-          }
-          <a class="page-more" href="/books">全部记录 → /books</a>
-        </div>
-
-        <div class="media-col">
-          <p class="media-title">影</p>
-          <!-- D-026：movies 集合尚不存在，静态空态，不建集合、不造内容 -->
-          <div class="media-empty">
-            <p><strong>正在整理</strong></p>
-            <p>看过的电影与剧集，整理好之后写在这一栏。</p>
-          </div>
-          <a class="page-more" href="/movies">全部记录 → /movies</a>
-        </div>
-
-        <div class="media-col">
-          <p class="media-title">音</p>
-          {
-            musicRecent.map((entry) => (
-              <a class="media-item entry" href={`/${entry.collection}/${entry.id}`}>
-                {entry.data.cover && <img class="mi-cover" src={entry.data.cover} alt="" loading="lazy" />}
-                <span class="mi-text">
-                  <strong>{entry.data.title}</strong>
-                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
-                </span>
-              </a>
-            ))
-          }
-          <a class="page-more" href="/music">全部记录 → /music</a>
-        </div>
-      </div>
-
-      <footer class="page-foot">
-        <span class="pf-num">03</span>
-        <span class="pf-label">书影音</span>
-        <span class="pf-meta">BAOZI.SPACE</span>
-      </footer>
-    </section>
-
-    <!-- ============ P.04 Project ============ -->
-    <section class="paper-page" aria-label="Project 项目">
-      <header class="page-head">
-        <p class="page-label"><span class="pl-zh">项目</span><span class="pl-en">Project</span></p>
-      </header>
-
-      <div class="page-body">
-        {
-          projectRecent.map((entry) => (
-            <a class="journal-entry entry" href={`/${entry.collection}/${entry.id}`}>
-              {entry.data.cover && <img class="je-cover" src={entry.data.cover} alt="" loading="lazy" />}
-              <span class="je-text">
-                <span class="je-meta">
-                  <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
-                </span>
-                <strong class="je-title">{entry.data.title}</strong>
-                {entry.data.description && <span class="je-desc">{entry.data.description}</span>}
-              </span>
-            </a>
-          ))
-        }
-        <!-- D-021 迁移前项目详情仍在 /ai-works/<id>，列表页在 /projects -->
-        <a class="page-more" href="/projects">全部项目 → /projects</a>
-      </div>
-
-      <footer class="page-foot">
-        <span class="pf-num">04</span>
-        <span class="pf-label">PROJECT</span>
-        <span class="pf-meta">BAOZI.SPACE</span>
-      </footer>
-    </section>
-
-    <!-- ============ P.05 页尾 ============ -->
-    <section class="paper-page page-last" aria-label="关于与联系">
-      <header class="page-head">
-        <p class="page-label"><span class="pl-zh">页尾</span><span class="pl-en">Info</span></p>
-      </header>
-
-      <div class="page-body">
-        <section class="foot-about" aria-label="关于包子">
-          <p class="foot-blocktitle">ABOUT · 包子</p>
-          <!-- D-024 原文两段 -->
-          <p>前小红书商业化早期员工，懂一些营销，懂一点产品。</p>
-          <p>工作之外，也想做一个生活家。</p>
-          <a class="page-more" href="/about">继续认识包子 → /about</a>
-        </section>
-
-        <section class="foot-contact" aria-label="联系方式">
-          <p class="foot-blocktitle">CONTACT · 联系</p>
-          <!-- D-005：联系方式由用户提供后填入，当前为占位 -->
-          <p class="contact-item">hello@baozi.space</p>
-          <p class="contact-item contact-placeholder">社交链接稍后补上</p>
-        </section>
-
-        <p class="foot-corner">
-          还有一角：<a href="/drinks">酒 → /drinks</a>
-        </p>
-
-        <a class="close-book" href="#cover" data-scroll-top>合上本子 ↑</a>
-
-        <p class="copyright">© 2026 包子 · baozi.space</p>
-      </div>
-
-      <footer class="page-foot">
-        <span class="pf-num">05</span>
-        <span class="pf-label">INFO</span>
-        <span class="pf-meta">BAOZI.SPACE</span>
-      </footer>
-    </section>
-  </main>
-
-  <script is:inline src="/scripts/cover-open.js"></script>
-</BaseLayout>
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#eef0ea" />
+    <meta
+      name="description"
+      content="中华一番包子铺：包子的个人网站。启动页、首页与项目矩阵在一屏滚动序列内串联，还有文章、相册、简历与项目。"
+    />
+    <meta property="og:title" content="baozi.space — 中华一番包子铺" />
+    <meta
+      property="og:description"
+      content="包子的个人空间：写作、照片、书影音与正在做的事。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://baozi.space/" />
+    <link rel="preload" as="fetch" href="/assets/intro/production/intro-manifest.json" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>baozi.space — 中华一番包子铺</title>
+  </head>
+  <body class="scene-body">
+    <a class="skip-link" href="#main">跳到正文</a>
+    <SceneRoot projects={projects} />
+  </body>
+</html>

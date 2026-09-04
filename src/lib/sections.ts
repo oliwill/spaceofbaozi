@@ -1,12 +1,20 @@
 export type SectionKey =
   | "blog"
-  | "thoughts"
   | "photos"
   | "drinks"
   | "books"
   | "music"
   | "about"
-  | "ai-works";
+  | "projects";
+
+/** 共享 entrySchema 的集合（projects 使用独立 schema，不在其列） */
+export type EntrySchemaCollectionKey =
+  | "blog"
+  | "photos"
+  | "drinks"
+  | "books"
+  | "music"
+  | "about";
 
 export interface SectionMeta {
   key: SectionKey;
@@ -29,13 +37,13 @@ export const SECTIONS: SectionMeta[] = [
     collection: "blog",
   },
   {
-    key: "thoughts",
+    key: "projects",
     number: "02",
-    title: "Thoughts",
-    zh: "想法",
-    desc: "短想法、观察、灵感和未完成念头。",
-    href: "/thoughts",
-    collection: "thoughts",
+    title: "Projects",
+    zh: "项目",
+    desc: "参与、完成与持续试验的项目。",
+    href: "/projects",
+    collection: "projects",
   },
   {
     key: "photos",
@@ -81,15 +89,6 @@ export const SECTIONS: SectionMeta[] = [
     desc: "专辑、歌单、单曲和听感记录。",
     href: "/music",
     collection: "music",
-  },
-  {
-    key: "ai-works",
-    number: "08",
-    title: "AI Works",
-    zh: "AI 创作",
-    desc: "AI 图像、视频、文字实验和生成作品。",
-    href: "/ai-works",
-    collection: "ai-works",
   },
 ];
 

@@ -56,11 +56,11 @@
 
 | 项目 | 状态 |
 |---|---|
-| 技术骨架 | Astro 5 静态站可构建；当前 `/` 仍是 D-105 回滚基线 |
-| Home v2 | CP0 桌面 1440×900 / 移动 390×844 静态首屏已批准（D-118），角色区域已冻结 |
-| 启动页开场 | D-121 oil-motion 帧映射；CP1 关键帧 / Identity Bible / Motion Brief 已批准（D-122），当前 CP2 Seedance Pilot |
-| A1 `/lab/intro` | D-115 滚动 Sprite 实验已完成并保留为动作参考，不再是新开场方向 |
-| 目标 IA | 五个一级入口已确认；内容与路由迁移尚未实施 |
+| 技术骨架 | Astro 5 静态站可构建；`/` 已切换为场景式 IA（D-123/D-124）：三场景一屏滚动串联 + Lenis + React islands + motion |
+| Home v2 | 作为场景 2 视觉基线（D-118 冻结构图复用），不再是独立首页 |
+| 启动页开场 | 场景 1 仍为 D-121 oil-motion alpha-atlas scrub；CP2 Seedance Pilot 由包子执行 |
+| A1 `/lab/intro` | D-115 滚动 Sprite 实验保留为动作参考，不再是新开场方向 |
+| 目标 IA | 四入口（Blog / Photos / Resume / Projects）已确认并落地；thoughts→blog、ai-works→projects 迁移已执行（301 写入 `public/_redirects`）；书影音保留为归档路由 |
 | 用户正式内容 | 尚未完整批准，不满足生产发布门禁 |
 | Cloudflare Pages | 尚未接入 |
 

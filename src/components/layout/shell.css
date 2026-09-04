@@ -1,0 +1,66 @@
+/* ShellLayout：传统文档页外壳（D-123）——极简索引导航 + 内容纸 */
+
+.shell-body {
+  min-height: 100vh;
+  background-color: var(--paper-warm);
+}
+
+.shell-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+  background: rgba(247, 244, 237, 0.92);
+  border-bottom: 1px solid rgba(43, 38, 32, 0.1);
+  backdrop-filter: blur(6px);
+  transition: transform 0.35s cubic-bezier(0.6, 0, 0.6, 1);
+}
+
+.shell-brand {
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+
+.shell-nav[data-hidden="true"] {
+  transform: translateY(-100%);
+}
+
+.shell-links {
+  display: flex;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.shell-links a {
+  color: var(--ink-light);
+  font-size: var(--fs-small);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.shell-links a:hover {
+  color: var(--ink);
+  border-bottom-color: rgba(43, 38, 32, 0.35);
+}
+
+.shell-body > main {
+  min-height: calc(100vh - 52px);
+}
+
+/* 内容页里的传统纸张容器 */
+.paper-page {
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+@media (max-width: 767px) {
+  .shell-nav {
+    padding: 0 1rem;
+  }
+}

@@ -1,7 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import type { GetStaticPaths } from "astro";
-import EntryDetail from "@/components/layout/EntryDetail.astro";
+import ShellLayout from "@/components/layout/ShellLayout.astro";
+import BookSpread from "@/components/layout/BookSpread.astro";
 import { getSection } from "@/lib/sections";
 
 export const getStaticPaths = (async () => {
@@ -16,4 +17,6 @@ const { entry } = Astro.props;
 const section = getSection("blog")!;
 ---
 
-<EntryDetail section={section} entry={entry} />
+<ShellLayout title={`${entry.data.title} · ${section.title} · baozi.space`} description={entry.data.description || section.desc}>
+  <BookSpread section={section} entry={entry} navVariant="tags" />
+</ShellLayout>

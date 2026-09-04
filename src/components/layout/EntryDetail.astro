@@ -1,12 +1,12 @@
 ---
-import type { CollectionEntry, CollectionKey } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import BaseLayout from "./BaseLayout.astro";
 import BookSpread from "./BookSpread.astro";
-import { type SectionMeta } from "@/lib/sections";
+import { type SectionMeta, type EntrySchemaCollectionKey } from "@/lib/sections";
 
 interface Props {
   section: SectionMeta;
-  entry: CollectionEntry<CollectionKey>;
+  entry: CollectionEntry<EntrySchemaCollectionKey>;
 }
 
 const { section, entry } = Astro.props;

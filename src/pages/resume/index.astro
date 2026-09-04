@@ -1,0 +1,22 @@
+---
+import { getCollection, render } from "astro:content";
+import ShellLayout from "@/components/layout/ShellLayout.astro";
+
+// 简历页（D-123）：内容源 src/content/about/me.md（D-024/D-005：正式介绍由包子提供，AI 不虚构）
+const [me] = await getCollection("about");
+if (!me) throw new Error("resume: src/content/about/me.md missing");
+const { Content } = await render(me);
+---
+
+<ShellLayout title="简历 · baozi.space" description="包子的个人简历与介绍。" noindex>
+  <article class="section-shell paper-page resume-page">
+    <header class="section-header">
+      <span class="section-kicker">Resume · 简历</span>
+      <h1>{me.data.title}</h1>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    <p class="footer-note">正式自我介绍与联系方式由包子提供（D-005），当前渲染 about/me.md。</p>
+  </article>
+</ShellLayout>
