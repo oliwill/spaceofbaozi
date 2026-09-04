@@ -1,15 +1,16 @@
 ---
 import { getCollection } from "astro:content";
+import { isPublishable } from "@/lib/content/gates";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
 
 // /projects 传统列表页：项目矩阵已内嵌首页场景 3，本页作为 link 兜底入口（D-123）
-const projects = (await getCollection("projects", ({ data }) => !data.draft))
+const projects = (await getCollection("projects", ({ data }) => isPublishable(data)))
   .sort((a, b) => +b.data.date - +a.data.date);
 
 const fmtDate = (d: Date) => d.toLocaleDateString("zh-CN");
 ---
 
-<ShellLayout title="项目 · baozi.space" description="参与、完成与持续试验的项目。" noindex>
+<ShellLayout title="项目 · baozi.space" description="参与、完成与持续试验的项目。" noindex={projects.length === 0}>
   <div class="section-shell paper-page">
     <header class="section-header">
       <span class="section-kicker">Projects · 项目</span>

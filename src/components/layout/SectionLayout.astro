@@ -6,16 +6,17 @@ interface Props {
   section: SectionMeta;
   title?: string;
   description?: string;
+  noindex?: boolean;
 }
 
-const { section, title, description } = Astro.props;
+const { section, title, description, noindex = false } = Astro.props;
 const pageTitle = title
   ? `${title} · ${section.title} · baozi.space`
   : `${section.title} · baozi.space`;
 const pageDesc = description ?? section.desc;
 ---
 
-<BaseLayout title={pageTitle} description={pageDesc} bodyClass="section-body">
+<BaseLayout title={pageTitle} description={pageDesc} bodyClass="section-body" noindex={noindex}>
   <div class="section-shell paper-page" id="main">
     <header class="section-topbar">
       <a class="brand-mark" href="/">

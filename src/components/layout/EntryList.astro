@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { isPublishable } from "@/lib/content/gates";
 import type { EntrySchemaCollectionKey } from "@/lib/sections";
 
 interface Props {
@@ -15,7 +16,7 @@ const {
 } = Astro.props;
 
 const sorted = [...entries]
-  .filter((e) => !("draft" in e.data && e.data.draft))
+  .filter((e) => isPublishable(e.data))
   .sort((a, b) => +b.data.date - +a.data.date);
 ---
 
@@ -32,13 +33,18 @@ const sorted = [...entries]
       {sorted.map((entry) => (
         <li class="entry-card">
           {entry.data.cover && (
-            <img
-              class="entry-cover"
-              src={entry.data.cover}
-              alt={entry.data.title}
-              loading="lazy"
-              decoding="async"
-            />
+            <figure class="entry-cover-figure">
+              <img
+                class="entry-cover"
+                src={entry.data.cover}
+                alt={entry.data.coverAlt ?? entry.data.title}
+                loading="lazy"
+                decoding="async"
+              />
+              {entry.data.coverCredit && (
+                <figcaption class="entry-cover-credit">{entry.data.coverCredit}</figcaption>
+              )}
+            </figure>
           )}
           <div class="entry-meta">
             <time datetime={entry.data.date.toISOString()}>

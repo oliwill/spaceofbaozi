@@ -2,13 +2,17 @@
 import { getCollection } from "astro:content";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
 import EntryList from "@/components/layout/EntryList.astro";
+import { isPublishable } from "@/lib/content/gates";
 import { getSection } from "@/lib/sections";
 
 const section = getSection("blog")!;
 const entries = await getCollection("blog");
+
+// 无已批准内容时保留 URL 但 noindex（D-127，内容批准清单发布规则）
+const hasPublishable = entries.some((e) => isPublishable(e.data));
 ---
 
-<ShellLayout title="文章 · baozi.space" description={section.desc}>
+<ShellLayout title="文章 · baozi.space" description={section.desc} noindex={!hasPublishable}>
   <div class="section-shell paper-page">
     <header class="section-header">
       <span class="section-kicker">{section.number} · {section.zh}</span>

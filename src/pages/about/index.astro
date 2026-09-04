@@ -2,12 +2,15 @@
 import { getCollection } from "astro:content";
 import SectionLayout from "@/components/layout/SectionLayout.astro";
 import EntryList from "@/components/layout/EntryList.astro";
+import { isPublishable } from "@/lib/content/gates";
 import { getSection } from "@/lib/sections";
 
 const section = getSection("about")!;
 const entries = await getCollection("about");
+
+const hasPublishable = entries.some((e) => isPublishable(e.data));
 ---
 
-<SectionLayout section={section}>
+<SectionLayout section={section} noindex={!hasPublishable}>
   <EntryList entries={entries} />
 </SectionLayout>

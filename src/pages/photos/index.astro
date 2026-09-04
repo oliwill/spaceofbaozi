@@ -3,25 +3,27 @@ import { getCollection } from "astro:content";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
 import EntryList from "@/components/layout/EntryList.astro";
 import Lightbox from "@/components/photos/Lightbox";
+import { isPublishable } from "@/lib/content/gates";
 import { getSection } from "@/lib/sections";
 
 const section = getSection("photos")!;
 const entries = await getCollection("photos");
 
-// 灯箱数据：只取有封面的公开相册（D-031：alt 必填，用标题充当）
+// 灯箱数据：只取有封面且已批准的相册（D-031/D-127：alt 必填，优先 coverAlt）
 const lightboxItems = entries
-  .filter((entry) => !entry.data.draft && entry.data.cover)
+  .filter((entry) => isPublishable(entry.data) && entry.data.cover)
   .sort((a, b) => +b.data.date - +a.data.date)
   .map((entry) => ({
     slug: entry.id,
     title: entry.data.title,
     src: entry.data.cover!,
-    alt: entry.data.title,
+    alt: entry.data.coverAlt ?? entry.data.title,
     description: entry.data.description || undefined,
   }));
+const hasPublishable = entries.some((e) => isPublishable(e.data));
 ---
 
-<ShellLayout title="照片 · baozi.space" description={section.desc}>
+<ShellLayout title="照片 · baozi.space" description={section.desc} noindex={!hasPublishable}>
   <div class="section-shell paper-page">
     <header class="section-header">
       <span class="section-kicker">{section.number} · {section.zh}</span>

@@ -1202,6 +1202,18 @@
   - 手写 IntersectionObserver 解码门控：toss 为 138 帧 AVIF 管线所需；当前相册量级用原生 `loading="lazy"` 足够，不引入过度工程。
 - **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`src/lib/scroll/navHide.ts`、`src/components/layout/ShellLayout.astro`、`src/components/layout/shell.css`、`src/components/scene/SceneHome.tsx`、`src/components/photos/Lightbox.tsx`、`src/lib/photos/lightboxPreload.ts`、`src/components/layout/EntryList.astro`、`astro.config.mjs`、`src/pages/index.astro`、`src/pages/lab/toss-motion.astro`、`tests/unit/scroll/navHide.test.ts`、`tests/unit/photos/lightboxPreload.test.ts`、`design-assets/lab-review/toss-motion/`。
 
+### D-127 · 内容生产门禁字段与同阶段查询切换
+
+- **状态：** Accepted（2026-09-04，依据阶段 C 迁移表 §4 前置依赖与内容批准清单发布规则）
+- **决定：**
+  - `entrySchema` 与 `projectSchema` 同步增加 `approved`（默认 `false`）、`updated`（可选）、`coverAlt`（可选，缺省回退标题）、`coverCredit`（可选，列表封面下署名）；`projects` 集合自此与 entry 集合共用同一组门禁字段。
+  - 所有生产查询统一切换为 `isPublishable(data)`（`!draft && approved`）：EntryList、BookSpread 导航、六个详情页 `getStaticPaths`、blog tag 页、photos 灯箱数据、首页场景 3 与 projects 两页。`status` 字段不承担公开门禁。
+  - 有效内容为零的栏目列表页保留 URL、显示空状态并输出 `noindex`（`ShellLayout` 原生支持；`SectionLayout` 新增转发）；第一条批准内容发布后自动恢复索引。projects 列表页原硬编码 `noindex` 改为按内容动态计算。
+  - `/resume` 直接渲染 `about/me.md`，不经 `approved` 门禁——简历是主 tab 页面而非内容条目，其文案批准走 About 门禁（批准清单），不在本条范围。
+- **当前效果：** 批准清单中 0 条内容为 Approve，故切换后所有内容列表与详情进入空状态；这是批准清单设计的目标行为，不是回归。内容逐条 Approve 后自动恢复，无需改代码。
+- **替代关系：** 无（新增，落实 D-026 门禁与阶段 C 迁移表 §4）；批准清单的发布规则不变，本条使其在代码层强制执行。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`src/content.config.ts`、`src/lib/content/gates.ts`（新建）、`src/components/layout/EntryList.astro`、`BookSpread.astro`、`SectionLayout.astro`、`src/pages/{index,blog,blog/[...slug],blog/tag/[tag],photos,photos/[...slug],books,books/[...slug],drinks,drinks/[...slug],music,music/[...slug],about,about/[...slug],projects,projects/[slug]}`、`src/content/_templates/blog-post.md`、`tests/unit/content/gates.test.ts`、`docs/project/content-approval-register.md`。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。

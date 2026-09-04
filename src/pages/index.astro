@@ -2,9 +2,10 @@
 import "@/styles/global.css";
 import SceneRoot from "@/components/scene/SceneRoot.astro";
 import { getCollection } from "astro:content";
+import { isPublishable } from "@/lib/content/gates";
 
 // 场景 3 数据（D-124：Astro 构建期注入，React 不取数）
-const projects = (await getCollection("projects", ({ data }) => !data.draft))
+const projects = (await getCollection("projects", ({ data }) => isPublishable(data)))
   .sort((a, b) => +b.data.date - +a.data.date)
   .map((entry) => ({
     slug: entry.id,

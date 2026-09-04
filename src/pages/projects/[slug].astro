@@ -1,10 +1,11 @@
 ---
 import { getCollection, render } from "astro:content";
+import { isPublishable } from "@/lib/content/gates";
 import type { GetStaticPaths } from "astro";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
 
 export const getStaticPaths = (async () => {
-  const entries = await getCollection("projects", ({ data }) => !data.draft);
+  const entries = await getCollection("projects", ({ data }) => isPublishable(data));
   return entries.map((entry) => ({
     params: { slug: entry.id },
     props: { entry },

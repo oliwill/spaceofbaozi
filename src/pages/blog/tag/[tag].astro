@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { isPublishable } from "@/lib/content/gates";
 import type { GetStaticPaths } from "astro";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
 import EntryList from "@/components/layout/EntryList.astro";
@@ -7,7 +8,7 @@ import { getSection } from "@/lib/sections";
 
 // 构建期按标签生成静态筛选页（无 JS 也工作，静态托管适配 /blog?tag= 的替代）
 export const getStaticPaths = (async () => {
-  const entries = await getCollection("blog", ({ data }) => !data.draft);
+  const entries = await getCollection("blog", ({ data }) => isPublishable(data));
   const tags = new Set(entries.flatMap((e) => e.data.tags));
   return [...tags].map((tag) => ({
     params: { tag },

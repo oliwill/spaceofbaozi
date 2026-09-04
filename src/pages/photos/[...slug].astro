@@ -1,12 +1,13 @@
 ---
 import { getCollection } from "astro:content";
+import { isPublishable } from "@/lib/content/gates";
 import type { GetStaticPaths } from "astro";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
 import BookSpread from "@/components/layout/BookSpread.astro";
 import { getSection } from "@/lib/sections";
 
 export const getStaticPaths = (async () => {
-  const entries = await getCollection("photos", ({ data }) => !data.draft);
+  const entries = await getCollection("photos", ({ data }) => isPublishable(data));
   return entries.map((entry) => ({
     params: { slug: entry.id },
     props: { entry },

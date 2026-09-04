@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import type { SectionMeta, EntrySchemaCollectionKey } from "@/lib/sections";
+import { isPublishable } from "@/lib/content/gates";
 import { getCollection, render } from "astro:content";
 
 interface Props {
@@ -20,7 +21,7 @@ let albumIndex: { id: string; title: string; active: boolean }[] = [];
 
 if (navVariant !== "none") {
   // BookSpread 只服务 entrySchema 集合（projects 独立 schema 不进本书视图）
-  const all = await getCollection(section.collection as EntrySchemaCollectionKey, ({ data }) => !data.draft);
+  const all = await getCollection(section.collection as EntrySchemaCollectionKey, ({ data }) => isPublishable(data));
 
   if (navVariant === "tags") {
     const counts = new Map<string, number>();
