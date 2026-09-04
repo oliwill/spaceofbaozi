@@ -1227,6 +1227,14 @@
 - **替代关系：** 取代 D-121 中「Seedance 2.5 只生成纯色键背景上的语义动作」一条与计划 CP2 的视频生成定义；D-121 其余约束与 CP0/CP1 冻结项不变。
 - **受影响文档：** `docs/project/decision-log.md`（本条）、`2026-08-21-baozi-space-oil-motion-project-plan.md`（状态、CP2 节、职责）、`AGENTS.md`、`README.md`、`baozi-space-prd.md`、`docs/animation/oil-motion/concept-contract.yaml`（注释口径）。
 
+### D-129 · 生产部署现实为 Vercel，301 由 vercel.json 接管
+
+- **状态：** Accepted（2026-09-04，依据线上实测：`baozi.space` 响应头 `Server: Vercel`、旧 D-105 构建、`public/_redirects` 未生效、`/resume` 与 oil-motion manifest 均 404）
+- **事实：** D-010 决定的 Cloudflare Pages 从未接管生产域名；`baozi.space` 当前由 Vercel 项目托管且构建停留在 D-123 之前的旧提交，推送 main 不会更新线上。
+- **决定（临时机制）：** 仓库新增 `vercel.json`，逐条镜像 `public/_redirects` 的 301（Vercel 不读 `_redirects`）；两份重定向表必须同步维护，直到平台归属定稿。
+- **开放问题（包子拍板）：** a) 留在 Vercel（则需在 Vercel 后台确认项目连接 `oliwill/spaceofbaozi` main 并重建，D-010 随之修订）；b) 按 D-010 迁移 Cloudflare Pages（包子在 Cloudflare 建 Pages 项目并切换 DNS，vercel.json 随之删除）。部署连接恢复前，线上仍是旧站。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`vercel.json`（新建）、`docs/plans/2026-08-31-stage-c-url-migration.md` §3（Cloudflare 假设与现实冲突，以本条为准）。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。

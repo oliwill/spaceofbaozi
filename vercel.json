@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/thoughts/friends-reunion", "destination": "/blog/friends-reunion", "permanent": true },
+    { "source": "/thoughts/listenhub-embed", "destination": "/blog/listenhub-embed", "permanent": true },
+    { "source": "/thoughts/oppenheimer-cast", "destination": "/blog/oppenheimer-cast", "permanent": true },
+    { "source": "/thoughts/read-me", "destination": "/blog/read-me", "permanent": true },
+    { "source": "/thoughts/reading-outline", "destination": "/blog/reading-outline", "permanent": true },
+    { "source": "/thoughts/spring-visit", "destination": "/blog/spring-visit", "permanent": true },
+    { "source": "/thoughts/webpage-as-room", "destination": "/blog/webpage-as-room", "permanent": true },
+    { "source": "/thoughts", "destination": "/blog", "permanent": true },
+    { "source": "/ai-works/first-experiment", "destination": "/projects/first-experiment", "permanent": true },
+    { "source": "/ai-works", "destination": "/projects", "permanent": true },
+    { "source": "/about/me", "destination": "/resume", "permanent": true }
+  ]
+}
