@@ -1,0 +1,19 @@
+{
+  "status": "pending-harness-measurement",
+  "desktop": {
+    "viewport": { "width": 1440, "height": 900 },
+    "dotGridOriginPx": null,
+    "personFootPivotPx": null,
+    "jialeCenterPx": null,
+    "jialeFootPivotPx": null,
+    "nextSectionTopPx": null
+  },
+  "mobile": {
+    "viewport": { "width": 390, "height": 844 },
+    "dotGridOriginPx": null,
+    "personFootPivotPx": null,
+    "jialeCenterPx": null,
+    "jialeFootPivotPx": null,
+    "nextSectionTopPx": null
+  }
+}

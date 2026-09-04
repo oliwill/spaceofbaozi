@@ -1,0 +1,369 @@
+{
+  "sourceRoot": "E:\\baozi\\assets-master\\deliverables\\intro-materials-harness-ready-2026-08-31",
+  "generatedAt": "2026-09-03T10:23:43.184Z",
+  "inputs": [
+    {
+      "file": "person/trimmed/person-neutral.png",
+      "format": "png",
+      "width": 789,
+      "height": 1568,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 51,
+        "y": 61,
+        "width": 515,
+        "height": 1447
+      },
+      "opaquePixels": 450598
+    },
+    {
+      "file": "person/trimmed/person-run.png",
+      "format": "png",
+      "width": 1049,
+      "height": 1493,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 99,
+        "y": 118,
+        "width": 847,
+        "height": 1221
+      },
+      "opaquePixels": 352326
+    },
+    {
+      "file": "person/trimmed/person-pulled-lean.png",
+      "format": "png",
+      "width": 1071,
+      "height": 1521,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 90,
+        "y": 87,
+        "width": 924,
+        "height": 1311
+      },
+      "opaquePixels": 432353
+    },
+    {
+      "file": "person/trimmed/person-fall-slide-right.png",
+      "format": "png",
+      "width": 1547,
+      "height": 1099,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 54,
+        "y": 166,
+        "width": 1435,
+        "height": 703
+      },
+      "opaquePixels": 357679
+    },
+    {
+      "file": "dog/trimmed/dog-run-contact.png",
+      "format": "png",
+      "width": 1554,
+      "height": 1059,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 378,
+        "y": 180,
+        "width": 871,
+        "height": 674
+      },
+      "opaquePixels": 342229
+    },
+    {
+      "file": "dog/trimmed/dog-run-stretch.png",
+      "format": "png",
+      "width": 1468,
+      "height": 1016,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 337,
+        "y": 192,
+        "width": 961,
+        "height": 673
+      },
+      "opaquePixels": 374384
+    },
+    {
+      "file": "dog/trimmed/dog-run-gathered.png",
+      "format": "png",
+      "width": 1532,
+      "height": 1064,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 358,
+        "y": 193,
+        "width": 899,
+        "height": 577
+      },
+      "opaquePixels": 326732
+    },
+    {
+      "file": "dog/trimmed/dog-run-airborne.png",
+      "format": "png",
+      "width": 1580,
+      "height": 1065,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 258,
+        "y": 162,
+        "width": 1112,
+        "height": 647
+      },
+      "opaquePixels": 430330
+    },
+    {
+      "file": "props/yellow-ball-trimmed.png",
+      "format": "png",
+      "width": 1261,
+      "height": 1289,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 333,
+        "y": 355,
+        "width": 551,
+        "height": 554
+      },
+      "opaquePixels": 239273
+    },
+    {
+      "file": "background/grass-desktop-approved.png",
+      "format": "png",
+      "width": 1440,
+      "height": 225,
+      "channels": 3,
+      "hasAlpha": false,
+      "edgeAlphaMax": 255,
+      "contentBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 225
+      },
+      "opaquePixels": 324000
+    },
+    {
+      "file": "background/grass-mobile-approved.png",
+      "format": "png",
+      "width": 390,
+      "height": 211,
+      "channels": 3,
+      "hasAlpha": false,
+      "edgeAlphaMax": 255,
+      "contentBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 211
+      },
+      "opaquePixels": 82290
+    }
+  ],
+  "outputs": {
+    "person": {
+      "desktop": {
+        "src": "/assets/intro/oil-motion/person/desktop.webp",
+        "dpr": 2,
+        "scale": 1,
+        "imageSize": {
+          "width": 6124,
+          "height": 1543
+        },
+        "display": {
+          "heightVh": 58,
+          "groundOffsetVh": 8
+        },
+        "audit": {
+          "format": "webp",
+          "width": 6124,
+          "height": 1543,
+          "channels": 4,
+          "hasAlpha": true,
+          "edgeAlphaMax": 0
+        }
+      },
+      "mobile": {
+        "src": "/assets/intro/oil-motion/person/mobile.webp",
+        "dpr": 1,
+        "scale": 0.5,
+        "imageSize": {
+          "width": 3062,
+          "height": 772
+        },
+        "display": {
+          "heightVh": 48,
+          "groundOffsetVh": 7
+        },
+        "audit": {
+          "format": "webp",
+          "width": 3062,
+          "height": 772,
+          "channels": 4,
+          "hasAlpha": true,
+          "edgeAlphaMax": 0
+        }
+      }
+    },
+    "jiale": {
+      "desktop": {
+        "src": "/assets/intro/oil-motion/jiale/desktop.webp",
+        "dpr": 2,
+        "scale": 1,
+        "imageSize": {
+          "width": 4832,
+          "height": 770
+        },
+        "display": {
+          "heightVh": 26,
+          "groundOffsetVh": 8
+        },
+        "audit": {
+          "format": "webp",
+          "width": 4832,
+          "height": 770,
+          "channels": 4,
+          "hasAlpha": true,
+          "edgeAlphaMax": 0
+        }
+      },
+      "mobile": {
+        "src": "/assets/intro/oil-motion/jiale/mobile.webp",
+        "dpr": 1,
+        "scale": 0.5,
+        "imageSize": {
+          "width": 2416,
+          "height": 385
+        },
+        "display": {
+          "heightVh": 22,
+          "groundOffsetVh": 7
+        },
+        "audit": {
+          "format": "webp",
+          "width": 2416,
+          "height": 385,
+          "channels": 4,
+          "hasAlpha": true,
+          "edgeAlphaMax": 0
+        }
+      }
+    },
+    "ball": {
+      "desktop": {
+        "src": "/assets/intro/oil-motion/props/yellow-ball/desktop.webp",
+        "dpr": 2,
+        "display": {
+          "heightVh": 10
+        },
+        "audit": {
+          "format": "webp",
+          "width": 647,
+          "height": 650,
+          "channels": 4,
+          "hasAlpha": true,
+          "edgeAlphaMax": 0
+        }
+      },
+      "mobile": {
+        "src": "/assets/intro/oil-motion/props/yellow-ball/mobile.webp",
+        "dpr": 1,
+        "display": {
+          "heightVh": 8.5
+        },
+        "audit": {
+          "format": "webp",
+          "width": 324,
+          "height": 326,
+          "channels": 4,
+          "hasAlpha": true,
+          "edgeAlphaMax": 0
+        }
+      }
+    },
+    "backgrounds": [
+      {
+        "id": "grass-desktop",
+        "source": "background/grass-desktop-approved.png",
+        "inputAudit": {
+          "file": "background/grass-desktop-approved.png",
+          "format": "png",
+          "width": 1440,
+          "height": 225,
+          "channels": 3,
+          "hasAlpha": false,
+          "edgeAlphaMax": 255,
+          "contentBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 225
+          },
+          "opaquePixels": 324000
+        },
+        "src": "/assets/intro/oil-motion/background/grass-desktop.webp",
+        "audit": {
+          "format": "webp",
+          "width": 1440,
+          "height": 225,
+          "channels": 3,
+          "hasAlpha": false,
+          "edgeAlphaMax": 255
+        }
+      },
+      {
+        "id": "grass-mobile",
+        "source": "background/grass-mobile-approved.png",
+        "inputAudit": {
+          "file": "background/grass-mobile-approved.png",
+          "format": "png",
+          "width": 390,
+          "height": 211,
+          "channels": 3,
+          "hasAlpha": false,
+          "edgeAlphaMax": 255,
+          "contentBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 211
+          },
+          "opaquePixels": 82290
+        },
+        "src": "/assets/intro/oil-motion/background/grass-mobile.webp",
+        "audit": {
+          "format": "webp",
+          "width": 390,
+          "height": 211,
+          "channels": 3,
+          "hasAlpha": false,
+          "edgeAlphaMax": 255
+        }
+      }
+    ]
+  },
+  "identityCheck": {
+    "person": "manual-match: dark bucket hat, glasses, patterned short-sleeve shirt, dark blue shorts, dark shoes, white outline",
+    "jiale": "manual-match: white bichon, blue collar, white outline, right-facing run frames",
+    "orientation": "all dynamic poses face right"
+  }
+}

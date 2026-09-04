@@ -1,0 +1,39 @@
+---
+import ConfirmedMaterialsStage from "@/components/intro-materials/ConfirmedMaterialsStage.astro";
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#eef0ea" />
+    <title>确认素材启动页验收 · baozi.space</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到 Home v2 交接态</a>
+    <main id="main">
+      <ConfirmedMaterialsStage />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: #eef0ea; }
+  body { margin: 0; font-family: system-ui, "Microsoft YaHei", sans-serif; }
+  a { color: inherit; }
+  .skip-link {
+    position: fixed;
+    top: 8px;
+    left: 16px;
+    z-index: 100;
+    padding: 10px 14px;
+    color: #fffdf7;
+    background: #25231f;
+    transform: translateY(-160%);
+  }
+  .skip-link:focus { transform: translateY(0); }
+  astro-dev-toolbar { display: none !important; }
+</style>

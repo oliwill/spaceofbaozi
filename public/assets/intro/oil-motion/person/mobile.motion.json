@@ -1,0 +1,188 @@
+{
+  "role": "person",
+  "frameOrder": [
+    "neutral",
+    "run",
+    "pulled-lean",
+    "fall-slide-right"
+  ],
+  "layout": "horizontal-strip",
+  "frameCount": 4,
+  "cellSize": {
+    "width": 1531,
+    "height": 1543
+  },
+  "frames": [
+    {
+      "id": "neutral",
+      "source": "person/trimmed/person-neutral.png",
+      "sourceSize": {
+        "width": 789,
+        "height": 1568
+      },
+      "contentBounds": {
+        "x": 51,
+        "y": 61,
+        "width": 515,
+        "height": 1447
+      },
+      "cell": {
+        "x": 0,
+        "y": 0,
+        "width": 1531,
+        "height": 1543
+      },
+      "anchors": {
+        "ground": [
+          0.5,
+          0.9689
+        ]
+      }
+    },
+    {
+      "id": "run",
+      "source": "person/trimmed/person-run.png",
+      "sourceSize": {
+        "width": 1049,
+        "height": 1493
+      },
+      "contentBounds": {
+        "x": 99,
+        "y": 118,
+        "width": 847,
+        "height": 1221
+      },
+      "cell": {
+        "x": 1531,
+        "y": 0,
+        "width": 1531,
+        "height": 1543
+      },
+      "anchors": {
+        "ground": [
+          0.5,
+          0.9689
+        ],
+        "hand": [
+          0.7368,
+          0.4478
+        ]
+      }
+    },
+    {
+      "id": "pulled-lean",
+      "source": "person/trimmed/person-pulled-lean.png",
+      "sourceSize": {
+        "width": 1071,
+        "height": 1521
+      },
+      "contentBounds": {
+        "x": 90,
+        "y": 87,
+        "width": 924,
+        "height": 1311
+      },
+      "cell": {
+        "x": 3062,
+        "y": 0,
+        "width": 1531,
+        "height": 1543
+      },
+      "anchors": {
+        "ground": [
+          0.5,
+          0.9689
+        ],
+        "hand": [
+          0.7636,
+          0.4776
+        ]
+      }
+    },
+    {
+      "id": "fall-slide-right",
+      "source": "person/trimmed/person-fall-slide-right.png",
+      "sourceSize": {
+        "width": 1547,
+        "height": 1099
+      },
+      "contentBounds": {
+        "x": 54,
+        "y": 166,
+        "width": 1435,
+        "height": 703
+      },
+      "cell": {
+        "x": 4593,
+        "y": 0,
+        "width": 1531,
+        "height": 1543
+      },
+      "anchors": {
+        "ground": [
+          0.5,
+          0.9689
+        ],
+        "hand": [
+          0.9203,
+          0.7006
+        ]
+      }
+    }
+  ],
+  "variants": {
+    "desktop": {
+      "src": "/assets/intro/oil-motion/person/desktop.webp",
+      "dpr": 2,
+      "scale": 1,
+      "imageSize": {
+        "width": 6124,
+        "height": 1543
+      },
+      "display": {
+        "heightVh": 58,
+        "groundOffsetVh": 8
+      },
+      "audit": {
+        "format": "webp",
+        "width": 6124,
+        "height": 1543,
+        "channels": 4,
+        "hasAlpha": true,
+        "edgeAlphaMax": 0
+      }
+    },
+    "mobile": {
+      "src": "/assets/intro/oil-motion/person/mobile.webp",
+      "dpr": 1,
+      "scale": 0.5,
+      "imageSize": {
+        "width": 3062,
+        "height": 772
+      },
+      "display": {
+        "heightVh": 48,
+        "groundOffsetVh": 7
+      },
+      "audit": {
+        "format": "webp",
+        "width": 3062,
+        "height": 772,
+        "channels": 4,
+        "hasAlpha": true,
+        "edgeAlphaMax": 0
+      }
+    }
+  },
+  "variant": "mobile",
+  "src": "/assets/intro/oil-motion/person/mobile.webp",
+  "dpr": 1,
+  "imageSize": {
+    "width": 3062,
+    "height": 772
+  },
+  "display": {
+    "heightVh": 48,
+    "groundOffsetVh": 7
+  }
+}

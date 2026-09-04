@@ -1,0 +1,4 @@
+take_id,model,task_id,seed,created_at,duration_s,aspect_ratio,resolution,fps,prompt_version,first_frame,last_frame,person_ref,jiale_ref,motion_ref,score,leash_grade,status,reject_reason
+desktop-take-01,Seedance 2.5,,,,6,16:10,720p,24,v1,intro-first-desktop.png,handoff-final-desktop.png,person-reference.png,jiale-reference.png,motion-reference-desktop.webm,,,,
+desktop-take-02,Seedance 2.5,,,,6,16:10,720p,24,v1,intro-first-desktop.png,handoff-final-desktop.png,person-reference.png,jiale-reference.png,motion-reference-desktop.webm,,,,
+desktop-take-03,Seedance 2.5,,,,6,16:10,720p,24,v1,intro-first-desktop.png,handoff-final-desktop.png,person-reference.png,jiale-reference.png,motion-reference-desktop.webm,,,,

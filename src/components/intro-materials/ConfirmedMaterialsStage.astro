@@ -1,0 +1,340 @@
+---
+import "@/components/intro-materials/confirmed-materials.css";
+import HomeOrbit from "@/components/home/HomeOrbit.astro";
+
+const grassDesktop = "/assets/intro/oil-motion/background/grass-desktop.webp";
+const grassMobile = "/assets/intro/oil-motion/background/grass-mobile.webp";
+---
+
+<section
+  class="materials-intro"
+  data-materials-intro
+  data-motion-ready="false"
+  data-progress="0.000"
+  aria-label="2026-08-31 确认素材启动页验收"
+>
+  <div class="materials-intro__stage" data-materials-stage>
+    <img
+      class="materials-intro__grass"
+      src={grassDesktop}
+      srcset={`${grassMobile} 390w, ${grassDesktop} 1440w`}
+      sizes="100vw"
+      alt=""
+      aria-hidden="true"
+      draggable="false"
+    />
+
+    <div class="materials-intro__actor materials-intro__actor--ball" data-materials-ball aria-hidden="true">
+      <div class="materials-intro__sprite materials-intro__sprite--ball" data-materials-ball-sprite></div>
+    </div>
+    <div class="materials-intro__actor materials-intro__actor--jiale" data-materials-jiale aria-hidden="true">
+      <div class="materials-intro__sprite" data-materials-jiale-sprite></div>
+    </div>
+    <div class="materials-intro__actor materials-intro__actor--person" data-materials-person aria-hidden="true">
+      <div class="materials-intro__sprite" data-materials-person-sprite></div>
+    </div>
+
+    <svg class="materials-intro__leash" data-materials-leash-svg aria-hidden="true">
+      <path data-materials-leash d="" />
+    </svg>
+
+    <section class="materials-intro__home" data-materials-home aria-labelledby="materials-home-title">
+      <div class="materials-intro__home-actors" aria-hidden="true">
+        <span class="materials-intro__home-static materials-intro__home-static--person"></span>
+        <span class="materials-intro__home-static materials-intro__home-static--jiale"></span>
+        <HomeOrbit />
+      </div>
+      <div class="materials-intro__home-content">
+        <p class="materials-intro__home-kicker">Home v2 交接态</p>
+        <h2 id="materials-home-title">你好，我是包子。</h2>
+        <p>人物摔倒后在这里站起，嘉乐会围绕人物转动；移动鼠标可以调整嘉乐的位置，人物会看向嘉乐。</p>
+        <div class="materials-intro__home-tabs" aria-label="主要栏目">
+          <span>文章</span>
+          <span>照片</span>
+          <span>简历</span>
+          <span>项目</span>
+        </div>
+      </div>
+    </section>
+
+    <button class="materials-intro__skip" type="button" data-materials-skip hidden>跳过动画</button>
+    <p class="materials-intro__review-cue" data-materials-review-cue hidden>素材验收 · 向下滚动查看动作</p>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  type Point = [number, number];
+  type RoleVariant = {
+    src: string;
+    display: { heightVh: number; groundOffsetVh?: number };
+    audit: { width: number; height: number };
+  };
+  type RoleManifest = {
+    frameCount: number;
+    cellSize: { width: number; height: number };
+    frames: Array<{ id: string; anchors: { hand?: Point; collar?: Point } }>;
+    variants: Record<"desktop" | "mobile", RoleVariant>;
+  };
+  type BallManifest = {
+    variants: Record<"desktop" | "mobile", RoleVariant>;
+  };
+  type IntroMaterialsManifest = {
+    roles: { person: RoleManifest; jiale: RoleManifest; ball: BallManifest };
+  };
+  type Layout = {
+    width: number;
+    height: number;
+    ballWidth: number;
+    jialeWidth: number;
+    personWidth: number;
+    jialeHeight: number;
+    personHeight: number;
+  };
+
+  const SESSION_KEY = "baozi-intro-materials-2026-08-31-complete";
+  const MANIFEST_URL = "/assets/intro/oil-motion/manifest.json";
+  const root = document.querySelector<HTMLElement>("[data-materials-intro]");
+
+  if (root) {
+    const stage = root.querySelector<HTMLElement>("[data-materials-stage]");
+    const ball = root.querySelector<HTMLElement>("[data-materials-ball]");
+    const ballSprite = root.querySelector<HTMLElement>("[data-materials-ball-sprite]");
+    const jiale = root.querySelector<HTMLElement>("[data-materials-jiale]");
+    const jialeSprite = root.querySelector<HTMLElement>("[data-materials-jiale-sprite]");
+    const person = root.querySelector<HTMLElement>("[data-materials-person]");
+    const personSprite = root.querySelector<HTMLElement>("[data-materials-person-sprite]");
+    const leashSvg = root.querySelector<SVGSVGElement>("[data-materials-leash-svg]");
+    const leash = root.querySelector<SVGPathElement>("[data-materials-leash]");
+    const home = root.querySelector<HTMLElement>("[data-materials-home]");
+    const skip = root.querySelector<HTMLButtonElement>("[data-materials-skip]");
+    const reviewCue = root.querySelector<HTMLElement>("[data-materials-review-cue]");
+
+    if (!stage || !ball || !ballSprite || !jiale || !jialeSprite || !person || !personSprite || !leashSvg || !leash || !home || !skip || !reviewCue) {
+      throw new Error("confirmed materials stage is incomplete");
+    }
+
+    const clamp = (value: number) => Math.min(1, Math.max(0, value));
+    const range = (value: number, start: number, end: number) => clamp((value - start) / (end - start));
+    const mix = (from: number, to: number, amount: number) => from + (to - from) * amount;
+    let trigger: ScrollTrigger | null = null;
+
+    const finish = (remember: boolean) => {
+      if (remember) sessionStorage.setItem(SESSION_KEY, "1");
+      trigger?.kill();
+      trigger = null;
+      root.dataset.motionReady = "false";
+      root.dataset.progress = "1.000";
+      root.dataset.complete = "true";
+      for (const actor of [ball, jiale, person]) {
+        actor.style.opacity = "0";
+        actor.dataset.visible = "false";
+      }
+      leash.style.opacity = "0";
+      home.style.opacity = "1";
+      home.style.transform = "none";
+      home.dataset.active = "true";
+      skip.hidden = true;
+      home.dataset.orbitActive = "false";
+      window.dispatchEvent(new CustomEvent("baozi:intro-orbit-reset"));
+      reviewCue.hidden = true;
+    };
+
+    skip.addEventListener("click", () => finish(true));
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("reset") === "1") sessionStorage.removeItem(SESSION_KEY);
+    if (reducedMotion || sessionStorage.getItem(SESSION_KEY) === "1") {
+      finish(false);
+    } else {
+      fetch(MANIFEST_URL, { cache: "no-store" })
+        .then(async (response) => {
+          if (!response.ok) throw new Error(`materials manifest failed: ${response.status}`);
+          return await response.json() as IntroMaterialsManifest;
+        })
+        .then((manifest) => {
+          const variantName = window.innerWidth < 768 ? "mobile" : "desktop";
+          const personVariant = manifest.roles.person.variants[variantName];
+          const jialeVariant = manifest.roles.jiale.variants[variantName];
+          const ballVariant = manifest.roles.ball.variants[variantName];
+
+          const setupRole = (
+            role: RoleManifest,
+            variant: RoleVariant,
+            wrapper: HTMLElement,
+            sprite: HTMLElement,
+          ) => {
+            wrapper.style.height = `${variant.display.heightVh}svh`;
+            wrapper.style.aspectRatio = `${role.cellSize.width} / ${role.cellSize.height}`;
+            wrapper.style.bottom = `${variant.display.groundOffsetVh ?? 8}svh`;
+            sprite.style.backgroundImage = `url("${variant.src}")`;
+            sprite.style.backgroundSize = `${role.frameCount * 100}% 100%`;
+          };
+
+          setupRole(manifest.roles.person, personVariant, person, personSprite);
+          setupRole(manifest.roles.jiale, jialeVariant, jiale, jialeSprite);
+          ball.style.height = `${ballVariant.display.heightVh}svh`;
+          ball.style.aspectRatio = `${ballVariant.audit.width} / ${ballVariant.audit.height}`;
+          ball.style.bottom = "9svh";
+          ballSprite.style.backgroundImage = `url("${ballVariant.src}")`;
+
+          const state = { progress: 0 };
+          let completed = false;
+          let orbitHandoffSent = false;
+          let layout: Layout = {
+            width: stage.clientWidth,
+            height: stage.clientHeight,
+            ballWidth: ball.offsetWidth,
+            jialeWidth: jiale.offsetWidth,
+            personWidth: person.offsetWidth,
+            jialeHeight: jiale.offsetHeight,
+            personHeight: person.offsetHeight,
+          };
+
+          const refreshLayout = () => {
+            layout = {
+              width: stage.clientWidth,
+              height: stage.clientHeight,
+              ballWidth: ball.offsetWidth,
+              jialeWidth: jiale.offsetWidth,
+              personWidth: person.offsetWidth,
+              jialeHeight: jiale.offsetHeight,
+              personHeight: person.offsetHeight,
+            };
+          };
+
+          const setFrame = (sprite: HTMLElement, frame: number, frameCount: number) => {
+            sprite.style.backgroundPosition = `${frame * (100 / (frameCount - 1))}% 0%`;
+            sprite.dataset.frame = String(frame);
+          };
+
+          const setActor = (actor: HTMLElement, x: number, visible: boolean) => {
+            actor.style.opacity = visible ? "1" : "0";
+            actor.style.transform = `translate3d(${x}px, 0, 0)`;
+            actor.dataset.visible = String(visible);
+            actor.dataset.x = x.toFixed(2);
+            actor.dataset.right = (x + actor.offsetWidth).toFixed(2);
+          };
+
+          const anchorPoint = (
+            actor: HTMLElement,
+            actorHeight: number,
+            groundOffsetVh: number,
+            anchor: Point,
+          ): Point => {
+            const x = Number(actor.dataset.x ?? "0") + actor.offsetWidth * anchor[0];
+            const bottom = layout.height * groundOffsetVh / 100;
+            const top = layout.height - bottom - actorHeight;
+            return [x, top + actorHeight * anchor[1]];
+          };
+
+          const render = () => {
+            const progress = clamp(state.progress);
+            root.dataset.progress = progress.toFixed(3);
+            root.dataset.complete = String(progress === 1);
+            skip.hidden = progress === 1;
+            reviewCue.hidden = progress > 0.01;
+
+            const ballPhase = range(progress, 0.08, 0.52);
+            const jialePhase = range(progress, 0.12, 0.74);
+            const personPhase = range(progress, 0.28, 0.82);
+            const ballVisible = progress >= 0.08 && progress < 0.52;
+            const jialeVisible = progress >= 0.12 && progress < 0.74;
+            const personVisible = progress >= 0.28 && progress < 0.82;
+
+            setActor(ball, mix(-layout.ballWidth, layout.width + layout.ballWidth, ballPhase), ballVisible);
+            ballSprite.style.transform = `rotate(${ballPhase * 540}deg)`;
+            setActor(jiale, mix(-layout.jialeWidth * 1.1, layout.width + layout.jialeWidth * 1.1, jialePhase), jialeVisible);
+            setActor(person, mix(-layout.personWidth * 1.1, layout.width + layout.personWidth * 1.1, personPhase), personVisible);
+
+            const jialeFrame = Math.floor(jialePhase * 12) % manifest.roles.jiale.frameCount;
+            const personFrame = progress < 0.35 ? 0 : progress < 0.49 ? 1 : progress < 0.61 ? 2 : 3;
+            setFrame(jialeSprite, jialeFrame, manifest.roles.jiale.frameCount);
+            setFrame(personSprite, personFrame, manifest.roles.person.frameCount);
+            jiale.dataset.frame = manifest.roles.jiale.frames[jialeFrame].id;
+            person.dataset.frame = manifest.roles.person.frames[personFrame].id;
+
+            const personAnchor = manifest.roles.person.frames[personFrame].anchors.hand;
+            const jialeAnchor = manifest.roles.jiale.frames[jialeFrame].anchors.collar;
+            const leashVisible = personVisible && jialeVisible && progress >= 0.35 && progress < 0.57 && personAnchor && jialeAnchor;
+            leashSvg.setAttribute("viewBox", `0 0 ${layout.width} ${layout.height}`);
+            if (leashVisible) {
+              const hand = anchorPoint(person, layout.personHeight, personVariant.display.groundOffsetVh ?? 8, personAnchor);
+              const collar = anchorPoint(jiale, layout.jialeHeight, jialeVariant.display.groundOffsetVh ?? 8, jialeAnchor);
+              const middleX = (hand[0] + collar[0]) / 2;
+              leash.setAttribute(
+                "d",
+                `M ${hand[0].toFixed(2)} ${hand[1].toFixed(2)} C ${middleX.toFixed(2)} ${(hand[1] + 18).toFixed(2)}, ${middleX.toFixed(2)} ${(collar[1] + 18).toFixed(2)}, ${collar[0].toFixed(2)} ${collar[1].toFixed(2)}`,
+              );
+              leash.style.opacity = "1";
+              person.dataset.handX = hand[0].toFixed(2);
+              person.dataset.handY = hand[1].toFixed(2);
+              jiale.dataset.collarX = collar[0].toFixed(2);
+              jiale.dataset.collarY = collar[1].toFixed(2);
+            } else {
+              leash.style.opacity = "0";
+            }
+            leash.dataset.visible = String(Boolean(leashVisible));
+
+            const homePhase = range(progress, 0.83, 1);
+            const orbitPhase = range(progress, 0.84, 0.99);
+            home.style.opacity = String(homePhase);
+            home.style.transform = `translate3d(0, ${mix(64, 0, homePhase)}px, 0)`;
+            home.dataset.active = String(progress >= 0.83);
+            home.dataset.orbitActive = String(orbitPhase > 0 || progress === 1);
+            if (orbitPhase > 0) {
+              const angle = (215 + orbitPhase * 180) * Math.PI / 180;
+              window.dispatchEvent(new CustomEvent("baozi:intro-orbit-update", {
+                detail: { angle, angularVelocity: progress < 0.99 ? Math.PI : 0 },
+              }));
+            }
+            if (progress >= 0.99 && !orbitHandoffSent) {
+              window.dispatchEvent(new CustomEvent("baozi:intro-orbit-handoff", {
+                detail: { angle: 35 * Math.PI / 180, angularVelocity: 0 },
+              }));
+              window.dispatchEvent(new CustomEvent("baozi:intro-person-stood"));
+              orbitHandoffSent = true;
+            } else if (progress < 0.83 && orbitHandoffSent) {
+              window.dispatchEvent(new CustomEvent("baozi:intro-orbit-reset"));
+              orbitHandoffSent = false;
+            }
+
+            if (progress === 1 && !completed) {
+              completed = true;
+              sessionStorage.setItem(SESSION_KEY, "1");
+            } else if (progress < 1) {
+              completed = false;
+            }
+          };
+
+          const resizeObserver = new ResizeObserver(() => {
+            refreshLayout();
+            render();
+          });
+          resizeObserver.observe(stage);
+          root.dataset.motionReady = "true";
+          skip.hidden = false;
+          reviewCue.hidden = false;
+          const timeline = gsap.timeline({ paused: true });
+          timeline.to(state, { progress: 1, duration: 1, ease: "none", onUpdate: render });
+          trigger = ScrollTrigger.create({
+            trigger: root,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true,
+            animation: timeline,
+          });
+          render();
+        })
+        .catch((error: unknown) => {
+          console.warn("Confirmed intro materials unavailable; showing Home v2.", error);
+          finish(false);
+        });
+    }
+  }
+</script>

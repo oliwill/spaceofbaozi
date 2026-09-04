@@ -1,0 +1,196 @@
+{
+  "role": "jiale",
+  "frameOrder": [
+    "contact",
+    "stretch",
+    "gathered",
+    "airborne"
+  ],
+  "layout": "horizontal-strip",
+  "frameCount": 4,
+  "cellSize": {
+    "width": 1208,
+    "height": 770
+  },
+  "frames": [
+    {
+      "id": "contact",
+      "source": "dog/trimmed/dog-run-contact.png",
+      "sourceSize": {
+        "width": 1554,
+        "height": 1059
+      },
+      "contentBounds": {
+        "x": 378,
+        "y": 180,
+        "width": 871,
+        "height": 674
+      },
+      "cell": {
+        "x": 0,
+        "y": 0,
+        "width": 1208,
+        "height": 770
+      },
+      "anchors": {
+        "ground": [
+          0.5,
+          0.9377
+        ],
+        "collar": [
+          0.6283,
+          0.4828
+        ],
+        "collarBluePixels": 1933
+      }
+    },
+    {
+      "id": "stretch",
+      "source": "dog/trimmed/dog-run-stretch.png",
+      "sourceSize": {
+        "width": 1468,
+        "height": 1016
+      },
+      "contentBounds": {
+        "x": 337,
+        "y": 192,
+        "width": 961,
+        "height": 673
+      },
+      "cell": {
+        "x": 1208,
+        "y": 0,
+        "width": 1208,
+        "height": 770
+      },
+      "anchors": {
+        "ground": [
+          0.5,
+          0.9377
+        ],
+        "collar": [
+          0.6447,
+          0.4789
+        ],
+        "collarBluePixels": 1920
+      }
+    },
+    {
+      "id": "gathered",
+      "source": "dog/trimmed/dog-run-gathered.png",
+      "sourceSize": {
+        "width": 1532,
+        "height": 1064
+      },
+      "contentBounds": {
+        "x": 358,
+        "y": 193,
+        "width": 899,
+        "height": 577
+      },
+      "cell": {
+        "x": 2416,
+        "y": 0,
+        "width": 1208,
+        "height": 770
+      },
+      "anchors": {
+        "ground": [
+          0.5,
+          0.9377
+        ],
+        "collar": [
+          0.6368,
+          0.5992
+        ],
+        "collarBluePixels": 1871
+      }
+    },
+    {
+      "id": "airborne",
+      "source": "dog/trimmed/dog-run-airborne.png",
+      "sourceSize": {
+        "width": 1580,
+        "height": 1065
+      },
+      "contentBounds": {
+        "x": 258,
+        "y": 162,
+        "width": 1112,
+        "height": 647
+      },
+      "cell": {
+        "x": 3624,
+        "y": 0,
+        "width": 1208,
+        "height": 770
+      },
+      "anchors": {
+        "ground": [
+          0.5,
+          0.9377
+        ],
+        "collar": [
+          0.6897,
+          0.5376
+        ],
+        "collarBluePixels": 2222
+      }
+    }
+  ],
+  "variants": {
+    "desktop": {
+      "src": "/assets/intro/oil-motion/jiale/desktop.webp",
+      "dpr": 2,
+      "scale": 1,
+      "imageSize": {
+        "width": 4832,
+        "height": 770
+      },
+      "display": {
+        "heightVh": 26,
+        "groundOffsetVh": 8
+      },
+      "audit": {
+        "format": "webp",
+        "width": 4832,
+        "height": 770,
+        "channels": 4,
+        "hasAlpha": true,
+        "edgeAlphaMax": 0
+      }
+    },
+    "mobile": {
+      "src": "/assets/intro/oil-motion/jiale/mobile.webp",
+      "dpr": 1,
+      "scale": 0.5,
+      "imageSize": {
+        "width": 2416,
+        "height": 385
+      },
+      "display": {
+        "heightVh": 22,
+        "groundOffsetVh": 7
+      },
+      "audit": {
+        "format": "webp",
+        "width": 2416,
+        "height": 385,
+        "channels": 4,
+        "hasAlpha": true,
+        "edgeAlphaMax": 0
+      }
+    }
+  },
+  "variant": "mobile",
+  "src": "/assets/intro/oil-motion/jiale/mobile.webp",
+  "dpr": 1,
+  "imageSize": {
+    "width": 2416,
+    "height": 385
+  },
+  "display": {
+    "heightVh": 22,
+    "groundOffsetVh": 7
+  }
+}

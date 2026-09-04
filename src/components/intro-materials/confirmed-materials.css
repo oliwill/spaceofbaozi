@@ -1,0 +1,276 @@
+/* 2026-08-31 确认素材隔离验收页：不进生产导航 */
+
+.materials-intro {
+  --dot-paper: #eef0ea;
+  --dot: rgba(63, 78, 82, 0.14);
+  --paper: #fffdf7;
+  --ink: #25231f;
+  --ink-soft: #67635b;
+  --indigo: #284d5b;
+  --vermilion: #b8513d;
+  min-height: 340vh;
+  background-color: var(--dot-paper);
+  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.materials-intro__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.materials-intro__grass {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.materials-intro__actor {
+  position: absolute;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.materials-intro__sprite {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: 400% 100%;
+}
+
+.materials-intro__sprite--ball {
+  background-size: 100% 100%;
+}
+
+.materials-intro__leash {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.materials-intro__leash path {
+  fill: none;
+  stroke: #284d5b;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.materials-intro__home {
+  position: absolute;
+  inset: clamp(1rem, 4vw, 4rem);
+  z-index: 4;
+  display: grid;
+  grid-template-columns: minmax(320px, 42%) 1fr;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  padding: clamp(2rem, 6vw, 5rem);
+  color: var(--ink);
+  background: var(--paper);
+  box-shadow: 0 8px 30px rgba(46, 48, 42, 0.1);
+}
+
+.materials-intro__home-actors {
+  position: relative;
+  min-height: min(58vh, 520px);
+}
+
+.materials-intro__home-static {
+  position: absolute;
+  display: block;
+  opacity: 1;
+  transition: opacity 180ms ease-out;
+  pointer-events: none;
+}
+
+.materials-intro__home-static--person {
+  left: 4%;
+  bottom: 12%;
+  width: min(36vh, 32vw);
+  aspect-ratio: 384 / 342;
+  background-image: url("/assets/orbit/runtime/person-look-12dir.webp");
+  background-position: 0% 0%;
+  background-repeat: no-repeat;
+  background-size: 400% 300%;
+}
+
+.materials-intro__home-static--jiale {
+  left: 46%;
+  bottom: 10%;
+  width: min(10.7vh, 9vw);
+  aspect-ratio: 4 / 3;
+  background-image: url("/assets/orbit/runtime/dog-orbit-run-8dir-4f.webp");
+  background-position: 0% 0%;
+  background-repeat: no-repeat;
+  background-size: 400% 800%;
+}
+
+.materials-intro__home[data-orbit-active="true"] .materials-intro__home-static {
+  opacity: 0;
+}
+
+.materials-intro__home-actors .home-orbit {
+  z-index: 3;
+}
+
+.materials-intro__home-content {
+  position: relative;
+  z-index: 7;
+}
+
+.materials-intro[data-motion-ready="true"] .materials-intro__home {
+  opacity: 0;
+}
+
+.materials-intro__home-kicker {
+  margin: 0 0 0.75rem;
+  color: var(--vermilion);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.materials-intro__home h2 {
+  max-width: none;
+  margin: 0;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: clamp(2.4rem, 4.8vw, 4.8rem);
+  font-weight: 500;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.materials-intro__home-content > p {
+  max-width: 34rem;
+  margin: 1.25rem 0 0;
+  color: var(--ink-soft);
+  line-height: 1.8;
+}
+
+.materials-intro__home-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.materials-intro__home-tabs span {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid rgba(37, 35, 31, 0.12);
+  border-radius: 999px;
+  color: var(--indigo);
+  font-size: 0.85rem;
+}
+
+.materials-intro__review-cue {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  z-index: 5;
+  margin: 0;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(37, 35, 31, 0.14);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  background: rgba(255, 253, 247, 0.9);
+  font-size: 0.85rem;
+  transform: translateX(-50%);
+  backdrop-filter: blur(6px);
+}
+
+.materials-intro__review-cue[hidden] {
+  display: none;
+}
+
+.materials-intro__skip {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 5;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(37, 35, 31, 0.16);
+  border-radius: 999px;
+  color: var(--ink);
+  background: rgba(255, 253, 247, 0.9);
+  cursor: pointer;
+}
+
+.materials-intro__skip[hidden] {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .materials-intro {
+    background-size: 18px 18px;
+  }
+
+  .materials-intro__home {
+    inset: 1rem;
+    padding: 4.5rem 1.25rem 2rem;
+  }
+
+  .materials-intro__home {
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 1rem;
+    overflow: hidden;
+  }
+
+  .materials-intro__home-actors {
+    min-height: 32vh;
+  }
+
+  .materials-intro__home h2 {
+    font-size: 2.2rem;
+    white-space: normal;
+    text-wrap: balance;
+  }
+
+  .materials-intro__home-actors .home-orbit__person {
+    left: 16%;
+    bottom: 8%;
+    width: min(24vh, 40vw);
+  }
+
+  .materials-intro__home-actors .home-orbit__anchor {
+    width: min(8vh, 18vw);
+  }
+
+  .materials-intro__home-static--person {
+    left: 16%;
+    bottom: 8%;
+    width: min(24vh, 40vw);
+  }
+
+  .materials-intro__home-static--jiale {
+    left: 58%;
+    bottom: 8%;
+    width: min(8vh, 18vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .materials-intro__actor,
+  .materials-intro__leash,
+  .materials-intro__skip {
+    display: none;
+  }
+
+  .materials-intro__home {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

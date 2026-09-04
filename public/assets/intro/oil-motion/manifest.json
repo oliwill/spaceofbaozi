@@ -1,0 +1,499 @@
+{
+  "schemaVersion": 1,
+  "sourcePackage": "assets-master/intro-materials-harness-ready-2026-08-31.zip",
+  "identityReferences": {
+    "person": "reference/person-identity-reference-2026-08-14.png",
+    "jiale": "reference/dog-identity-reference-2026-08-14.png"
+  },
+  "generatedAt": "2026-09-03T10:23:43.184Z",
+  "roles": {
+    "person": {
+      "role": "person",
+      "frameOrder": [
+        "neutral",
+        "run",
+        "pulled-lean",
+        "fall-slide-right"
+      ],
+      "layout": "horizontal-strip",
+      "frameCount": 4,
+      "cellSize": {
+        "width": 1531,
+        "height": 1543
+      },
+      "frames": [
+        {
+          "id": "neutral",
+          "source": "person/trimmed/person-neutral.png",
+          "sourceSize": {
+            "width": 789,
+            "height": 1568
+          },
+          "contentBounds": {
+            "x": 51,
+            "y": 61,
+            "width": 515,
+            "height": 1447
+          },
+          "cell": {
+            "x": 0,
+            "y": 0,
+            "width": 1531,
+            "height": 1543
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9689
+            ]
+          }
+        },
+        {
+          "id": "run",
+          "source": "person/trimmed/person-run.png",
+          "sourceSize": {
+            "width": 1049,
+            "height": 1493
+          },
+          "contentBounds": {
+            "x": 99,
+            "y": 118,
+            "width": 847,
+            "height": 1221
+          },
+          "cell": {
+            "x": 1531,
+            "y": 0,
+            "width": 1531,
+            "height": 1543
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9689
+            ],
+            "hand": [
+              0.7368,
+              0.4478
+            ]
+          }
+        },
+        {
+          "id": "pulled-lean",
+          "source": "person/trimmed/person-pulled-lean.png",
+          "sourceSize": {
+            "width": 1071,
+            "height": 1521
+          },
+          "contentBounds": {
+            "x": 90,
+            "y": 87,
+            "width": 924,
+            "height": 1311
+          },
+          "cell": {
+            "x": 3062,
+            "y": 0,
+            "width": 1531,
+            "height": 1543
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9689
+            ],
+            "hand": [
+              0.7636,
+              0.4776
+            ]
+          }
+        },
+        {
+          "id": "fall-slide-right",
+          "source": "person/trimmed/person-fall-slide-right.png",
+          "sourceSize": {
+            "width": 1547,
+            "height": 1099
+          },
+          "contentBounds": {
+            "x": 54,
+            "y": 166,
+            "width": 1435,
+            "height": 703
+          },
+          "cell": {
+            "x": 4593,
+            "y": 0,
+            "width": 1531,
+            "height": 1543
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9689
+            ],
+            "hand": [
+              0.9203,
+              0.7006
+            ]
+          }
+        }
+      ],
+      "variants": {
+        "desktop": {
+          "src": "/assets/intro/oil-motion/person/desktop.webp",
+          "dpr": 2,
+          "scale": 1,
+          "imageSize": {
+            "width": 6124,
+            "height": 1543
+          },
+          "display": {
+            "heightVh": 58,
+            "groundOffsetVh": 8
+          },
+          "audit": {
+            "format": "webp",
+            "width": 6124,
+            "height": 1543,
+            "channels": 4,
+            "hasAlpha": true,
+            "edgeAlphaMax": 0
+          }
+        },
+        "mobile": {
+          "src": "/assets/intro/oil-motion/person/mobile.webp",
+          "dpr": 1,
+          "scale": 0.5,
+          "imageSize": {
+            "width": 3062,
+            "height": 772
+          },
+          "display": {
+            "heightVh": 48,
+            "groundOffsetVh": 7
+          },
+          "audit": {
+            "format": "webp",
+            "width": 3062,
+            "height": 772,
+            "channels": 4,
+            "hasAlpha": true,
+            "edgeAlphaMax": 0
+          }
+        }
+      }
+    },
+    "jiale": {
+      "role": "jiale",
+      "frameOrder": [
+        "contact",
+        "stretch",
+        "gathered",
+        "airborne"
+      ],
+      "layout": "horizontal-strip",
+      "frameCount": 4,
+      "cellSize": {
+        "width": 1208,
+        "height": 770
+      },
+      "frames": [
+        {
+          "id": "contact",
+          "source": "dog/trimmed/dog-run-contact.png",
+          "sourceSize": {
+            "width": 1554,
+            "height": 1059
+          },
+          "contentBounds": {
+            "x": 378,
+            "y": 180,
+            "width": 871,
+            "height": 674
+          },
+          "cell": {
+            "x": 0,
+            "y": 0,
+            "width": 1208,
+            "height": 770
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9377
+            ],
+            "collar": [
+              0.6283,
+              0.4828
+            ],
+            "collarBluePixels": 1933
+          }
+        },
+        {
+          "id": "stretch",
+          "source": "dog/trimmed/dog-run-stretch.png",
+          "sourceSize": {
+            "width": 1468,
+            "height": 1016
+          },
+          "contentBounds": {
+            "x": 337,
+            "y": 192,
+            "width": 961,
+            "height": 673
+          },
+          "cell": {
+            "x": 1208,
+            "y": 0,
+            "width": 1208,
+            "height": 770
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9377
+            ],
+            "collar": [
+              0.6447,
+              0.4789
+            ],
+            "collarBluePixels": 1920
+          }
+        },
+        {
+          "id": "gathered",
+          "source": "dog/trimmed/dog-run-gathered.png",
+          "sourceSize": {
+            "width": 1532,
+            "height": 1064
+          },
+          "contentBounds": {
+            "x": 358,
+            "y": 193,
+            "width": 899,
+            "height": 577
+          },
+          "cell": {
+            "x": 2416,
+            "y": 0,
+            "width": 1208,
+            "height": 770
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9377
+            ],
+            "collar": [
+              0.6368,
+              0.5992
+            ],
+            "collarBluePixels": 1871
+          }
+        },
+        {
+          "id": "airborne",
+          "source": "dog/trimmed/dog-run-airborne.png",
+          "sourceSize": {
+            "width": 1580,
+            "height": 1065
+          },
+          "contentBounds": {
+            "x": 258,
+            "y": 162,
+            "width": 1112,
+            "height": 647
+          },
+          "cell": {
+            "x": 3624,
+            "y": 0,
+            "width": 1208,
+            "height": 770
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9377
+            ],
+            "collar": [
+              0.6897,
+              0.5376
+            ],
+            "collarBluePixels": 2222
+          }
+        }
+      ],
+      "variants": {
+        "desktop": {
+          "src": "/assets/intro/oil-motion/jiale/desktop.webp",
+          "dpr": 2,
+          "scale": 1,
+          "imageSize": {
+            "width": 4832,
+            "height": 770
+          },
+          "display": {
+            "heightVh": 26,
+            "groundOffsetVh": 8
+          },
+          "audit": {
+            "format": "webp",
+            "width": 4832,
+            "height": 770,
+            "channels": 4,
+            "hasAlpha": true,
+            "edgeAlphaMax": 0
+          }
+        },
+        "mobile": {
+          "src": "/assets/intro/oil-motion/jiale/mobile.webp",
+          "dpr": 1,
+          "scale": 0.5,
+          "imageSize": {
+            "width": 2416,
+            "height": 385
+          },
+          "display": {
+            "heightVh": 22,
+            "groundOffsetVh": 7
+          },
+          "audit": {
+            "format": "webp",
+            "width": 2416,
+            "height": 385,
+            "channels": 4,
+            "hasAlpha": true,
+            "edgeAlphaMax": 0
+          }
+        }
+      }
+    },
+    "ball": {
+      "id": "yellow-ball",
+      "source": "props/yellow-ball-trimmed.png",
+      "inputAudit": {
+        "file": "props/yellow-ball-trimmed.png",
+        "format": "png",
+        "width": 1261,
+        "height": 1289,
+        "channels": 4,
+        "hasAlpha": true,
+        "edgeAlphaMax": 0,
+        "contentBounds": {
+          "x": 333,
+          "y": 355,
+          "width": 551,
+          "height": 554
+        },
+        "opaquePixels": 239273
+      },
+      "variants": {
+        "desktop": {
+          "src": "/assets/intro/oil-motion/props/yellow-ball/desktop.webp",
+          "dpr": 2,
+          "display": {
+            "heightVh": 10
+          },
+          "audit": {
+            "format": "webp",
+            "width": 647,
+            "height": 650,
+            "channels": 4,
+            "hasAlpha": true,
+            "edgeAlphaMax": 0
+          }
+        },
+        "mobile": {
+          "src": "/assets/intro/oil-motion/props/yellow-ball/mobile.webp",
+          "dpr": 1,
+          "display": {
+            "heightVh": 8.5
+          },
+          "audit": {
+            "format": "webp",
+            "width": 324,
+            "height": 326,
+            "channels": 4,
+            "hasAlpha": true,
+            "edgeAlphaMax": 0
+          }
+        }
+      }
+    }
+  },
+  "backgrounds": [
+    {
+      "id": "grass-desktop",
+      "source": "background/grass-desktop-approved.png",
+      "inputAudit": {
+        "file": "background/grass-desktop-approved.png",
+        "format": "png",
+        "width": 1440,
+        "height": 225,
+        "channels": 3,
+        "hasAlpha": false,
+        "edgeAlphaMax": 255,
+        "contentBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 225
+        },
+        "opaquePixels": 324000
+      },
+      "src": "/assets/intro/oil-motion/background/grass-desktop.webp",
+      "audit": {
+        "format": "webp",
+        "width": 1440,
+        "height": 225,
+        "channels": 3,
+        "hasAlpha": false,
+        "edgeAlphaMax": 255
+      }
+    },
+    {
+      "id": "grass-mobile",
+      "source": "background/grass-mobile-approved.png",
+      "inputAudit": {
+        "file": "background/grass-mobile-approved.png",
+        "format": "png",
+        "width": 390,
+        "height": 211,
+        "channels": 3,
+        "hasAlpha": false,
+        "edgeAlphaMax": 255,
+        "contentBounds": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 211
+        },
+        "opaquePixels": 82290
+      },
+      "src": "/assets/intro/oil-motion/background/grass-mobile.webp",
+      "audit": {
+        "format": "webp",
+        "width": 390,
+        "height": 211,
+        "channels": 3,
+        "hasAlpha": false,
+        "edgeAlphaMax": 255
+      }
+    }
+  ],
+  "leash": {
+    "renderer": "svg",
+    "personAnchor": "hand",
+    "jialeAnchor": "collar",
+    "hiddenAfter": "fall-slide-right exit"
+  },
+  "motionContract": {
+    "direction": "left-to-right-only",
+    "exitOrder": [
+      "jiale",
+      "person"
+    ],
+    "homeHandoffStartsAfter": "person fully exits right"
+  }
+}
