@@ -33,7 +33,7 @@ export const P = {
   plate: [0.98, 1],
 } as const;
 
-export type PersonFrameId = "neutral" | "run" | "pulled-lean" | "fall-slide-right";
+export type PersonFrameId = "neutral" | "run" | "pulled-lean" | "stumble" | "fall-impact" | "fall-slide-right";
 
 export interface ActorState {
   /** 角色 ground 锚点的视口宽度百分比横坐标（负值 / 超 100 表示屏外） */
@@ -83,12 +83,15 @@ function personXVw(p: number, cfg: TimelineConfig): number {
   return cfg.person.exitEnd;
 }
 
-const PERSON_FRAME_ORDER: PersonFrameId[] = ["neutral", "run", "pulled-lean", "fall-slide-right"];
+const PERSON_FRAME_ORDER: PersonFrameId[] = ["neutral", "run", "pulled-lean", "stumble", "fall-impact", "fall-slide-right"];
 
+// D-128 六帧序列：踉跄（0.72–0.80）→ 触地（0.80–0.87）→ 倒地侧滑出画（0.87–0.95）
 function personFrame(p: number): PersonFrameId {
   if (p < P.personDrag[0]) return "neutral";
   if (p < P.personPulled[0]) return "run";
-  if (p < P.personFall[0]) return "pulled-lean";
+  if (p < P.personStumble[0]) return "pulled-lean";
+  if (p < P.personFall[0]) return "stumble";
+  if (p < 0.87) return "fall-impact";
   return "fall-slide-right";
 }
 

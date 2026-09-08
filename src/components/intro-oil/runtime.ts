@@ -4,7 +4,7 @@
 // 输入稳定 / 舞台离屏 / 交接完成后停止 rAF。
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { stateAtProgress, type IntroTimelineState, type PersonFrameId } from "@/lib/intro-oil/timeline";
+import { stateAtProgress, type IntroTimelineState } from "@/lib/intro-oil/timeline";
 import { smoothDampStep, isSettled, type DampState } from "@/lib/intro-oil/smoothDamp";
 import { leashPath, leashSag } from "@/lib/intro-oil/leash";
 
@@ -24,7 +24,7 @@ interface VariantDisplay {
 interface RoleManifest {
   frameOrder: string[];
   cellSize: { width: number; height: number };
-  frames: { id: string; anchors: { ground: [number, number] } }[];
+  frames: { id: string; anchors: { ground: [number, number]; hand?: [number, number]; collar?: [number, number] } }[];
   variants: Record<"desktop" | "mobile", VariantDisplay>;
 }
 
@@ -36,20 +36,7 @@ interface Manifest {
   };
 }
 
-// 手部 / 项圈锚点为目测估计值（manifest 暂无逐帧手部数据），单位：cell 归一化坐标。
-// 视觉校准权在包子 checkpoint 评审；误差超 2 CSS px 时需补真实锚点数据。
-const PERSON_HAND: Record<PersonFrameId, [number, number]> = {
-  neutral: [0.62, 0.55],
-  run: [0.7, 0.52],
-  "pulled-lean": [0.78, 0.5],
-  "fall-slide-right": [0.7, 0.35],
-};
-const JIALE_COLLAR: [number, number][] = [
-  [0.72, 0.38], // contact
-  [0.74, 0.36], // stretch
-  [0.68, 0.4], // gathered
-  [0.72, 0.37], // airborne
-];
+// 牵引绳锚点全部来自 manifest（pipeline 标定的逐帧 hand / 蓝点检测 collar），无目测估计值。
 
 interface Layer {
   el: HTMLElement;
@@ -172,9 +159,13 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     placeActor(jiale, state.jiale.xVw, state.jiale.frameIndex, state.jiale.visible);
     placeActor(person, state.person.xVw, state.person.frameIndex, state.person.visible);
 
-    if (state.leashVisible && state.person.visible && state.jiale.visible) {
-      const hand = actorAnchorPx(person, state.person.xVw, state.person.frameIndex, PERSON_HAND[state.person.frameId]);
-      const collar = actorAnchorPx(jiale, state.jiale.xVw, state.jiale.frameIndex, JIALE_COLLAR[state.jiale.frameIndex]);
+    const personFrameData = manifest.roles.person.frames[state.person.frameIndex];
+    const jialeFrameData = manifest.roles.jiale.frames[state.jiale.frameIndex];
+    const handAnchor = personFrameData.anchors.hand;
+    const collarAnchor = jialeFrameData.anchors.collar;
+    if (state.leashVisible && state.person.visible && state.jiale.visible && handAnchor && collarAnchor) {
+      const hand = actorAnchorPx(person, state.person.xVw, state.person.frameIndex, handAnchor);
+      const collar = actorAnchorPx(jiale, state.jiale.xVw, state.jiale.frameIndex, collarAnchor);
       const dist = Math.max(0, hand.x - collar.x);
       layers.leashPath.setAttribute("d", leashPath(hand, collar, leashSag(leashTaut(p), dist)));
       layers.leash.classList.add("is-live");

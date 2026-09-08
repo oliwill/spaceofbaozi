@@ -1,6 +1,6 @@
 {
   "sourceRoot": "E:\\baozi\\assets-master\\deliverables\\intro-materials-harness-ready-2026-08-31",
-  "generatedAt": "2026-09-03T10:23:43.184Z",
+  "generatedAt": "2026-09-08T05:50:08.441Z",
   "inputs": [
     {
       "file": "person/trimmed/person-neutral.png",
@@ -49,6 +49,38 @@
         "height": 1311
       },
       "opaquePixels": 432353
+    },
+    {
+      "file": "person/trimmed/person-stumble.png",
+      "format": "png",
+      "width": 1379,
+      "height": 1141,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 53,
+        "y": 331,
+        "width": 1275,
+        "height": 463
+      },
+      "opaquePixels": 275901
+    },
+    {
+      "file": "person/trimmed/person-fall-impact.png",
+      "format": "png",
+      "width": 1492,
+      "height": 1054,
+      "channels": 4,
+      "hasAlpha": true,
+      "edgeAlphaMax": 0,
+      "contentBounds": {
+        "x": 45,
+        "y": 31,
+        "width": 1423,
+        "height": 993
+      },
+      "opaquePixels": 423788
     },
     {
       "file": "person/trimmed/person-fall-slide-right.png",
@@ -186,7 +218,7 @@
         "dpr": 2,
         "scale": 1,
         "imageSize": {
-          "width": 6124,
+          "width": 9186,
           "height": 1543
         },
         "display": {
@@ -195,7 +227,7 @@
         },
         "audit": {
           "format": "webp",
-          "width": 6124,
+          "width": 9186,
           "height": 1543,
           "channels": 4,
           "hasAlpha": true,
@@ -207,7 +239,7 @@
         "dpr": 1,
         "scale": 0.5,
         "imageSize": {
-          "width": 3062,
+          "width": 4593,
           "height": 772
         },
         "display": {
@@ -216,7 +248,7 @@
         },
         "audit": {
           "format": "webp",
-          "width": 3062,
+          "width": 4593,
           "height": 772,
           "channels": 4,
           "hasAlpha": true,

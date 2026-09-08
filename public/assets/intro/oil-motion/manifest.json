@@ -5,7 +5,7 @@
     "person": "reference/person-identity-reference-2026-08-14.png",
     "jiale": "reference/dog-identity-reference-2026-08-14.png"
   },
-  "generatedAt": "2026-09-03T10:23:43.184Z",
+  "generatedAt": "2026-09-08T05:50:08.441Z",
   "roles": {
     "person": {
       "role": "person",
@@ -13,10 +13,12 @@
         "neutral",
         "run",
         "pulled-lean",
+        "stumble",
+        "fall-impact",
         "fall-slide-right"
       ],
       "layout": "horizontal-strip",
-      "frameCount": 4,
+      "frameCount": 6,
       "cellSize": {
         "width": 1531,
         "height": 1543
@@ -109,6 +111,66 @@
           }
         },
         {
+          "id": "stumble",
+          "source": "person/trimmed/person-stumble.png",
+          "sourceSize": {
+            "width": 1379,
+            "height": 1141
+          },
+          "contentBounds": {
+            "x": 53,
+            "y": 331,
+            "width": 1275,
+            "height": 463
+          },
+          "cell": {
+            "x": 4593,
+            "y": 0,
+            "width": 1531,
+            "height": 1543
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9689
+            ],
+            "hand": [
+              0.9014,
+              0.639
+            ]
+          }
+        },
+        {
+          "id": "fall-impact",
+          "source": "person/trimmed/person-fall-impact.png",
+          "sourceSize": {
+            "width": 1492,
+            "height": 1054
+          },
+          "contentBounds": {
+            "x": 45,
+            "y": 31,
+            "width": 1423,
+            "height": 993
+          },
+          "cell": {
+            "x": 6124,
+            "y": 0,
+            "width": 1531,
+            "height": 1543
+          },
+          "anchors": {
+            "ground": [
+              0.5,
+              0.9689
+            ],
+            "hand": [
+              0.8485,
+              0.6455
+            ]
+          }
+        },
+        {
           "id": "fall-slide-right",
           "source": "person/trimmed/person-fall-slide-right.png",
           "sourceSize": {
@@ -122,7 +184,7 @@
             "height": 703
           },
           "cell": {
-            "x": 4593,
+            "x": 7655,
             "y": 0,
             "width": 1531,
             "height": 1543
@@ -145,7 +207,7 @@
           "dpr": 2,
           "scale": 1,
           "imageSize": {
-            "width": 6124,
+            "width": 9186,
             "height": 1543
           },
           "display": {
@@ -154,7 +216,7 @@
           },
           "audit": {
             "format": "webp",
-            "width": 6124,
+            "width": 9186,
             "height": 1543,
             "channels": 4,
             "hasAlpha": true,
@@ -166,7 +228,7 @@
           "dpr": 1,
           "scale": 0.5,
           "imageSize": {
-            "width": 3062,
+            "width": 4593,
             "height": 772
           },
           "display": {
@@ -175,7 +237,7 @@
           },
           "audit": {
             "format": "webp",
-            "width": 3062,
+            "width": 4593,
             "height": 772,
             "channels": 4,
             "hasAlpha": true,

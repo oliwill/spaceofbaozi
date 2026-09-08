@@ -12,6 +12,9 @@ const personFrames = [
   { id: "neutral", file: "person/trimmed/person-neutral.png", hand: null },
   { id: "run", file: "person/trimmed/person-run.png", hand: [885, 535] },
   { id: "pulled-lean", file: "person/trimmed/person-pulled-lean.png", hand: [955, 640] },
+  // D-128 image2 补帧：手部锚点为源图像素坐标（2026-09-04 目测标定）
+  { id: "stumble", file: "person/trimmed/person-stumble.png", hand: [1305, 285] },
+  { id: "fall-impact", file: "person/trimmed/person-fall-impact.png", hand: [1290, 525] },
   { id: "fall-slide-right", file: "person/trimmed/person-fall-slide-right.png", hand: [1415, 455] },
 ];
 
