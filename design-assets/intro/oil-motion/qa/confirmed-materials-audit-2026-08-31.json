@@ -1,6 +1,6 @@
 {
   "sourceRoot": "E:\\baozi\\assets-master\\deliverables\\intro-materials-harness-ready-2026-08-31",
-  "generatedAt": "2026-09-08T05:50:08.441Z",
+  "generatedAt": "2026-09-08T08:27:34.175Z",
   "inputs": [
     {
       "file": "person/trimmed/person-neutral.png",
@@ -19,39 +19,7 @@
       "opaquePixels": 450598
     },
     {
-      "file": "person/trimmed/person-run.png",
-      "format": "png",
-      "width": 1049,
-      "height": 1493,
-      "channels": 4,
-      "hasAlpha": true,
-      "edgeAlphaMax": 0,
-      "contentBounds": {
-        "x": 99,
-        "y": 118,
-        "width": 847,
-        "height": 1221
-      },
-      "opaquePixels": 352326
-    },
-    {
-      "file": "person/trimmed/person-pulled-lean.png",
-      "format": "png",
-      "width": 1071,
-      "height": 1521,
-      "channels": 4,
-      "hasAlpha": true,
-      "edgeAlphaMax": 0,
-      "contentBounds": {
-        "x": 90,
-        "y": 87,
-        "width": 924,
-        "height": 1311
-      },
-      "opaquePixels": 432353
-    },
-    {
-      "file": "person/trimmed/person-stumble.png",
+      "file": "person/trimmed/person-fall-impact.png",
       "format": "png",
       "width": 1379,
       "height": 1141,
@@ -67,7 +35,7 @@
       "opaquePixels": 275901
     },
     {
-      "file": "person/trimmed/person-fall-impact.png",
+      "file": "person/trimmed/person-stumble.png",
       "format": "png",
       "width": 1492,
       "height": 1054,
@@ -218,7 +186,7 @@
         "dpr": 2,
         "scale": 1,
         "imageSize": {
-          "width": 9186,
+          "width": 6124,
           "height": 1543
         },
         "display": {
@@ -227,7 +195,7 @@
         },
         "audit": {
           "format": "webp",
-          "width": 9186,
+          "width": 6124,
           "height": 1543,
           "channels": 4,
           "hasAlpha": true,
@@ -239,7 +207,7 @@
         "dpr": 1,
         "scale": 0.5,
         "imageSize": {
-          "width": 4593,
+          "width": 3062,
           "height": 772
         },
         "display": {
@@ -248,7 +216,7 @@
         },
         "audit": {
           "format": "webp",
-          "width": 4593,
+          "width": 3062,
           "height": 772,
           "channels": 4,
           "hasAlpha": true,
@@ -266,7 +234,7 @@
           "height": 770
         },
         "display": {
-          "heightVh": 26,
+          "heightVh": 20,
           "groundOffsetVh": 8
         },
         "audit": {
@@ -287,7 +255,7 @@
           "height": 385
         },
         "display": {
-          "heightVh": 22,
+          "heightVh": 17,
           "groundOffsetVh": 7
         },
         "audit": {

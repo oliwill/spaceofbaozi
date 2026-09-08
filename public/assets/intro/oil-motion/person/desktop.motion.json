@@ -1,22 +1,20 @@
 {
   "role": "person",
   "frameOrder": [
-    "neutral",
     "run",
-    "pulled-lean",
-    "stumble",
-    "fall-impact",
+    "pulled-lunge",
+    "fall-dive",
     "fall-slide-right"
   ],
   "layout": "horizontal-strip",
-  "frameCount": 6,
+  "frameCount": 4,
   "cellSize": {
     "width": 1531,
     "height": 1543
   },
   "frames": [
     {
-      "id": "neutral",
+      "id": "run",
       "source": "person/trimmed/person-neutral.png",
       "sourceSize": {
         "width": 789,
@@ -38,21 +36,25 @@
         "ground": [
           0.5,
           0.9689
+        ],
+        "hand": [
+          0.675,
+          0.45
         ]
       }
     },
     {
-      "id": "run",
-      "source": "person/trimmed/person-run.png",
+      "id": "pulled-lunge",
+      "source": "person/trimmed/person-fall-impact.png",
       "sourceSize": {
-        "width": 1049,
-        "height": 1493
+        "width": 1379,
+        "height": 1141
       },
       "contentBounds": {
-        "x": 99,
-        "y": 118,
-        "width": 847,
-        "height": 1221
+        "x": 53,
+        "y": 331,
+        "width": 1275,
+        "height": 463
       },
       "cell": {
         "x": 1531,
@@ -66,23 +68,23 @@
           0.9689
         ],
         "hand": [
-          0.7368,
-          0.4478
+          0.908,
+          0.57
         ]
       }
     },
     {
-      "id": "pulled-lean",
-      "source": "person/trimmed/person-pulled-lean.png",
+      "id": "fall-dive",
+      "source": "person/trimmed/person-stumble.png",
       "sourceSize": {
-        "width": 1071,
-        "height": 1521
+        "width": 1492,
+        "height": 1054
       },
       "contentBounds": {
-        "x": 90,
-        "y": 87,
-        "width": 924,
-        "height": 1311
+        "x": 45,
+        "y": 31,
+        "width": 1423,
+        "height": 993
       },
       "cell": {
         "x": 3062,
@@ -96,68 +98,8 @@
           0.9689
         ],
         "hand": [
-          0.7636,
-          0.4776
-        ]
-      }
-    },
-    {
-      "id": "stumble",
-      "source": "person/trimmed/person-stumble.png",
-      "sourceSize": {
-        "width": 1379,
-        "height": 1141
-      },
-      "contentBounds": {
-        "x": 53,
-        "y": 331,
-        "width": 1275,
-        "height": 463
-      },
-      "cell": {
-        "x": 4593,
-        "y": 0,
-        "width": 1531,
-        "height": 1543
-      },
-      "anchors": {
-        "ground": [
-          0.5,
-          0.9689
-        ],
-        "hand": [
-          0.9014,
-          0.639
-        ]
-      }
-    },
-    {
-      "id": "fall-impact",
-      "source": "person/trimmed/person-fall-impact.png",
-      "sourceSize": {
-        "width": 1492,
-        "height": 1054
-      },
-      "contentBounds": {
-        "x": 45,
-        "y": 31,
-        "width": 1423,
-        "height": 993
-      },
-      "cell": {
-        "x": 6124,
-        "y": 0,
-        "width": 1531,
-        "height": 1543
-      },
-      "anchors": {
-        "ground": [
-          0.5,
-          0.9689
-        ],
-        "hand": [
-          0.8485,
-          0.6455
+          0.914,
+          0.797
         ]
       }
     },
@@ -175,7 +117,7 @@
         "height": 703
       },
       "cell": {
-        "x": 7655,
+        "x": 4593,
         "y": 0,
         "width": 1531,
         "height": 1543
@@ -198,7 +140,7 @@
       "dpr": 2,
       "scale": 1,
       "imageSize": {
-        "width": 9186,
+        "width": 6124,
         "height": 1543
       },
       "display": {
@@ -207,7 +149,7 @@
       },
       "audit": {
         "format": "webp",
-        "width": 9186,
+        "width": 6124,
         "height": 1543,
         "channels": 4,
         "hasAlpha": true,
@@ -219,7 +161,7 @@
       "dpr": 1,
       "scale": 0.5,
       "imageSize": {
-        "width": 4593,
+        "width": 3062,
         "height": 772
       },
       "display": {
@@ -228,7 +170,7 @@
       },
       "audit": {
         "format": "webp",
-        "width": 4593,
+        "width": 3062,
         "height": 772,
         "channels": 4,
         "hasAlpha": true,
@@ -240,7 +182,7 @@
   "src": "/assets/intro/oil-motion/person/desktop.webp",
   "dpr": 2,
   "imageSize": {
-    "width": 9186,
+    "width": 6124,
     "height": 1543
   },
   "display": {

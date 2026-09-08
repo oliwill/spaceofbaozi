@@ -114,17 +114,16 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     const stageRect = stage.getBoundingClientRect();
     groundYPx = rect.top - stageRect.top + rect.height * GRASS_TRANSPARENT_TOP;
   }
-
   function groundLinePx(layer: Layer): number {
     return groundYPx + (layer.groundOffsetVh / 100) * window.innerHeight;
   }
 
-  function placeActor(layer: Layer, xVw: number, frameIndex: number, visible: boolean): void {
+  function placeActor(layer: Layer, xVw: number, frameIndex: number, visible: boolean, bobYPx = 0): void {
     const vw = window.innerWidth / 100;
     const frame = layer.role ? layer.role.frames[frameIndex] : null;
     const [ax, ay] = frame ? frame.anchors.ground : [0.5, 1];
     const x = xVw * vw - ax * layer.dispW;
-    const y = groundLinePx(layer) - ay * layer.dispH;
+    const y = groundLinePx(layer) - ay * layer.dispH + bobYPx;
     layer.el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     layer.el.classList.toggle("is-live", visible);
     if (layer.role && frameIndex !== layer.lastFrame) {
@@ -153,7 +152,11 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     ball.el.classList.toggle("is-live", state.ball.visible);
 
     placeActor(jiale, state.jiale.xVw, state.jiale.frameIndex, state.jiale.visible);
-    placeActor(person, state.person.xVw, state.person.frameIndex, state.person.visible);
+    // 跑步/被拽段加程序上下颠簸（D-121 几何运动归程序；幅度小，不改变角色比例）
+    const personBob = state.person.frameId === "run" || state.person.frameId === "pulled-lunge"
+      ? Math.sin(p * Math.PI * 2 * 9) * window.innerHeight * 0.012
+      : 0;
+    placeActor(person, state.person.xVw, state.person.frameIndex, state.person.visible, personBob);
 
     const handAnchor = manifest.roles.person.frames[state.person.frameIndex].anchors.hand;
     const collarAnchor = manifest.roles.jiale.frames[state.jiale.frameIndex].anchors.collar;

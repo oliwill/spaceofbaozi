@@ -35,12 +35,10 @@ describe("stateAtProgress（CP5 主时间线）", () => {
     expect(stateAtProgress(0.96).person.visible).toBe(false);
   });
 
-  it("人物帧序：出场即 run（被拽入）→ pulled-lean → stumble → fall-impact → fall-slide-right", () => {
-    expect(stateAtProgress(0.34).person.frameId).toBe("run");
-    expect(stateAtProgress(0.45).person.frameId).toBe("run");
-    expect(stateAtProgress(0.65).person.frameId).toBe("pulled-lean");
-    expect(stateAtProgress(0.76).person.frameId).toBe("stumble");
-    expect(stateAtProgress(0.83).person.frameId).toBe("fall-impact");
+  it("人物帧序：run → pulled-lunge → fall-dive → fall-slide-right", () => {
+    expect(stateAtProgress(0.4).person.frameId).toBe("run");
+    expect(stateAtProgress(0.6).person.frameId).toBe("pulled-lunge");
+    expect(stateAtProgress(0.8).person.frameId).toBe("fall-dive");
     expect(stateAtProgress(0.9).person.frameId).toBe("fall-slide-right");
   });
   it("遮罩 95–98% 进入，98% 时盖满；Home v2 交接层只在 98% 后显现（CP6）", () => {

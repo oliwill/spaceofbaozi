@@ -8,13 +8,12 @@ const QA_ROOT = path.resolve("design-assets/intro/oil-motion/qa");
 const PAD = 48;
 const MOBILE_SCALE = 0.5;
 
+// 注意：源 PNG 文件名与内容不符（2026-09-05 cell 审计确认），frame id 以内容为准。
+// hand 锚点：值 ≤1 视为 cell 归一化坐标，>1 为源图像素坐标。
 const personFrames = [
-  { id: "neutral", file: "person/trimmed/person-neutral.png", hand: null },
-  { id: "run", file: "person/trimmed/person-run.png", hand: [885, 535] },
-  { id: "pulled-lean", file: "person/trimmed/person-pulled-lean.png", hand: [955, 640] },
-  // D-128 image2 补帧：手部锚点为源图像素坐标（2026-09-04 目测标定）
-  { id: "stumble", file: "person/trimmed/person-stumble.png", hand: [1305, 285] },
-  { id: "fall-impact", file: "person/trimmed/person-fall-impact.png", hand: [1290, 525] },
+  { id: "run", file: "person/trimmed/person-neutral.png", hand: [0.675, 0.45] },
+  { id: "pulled-lunge", file: "person/trimmed/person-fall-impact.png", hand: [0.908, 0.57] },
+  { id: "fall-dive", file: "person/trimmed/person-stumble.png", hand: [0.914, 0.797] },
   { id: "fall-slide-right", file: "person/trimmed/person-fall-slide-right.png", hand: [1415, 455] },
 ];
 
@@ -159,12 +158,14 @@ async function packAtlas({ role, frames, directory, display }) {
         bluePixels: detected.bluePixels,
       };
     }
-
+    // hand ≤1 为 cell 归一化坐标（跨 cell 布局稳定），>1 为源图像素坐标
     const hand = frame.hand
-      ? normalize([
-          left + frame.hand[0] - analysis.bounds.x,
-          top + frame.hand[1] - analysis.bounds.y,
-        ], cellWidth, cellHeight)
+      ? frame.hand[0] <= 1 && frame.hand[1] <= 1
+        ? frame.hand
+        : normalize([
+            left + frame.hand[0] - analysis.bounds.x,
+            top + frame.hand[1] - analysis.bounds.y,
+          ], cellWidth, cellHeight)
       : null;
 
     manifestFrames.push({

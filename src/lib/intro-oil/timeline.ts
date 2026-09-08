@@ -25,15 +25,15 @@ export const P = {
   jialeChase: [0.52, 0.72],
   jialeExit: [0.72, 0.86],
   personEnter: [0.3, 0.38],
-  personDrag: [0.38, 0.55],
-  personPulled: [0.55, 0.72],
+  personDrag: [0.38, 0.5],
+  personPulled: [0.5, 0.72],
   personStumble: [0.72, 0.8],
   personFall: [0.8, 0.95],
   mask: [0.95, 0.98],
   plate: [0.98, 1],
 } as const;
 
-export type PersonFrameId = "neutral" | "run" | "pulled-lean" | "stumble" | "fall-impact" | "fall-slide-right";
+export type PersonFrameId = "run" | "pulled-lunge" | "fall-dive" | "fall-slide-right";
 
 export interface ActorState {
   /** 角色 ground 锚点的视口宽度百分比横坐标（负值 / 超 100 表示屏外） */
@@ -82,14 +82,13 @@ function personXVw(p: number, cfg: TimelineConfig): number {
   if (p <= P.personFall[1]) return lerp(p, P.personFall, cfg.person.stumbleEnd, cfg.person.exitEnd);
   return cfg.person.exitEnd;
 }
+const PERSON_FRAME_ORDER: PersonFrameId[] = ["run", "pulled-lunge", "fall-dive", "fall-slide-right"];
 
-const PERSON_FRAME_ORDER: PersonFrameId[] = ["neutral", "run", "pulled-lean", "stumble", "fall-impact", "fall-slide-right"];
-// D-128 帧序：人物出场即被绳子拽着跑（不用 neutral 站姿）；踉跄→触地→倒地侧滑出画
+// 帧序（2026-09-05 cell 审计按内容定义）：被拽跑 → 前扑失衡 → 摔倒飞出 → 倒地滑出
 function personFrame(p: number): PersonFrameId {
   if (p < P.personPulled[0]) return "run";
-  if (p < P.personStumble[0]) return "pulled-lean";
-  if (p < P.personFall[0]) return "stumble";
-  if (p < 0.87) return "fall-impact";
+  if (p < P.personStumble[0]) return "pulled-lunge";
+  if (p < 0.87) return "fall-dive";
   return "fall-slide-right";
 }
 
