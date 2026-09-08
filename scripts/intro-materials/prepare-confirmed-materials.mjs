@@ -381,6 +381,37 @@ const ball = await packSingle({
   },
 });
 
+// Contact sheet：每个角色一行、按帧序排列的缩略总览（人工核对帧序用，package-spec §入库流程 4）
+async function buildContactSheet(roleResult, label) {
+  const cells = roleResult.roleManifest.frames;
+  const thumbW = 260;
+  const atlasPath = path.join(OUTPUT_ROOT, label, "desktop.webp");
+  const { cellSize } = roleResult.roleManifest;
+  const ratio = cellSize.height / cellSize.width;
+  const thumbH = Math.round(thumbW * ratio);
+  const composites = [];
+  for (let i = 0; i < cells.length; i += 1) {
+    const thumb = await sharp(atlasPath)
+      .extract({ left: cells[i].cell.x, top: 0, width: cellSize.width, height: cellSize.height })
+      .resize(thumbW, thumbH)
+      .png()
+      .toBuffer();
+    composites.push({ input: thumb, left: i * thumbW, top: 0 });
+  }
+  await sharp({
+    create: {
+      width: thumbW * cells.length,
+      height: thumbH,
+      channels: 4,
+      background: { r: 255, g: 0, b: 255, alpha: 1 },
+    },
+  })
+    .composite(composites)
+    .png()
+    .toFile(path.join(QA_ROOT, `contact-sheet-${label}.png`));
+}
+
+
 const backgrounds = [
   await packBackground("background/grass-desktop-approved.png", "grass-desktop"),
   await packBackground("background/grass-mobile-approved.png", "grass-mobile"),
@@ -415,6 +446,8 @@ const manifest = {
 
 await mkdir(QA_ROOT, { recursive: true });
 await writeFile(path.join(OUTPUT_ROOT, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+await buildContactSheet(person, "person");
+await buildContactSheet(jiale, "jiale");
 await writeFile(
   path.join(QA_ROOT, "confirmed-materials-audit-2026-08-31.json"),
   `${JSON.stringify({

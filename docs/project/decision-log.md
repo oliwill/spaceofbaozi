@@ -1242,6 +1242,18 @@
 - **替代关系：** 关闭 D-129 的开放问题；D-010 生效。
 - **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`vercel.json`（切换后删除）。
 
+### D-131 · 启动页素材整包重置与命名规范
+
+- **状态：** Accepted（2026-09-05，依据包子「重新生成资源包，给到后重新配置」）
+- **改变原因：** cell 审计 + 像素 diff 证实 2026-08-31 素材包与 image2 补帧的文件名与内容普遍不符（neutral=跑步、run/pulled-lean=站立、stumble=水平扑出、fall-impact=前扑踉跄），逐帧修补不可信。
+- **决定：**
+  - 人物动作帧整包作废，由包子按 `design-assets/intro/oil-motion/source/package-spec.md` 重新生成（语义命名 + manifest.txt 人工核对表 + 蓝点项圈标记）。
+  - 新包入库前 Harness 逐行核对 manifest.txt 并产出 contact sheet 供包子过目，不一致即拒收；pipeline 已内置 contact sheet 输出（`qa/contact-sheet-<role>.png`）。
+  - 过渡期运行时维持现有 4 帧内容映射（run→pulled-lunge→fall-dive→fall-slide-right），新包到达后在 `chore/asset-reset` 分支重建图集并更新引用。
+  - 本地冗余已清理：旧交付 zip、jimeng 失败样本、旧评审录屏、过期截图共约 122MB；`design-assets/lab-review/intro-oil/` 只保留最新一轮评审材料。
+- **替代关系：** `asset-request-2026-09-04.md` 作废（保留为历史）；D-128 的 image2 路线与验收标准不变。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`design-assets/intro/oil-motion/source/package-spec.md`（新建）、`asset-request-2026-09-04.md`（标记作废）、`scripts/intro-materials/prepare-confirmed-materials.mjs`（contact sheet + 归一化锚点）。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。
