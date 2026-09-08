@@ -1235,6 +1235,13 @@
 - **开放问题（包子拍板）：** a) 留在 Vercel（则需在 Vercel 后台确认项目连接 `oliwill/spaceofbaozi` main 并重建，D-010 随之修订）；b) 按 D-010 迁移 Cloudflare Pages（包子在 Cloudflare 建 Pages 项目并切换 DNS，vercel.json 随之删除）。部署连接恢复前，线上仍是旧站。
 - **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`vercel.json`（新建）、`docs/plans/2026-08-31-stage-c-url-migration.md` §3（Cloudflare 假设与现实冲突，以本条为准）。
 
+### D-130 · 生产平台定稿 Cloudflare Pages
+
+- **状态：** Accepted（2026-09-05，依据包子对 D-129 开放问题的选择「迁移到 Cloudflare Pages」）
+- **决定：** 按 D-010 原案执行：`baozi.space` 从 Vercel 迁往 Cloudflare Pages。`public/_redirects` 为 301 唯一事实来源；`vercel.json` 在 DNS 切换完成前保留（Vercel 仍服务旧站），切换完成后删除。包子负责：Cloudflare 建 Pages 项目（连接 `oliwill/spaceofbaozi`，构建命令 `bun run build`、输出 `dist`）、DNS 切到 `<project>.pages.dev`；Harness 负责切换后重跑 301 验证清单与旧站内容抽查。
+- **替代关系：** 关闭 D-129 的开放问题；D-010 生效。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`vercel.json`（切换后删除）。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。

@@ -359,8 +359,9 @@ const jiale = await packAtlas({
   frames: jialeFrames,
   directory: "jiale",
   display: {
-    desktop: { heightVh: 26, groundOffsetVh: 8 },
-    mobile: { heightVh: 22, groundOffsetVh: 7 },
+    // D-128 评审修订：嘉乐相对人物过大，26vh → 20vh（移动 22→17）
+    desktop: { heightVh: 20, groundOffsetVh: 8 },
+    mobile: { heightVh: 17, groundOffsetVh: 7 },
     desktopDpr: 2,
     mobileDpr: 1,
   },

@@ -84,10 +84,8 @@ function personXVw(p: number, cfg: TimelineConfig): number {
 }
 
 const PERSON_FRAME_ORDER: PersonFrameId[] = ["neutral", "run", "pulled-lean", "stumble", "fall-impact", "fall-slide-right"];
-
-// D-128 六帧序列：踉跄（0.72–0.80）→ 触地（0.80–0.87）→ 倒地侧滑出画（0.87–0.95）
+// D-128 帧序：人物出场即被绳子拽着跑（不用 neutral 站姿）；踉跄→触地→倒地侧滑出画
 function personFrame(p: number): PersonFrameId {
-  if (p < P.personDrag[0]) return "neutral";
   if (p < P.personPulled[0]) return "run";
   if (p < P.personStumble[0]) return "pulled-lean";
   if (p < P.personFall[0]) return "stumble";

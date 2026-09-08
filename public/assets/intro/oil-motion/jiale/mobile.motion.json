@@ -148,7 +148,7 @@
         "height": 770
       },
       "display": {
-        "heightVh": 26,
+        "heightVh": 20,
         "groundOffsetVh": 8
       },
       "audit": {
@@ -169,7 +169,7 @@
         "height": 385
       },
       "display": {
-        "heightVh": 22,
+        "heightVh": 17,
         "groundOffsetVh": 7
       },
       "audit": {
@@ -190,7 +190,7 @@
     "height": 385
   },
   "display": {
-    "heightVh": 22,
+    "heightVh": 17,
     "groundOffsetVh": 7
   }
 }

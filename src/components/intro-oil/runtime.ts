@@ -14,6 +14,8 @@ const MANIFEST_URL = "/assets/intro/oil-motion/manifest.json";
 /** 草地资产顶部透明比例（intro-oil.css 草地规则同源） */
 const GRASS_TRANSPARENT_TOP = 0.32;
 const BREAKPOINT = "(min-width: 768px)";
+/** 球比人物地面线再压低 2.5vh，压进草里滚动（评审修订：否则 reads as 悬浮） */
+const BALL_GROUND_OFFSET_VH = 10.5;
 
 interface VariantDisplay {
   src: string;
@@ -40,8 +42,6 @@ interface Manifest {
 
 interface Layer {
   el: HTMLElement;
-  cellW: number;
-  cellH: number;
   dispW: number;
   dispH: number;
   groundOffsetVh: number;
@@ -49,9 +49,8 @@ interface Layer {
   lastFrame: number;
 }
 
+// 人物出场即被拽入：绳子从进场起绷紧，摔倒后逐渐松弛
 function leashTaut(p: number): number {
-  if (p < 0.3) return 0.3;
-  if (p < 0.38) return 0.3 + ((p - 0.3) / 0.08) * 0.7;
   if (p < 0.72) return 1;
   return 1 - ((p - 0.72) / 0.23) * 0.5;
 }
@@ -93,9 +92,7 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
 
   function makeLayer(el: HTMLElement, role: RoleManifest | null, v: VariantDisplay): Layer {
     const dispH = (v.display.heightVh / 100) * window.innerHeight;
-    const cellW = role ? role.cellSize.width : 1;
-    const cellH = role ? role.cellSize.height : 1;
-    const dispW = role ? dispH * (cellW / cellH) : dispH;
+    const dispW = role ? dispH * (role.cellSize.width / role.cellSize.height) : dispH;
     el.style.height = `${dispH}px`;
     el.style.width = `${dispW}px`;
     el.style.backgroundImage = `url(${v.src})`;
@@ -104,8 +101,6 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     }
     return {
       el,
-      cellW,
-      cellH,
       dispW,
       dispH,
       groundOffsetVh: v.display.groundOffsetVh ?? 8,
@@ -117,17 +112,19 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
   function measureGround(): void {
     const rect = grass.getBoundingClientRect();
     const stageRect = stage.getBoundingClientRect();
-    const visibleTop = rect.top - stageRect.top + rect.height * GRASS_TRANSPARENT_TOP;
-    groundYPx = visibleTop;
+    groundYPx = rect.top - stageRect.top + rect.height * GRASS_TRANSPARENT_TOP;
+  }
+
+  function groundLinePx(layer: Layer): number {
+    return groundYPx + (layer.groundOffsetVh / 100) * window.innerHeight;
   }
 
   function placeActor(layer: Layer, xVw: number, frameIndex: number, visible: boolean): void {
     const vw = window.innerWidth / 100;
     const frame = layer.role ? layer.role.frames[frameIndex] : null;
     const [ax, ay] = frame ? frame.anchors.ground : [0.5, 1];
-    const groundY = groundYPx + (layer.groundOffsetVh / 100) * window.innerHeight;
     const x = xVw * vw - ax * layer.dispW;
-    const y = groundY - ay * layer.dispH;
+    const y = groundLinePx(layer) - ay * layer.dispH;
     layer.el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     layer.el.classList.toggle("is-live", visible);
     if (layer.role && frameIndex !== layer.lastFrame) {
@@ -140,10 +137,9 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     const vw = window.innerWidth / 100;
     const frame = layer.role ? layer.role.frames[frameIndex] : null;
     const [gax, gay] = frame ? frame.anchors.ground : [0.5, 1];
-    const groundY = groundYPx + (layer.groundOffsetVh / 100) * window.innerHeight;
     return {
       x: xVw * vw - gax * layer.dispW + anchor[0] * layer.dispW,
-      y: groundY - gay * layer.dispH + anchor[1] * layer.dispH,
+      y: groundLinePx(layer) - gay * layer.dispH + anchor[1] * layer.dispH,
     };
   }
 
@@ -151,7 +147,7 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     // 球：静态帧 + 程序旋转（滚动距离 / 半径）
     const ballRadius = ball.dispH / 2;
     const ballXPx = state.ball.xVw * (window.innerWidth / 100);
-    const ballGroundY = groundYPx + (ball.groundOffsetVh / 100) * window.innerHeight;
+    const ballGroundY = groundLinePx(ball);
     const deg = (ballXPx / Math.max(1, ballRadius)) * (180 / Math.PI);
     ball.el.style.transform = `translate3d(${ballXPx - ballRadius}px, ${ballGroundY - ball.dispH}px, 0) rotate(${deg}deg)`;
     ball.el.classList.toggle("is-live", state.ball.visible);
@@ -159,10 +155,8 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     placeActor(jiale, state.jiale.xVw, state.jiale.frameIndex, state.jiale.visible);
     placeActor(person, state.person.xVw, state.person.frameIndex, state.person.visible);
 
-    const personFrameData = manifest.roles.person.frames[state.person.frameIndex];
-    const jialeFrameData = manifest.roles.jiale.frames[state.jiale.frameIndex];
-    const handAnchor = personFrameData.anchors.hand;
-    const collarAnchor = jialeFrameData.anchors.collar;
+    const handAnchor = manifest.roles.person.frames[state.person.frameIndex].anchors.hand;
+    const collarAnchor = manifest.roles.jiale.frames[state.jiale.frameIndex].anchors.collar;
     if (state.leashVisible && state.person.visible && state.jiale.visible && handAnchor && collarAnchor) {
       const hand = actorAnchorPx(person, state.person.xVw, state.person.frameIndex, handAnchor);
       const collar = actorAnchorPx(jiale, state.jiale.xVw, state.jiale.frameIndex, collarAnchor);
@@ -200,15 +194,19 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     }
   }
 
+  function buildLayers(): void {
+    ball = makeLayer(layers.ball, null, manifest.roles.ball.variants[variant]);
+    ball.groundOffsetVh = BALL_GROUND_OFFSET_VH;
+    jiale = makeLayer(layers.jiale, manifest.roles.jiale, manifest.roles.jiale.variants[variant]);
+    person = makeLayer(layers.person, manifest.roles.person, manifest.roles.person.variants[variant]);
+  }
+
   async function setup(): Promise<void> {
     const res = await fetch(MANIFEST_URL);
     if (!res.ok) return; // 资源失败：保留静态舞台（CP6 降级路径）
     manifest = (await res.json()) as Manifest;
     variant = window.matchMedia(BREAKPOINT).matches ? "desktop" : "mobile";
-
-    ball = makeLayer(layers.ball, null, manifest.roles.ball.variants[variant]);
-    jiale = makeLayer(layers.jiale, manifest.roles.jiale, manifest.roles.jiale.variants[variant]);
-    person = makeLayer(layers.person, manifest.roles.person, manifest.roles.person.variants[variant]);
+    buildLayers();
     if (grass.complete) measureGround();
     else grass.addEventListener("load", measureGround, { once: true });
 
@@ -231,9 +229,7 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
       const next = window.matchMedia(BREAKPOINT).matches ? "desktop" : "mobile";
       if (next !== variant) {
         variant = next;
-        ball = makeLayer(layers.ball, null, manifest.roles.ball.variants[variant]);
-        jiale = makeLayer(layers.jiale, manifest.roles.jiale, manifest.roles.jiale.variants[variant]);
-        person = makeLayer(layers.person, manifest.roles.person, manifest.roles.person.variants[variant]);
+        buildLayers();
       }
       measureGround();
       ScrollTrigger.refresh();

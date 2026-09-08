@@ -5,7 +5,7 @@
     "person": "reference/person-identity-reference-2026-08-14.png",
     "jiale": "reference/dog-identity-reference-2026-08-14.png"
   },
-  "generatedAt": "2026-09-08T05:50:08.441Z",
+  "generatedAt": "2026-09-08T06:56:25.860Z",
   "roles": {
     "person": {
       "role": "person",
@@ -396,7 +396,7 @@
             "height": 770
           },
           "display": {
-            "heightVh": 26,
+            "heightVh": 20,
             "groundOffsetVh": 8
           },
           "audit": {
@@ -417,7 +417,7 @@
             "height": 385
           },
           "display": {
-            "heightVh": 22,
+            "heightVh": 17,
             "groundOffsetVh": 7
           },
           "audit": {

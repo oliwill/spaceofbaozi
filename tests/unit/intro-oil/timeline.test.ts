@@ -35,8 +35,8 @@ describe("stateAtProgress（CP5 主时间线）", () => {
     expect(stateAtProgress(0.96).person.visible).toBe(false);
   });
 
-  it("人物帧序：neutral → run → pulled-lean → stumble → fall-impact → fall-slide-right（D-128 六帧）", () => {
-    expect(stateAtProgress(0.34).person.frameId).toBe("neutral");
+  it("人物帧序：出场即 run（被拽入）→ pulled-lean → stumble → fall-impact → fall-slide-right", () => {
+    expect(stateAtProgress(0.34).person.frameId).toBe("run");
     expect(stateAtProgress(0.45).person.frameId).toBe("run");
     expect(stateAtProgress(0.65).person.frameId).toBe("pulled-lean");
     expect(stateAtProgress(0.76).person.frameId).toBe("stumble");
