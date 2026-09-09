@@ -1,7 +1,7 @@
 # image2 补图申请 · 人物姿态缺口（D-128）
 
 **日期：** 2026-09-04
-**状态：** 已交付并入库（2026-09-04）；2026-09-05 cell 审计后重做映射——源 PNG 文件名与内容普遍不符，图集 frame id 一律以内容为准：**person-neutral.png=跑步、person-run.png=站立插兜、person-pulled-lean.png=站立插兜变体、person-stumble.png=水平扑出、person-fall-impact.png=前扑踉跄、person-fall-slide-right.png=倒地侧滑**。当前生产序列 4 帧：run（neutral.png）→ pulled-lunge（fall-impact.png）→ fall-dive（stumble.png）→ fall-slide-right；站立/散步两帧按包子评审意见弃用。手部锚点改用 cell 归一化坐标（pipeline 支持 ≤1 归一化值）。
+**状态：** 作废（2026-09-05，D-131）：源文件名与内容普遍不符，逐帧修补不可信；改由包子按 `package-spec.md` 重新生成整包。以下为历史记录。
 **落盘目录：** `design-assets/intro/oil-motion/source/master/person/`（生成后放这里，Harness 核验入库）
 
 ## 参考图（生成时上传给 image2）

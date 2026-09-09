@@ -1,65 +1,71 @@
 import { describe, expect, it } from "vitest";
-import { stateAtProgress } from "@/lib/intro-oil/timeline";
+import { HOME_ANCHORS, stateAtProgress } from "@/lib/intro-oil/timeline";
 
-describe("stateAtProgress（CP5 主时间线）", () => {
+describe("stateAtProgress（v2 主时间线，D-132）", () => {
   it("进度钳制在 0..1", () => {
-    expect(stateAtProgress(-0.5).maskOpacity).toBe(0);
-    expect(stateAtProgress(2).maskOpacity).toBe(1);
+    expect(stateAtProgress(-0.5).plateOpacity).toBe(0);
+    expect(stateAtProgress(2).plateOpacity).toBe(1);
   });
 
-  it("0% 时全部角色隐藏、遮罩关闭", () => {
+  it("0% 时全部角色隐藏、草地在位", () => {
     const s = stateAtProgress(0);
     expect(s.ball.visible).toBe(false);
-    expect(s.jiale.visible).toBe(false);
+    expect(s.dog.visible).toBe(false);
     expect(s.person.visible).toBe(false);
-    expect(s.leashVisible).toBe(false);
-    expect(s.maskOpacity).toBe(0);
+    expect(s.leash.visible).toBe(false);
+    expect(s.grassOut).toBe(0);
   });
 
-  it("横向位移单调不减（左进右出，不从右侧回进）", () => {
-    let prev = stateAtProgress(0);
-    for (let i = 1; i <= 200; i++) {
-      const cur = stateAtProgress(i / 200);
-      expect(cur.ball.xVw).toBeGreaterThanOrEqual(prev.ball.xVw);
-      expect(cur.jiale.xVw).toBeGreaterThanOrEqual(prev.jiale.xVw);
-      expect(cur.person.xVw).toBeGreaterThanOrEqual(prev.person.xVw);
-      prev = cur;
-    }
+  it("阶段窗口对齐 v2 manifest introTimeline", () => {
+    expect(stateAtProgress(0.05).ball.visible).toBe(true);
+    expect(stateAtProgress(0.15).dog.seqId).toBe("dog-chase-right");
+    expect(stateAtProgress(0.4).person.seqId).toBe("person-pulled-run-right");
+    expect(stateAtProgress(0.7).person.seqId).toBe("person-stumble-fall-exit-right");
+    expect(stateAtProgress(0.9).person.seqId).toBe("person-slide-in-rise-stand");
+    expect(stateAtProgress(0.97).dog.seqId).toBe("dog-look-up-settle");
   });
 
-  it("退出顺序：球 → 嘉乐 → 人物（D-122 / motionContract.exitOrder）", () => {
-    expect(stateAtProgress(0.81).ball.visible).toBe(false);
-    expect(stateAtProgress(0.83).jiale.visible).toBe(true);
-    expect(stateAtProgress(0.87).jiale.visible).toBe(false);
-    expect(stateAtProgress(0.9).person.visible).toBe(true);
-    expect(stateAtProgress(0.96).person.visible).toBe(false);
+
+  it("球全程领跑，0.48 后离场且不再出现", () => {
+    expect(stateAtProgress(0.3).ball.visible).toBe(true);
+    expect(stateAtProgress(0.49).ball.visible).toBe(false);
+    expect(stateAtProgress(0.9).ball.visible).toBe(false);
   });
 
-  it("人物帧序：run → pulled-lunge → fall-dive → fall-slide-right", () => {
-    expect(stateAtProgress(0.4).person.frameId).toBe("run");
-    expect(stateAtProgress(0.6).person.frameId).toBe("pulled-lunge");
-    expect(stateAtProgress(0.8).person.frameId).toBe("fall-dive");
-    expect(stateAtProgress(0.9).person.frameId).toBe("fall-slide-right");
+  it("人物摔倒后从左侧滑入并停在首页冻结锚点（D-120）", () => {
+    expect(stateAtProgress(0.8).person.xVw).toBeGreaterThan(100); // 摔倒滑出右界
+    const landed = stateAtProgress(0.95);
+    expect(landed.person.xVw).toBeCloseTo(HOME_ANCHORS.desktop.personHomeVw, 2);
+    expect(landed.person.seqId).toBe("person-slide-in-rise-stand");
   });
-  it("遮罩 95–98% 进入，98% 时盖满；Home v2 交接层只在 98% 后显现（CP6）", () => {
-    expect(stateAtProgress(0.94).maskOpacity).toBe(0);
-    expect(stateAtProgress(0.965).maskOpacity).toBeCloseTo(0.5, 1);
-    expect(stateAtProgress(0.98).maskOpacity).toBe(1);
+
+  it("嘉乐返回后停在首页冻结锚点", () => {
+    expect(stateAtProgress(1).dog.xVw).toBeCloseTo(HOME_ANCHORS.desktop.dogHomeVw, 2);
+  });
+
+  it("草地只在 0.78–0.82 退出", () => {
+    expect(stateAtProgress(0.77).grassOut).toBe(0);
+    expect(stateAtProgress(0.8).grassOut).toBeCloseTo(0.5, 1);
+    expect(stateAtProgress(0.83).grassOut).toBe(1);
+  });
+
+  it("牵引绳只在被拽跑与摔倒段可见，起身后消失", () => {
+    expect(stateAtProgress(0.4).leash.visible).toBe(true);
+    expect(stateAtProgress(0.7).leash.visible).toBe(true);
+    expect(stateAtProgress(0.9).leash.visible).toBe(false);
+  });
+
+  it("交接层只在 0.98 后淡入", () => {
     expect(stateAtProgress(0.97).plateOpacity).toBe(0);
     expect(stateAtProgress(0.99).plateOpacity).toBeCloseTo(0.5, 1);
     expect(stateAtProgress(1).plateOpacity).toBe(1);
   });
 
-  it("嘉乐跑循环帧索引始终在 0..3", () => {
-    for (let i = 0; i <= 100; i++) {
-      const f = stateAtProgress(i / 100).jiale.frameIndex;
-      expect(f).toBeGreaterThanOrEqual(0);
-      expect(f).toBeLessThanOrEqual(3);
+  it("人物与嘉乐横向位移在各自阶段内单调（摔倒滑出段向右，返回段向左为设计意图）", () => {
+    for (let i = 65; i <= 82; i++) {
+      const cur = stateAtProgress(i / 100).person.xVw;
+      const prev = stateAtProgress((i - 1) / 100).person.xVw;
+      expect(cur).toBeGreaterThanOrEqual(prev);
     }
-  });
-
-  it("牵引绳在人物摔倒完全退出后隐藏", () => {
-    expect(stateAtProgress(0.5).leashVisible).toBe(true);
-    expect(stateAtProgress(0.96).leashVisible).toBe(false);
   });
 });

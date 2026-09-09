@@ -1242,6 +1242,32 @@
 - **替代关系：** 关闭 D-129 的开放问题；D-010 生效。
 - **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`vercel.json`（切换后删除）。
 
+### D-131 · 启动页素材整包重置与命名规范
+
+- **状态：** Accepted（2026-09-05，依据包子「重新生成资源包，给到后重新配置」）
+- **改变原因：** cell 审计 + 像素 diff 证实 2026-08-31 素材包与 image2 补帧的文件名与内容普遍不符（neutral=跑步、run/pulled-lean=站立、stumble=水平扑出、fall-impact=前扑踉跄），逐帧修补不可信。
+- **决定：**
+  - 人物动作帧整包作废，由包子按 `design-assets/intro/oil-motion/source/package-spec.md` 重新生成（语义命名 + manifest.txt 人工核对表 + 蓝点项圈标记）。
+  - 新包入库前 Harness 逐行核对 manifest.txt 并产出 contact sheet 供包子过目，不一致即拒收；pipeline 已内置 contact sheet 输出（`qa/contact-sheet-<role>.png`）。
+  - 过渡期运行时维持现有 4 帧内容映射（run→pulled-lunge→fall-dive→fall-slide-right），新包到达后在 `chore/asset-reset` 分支重建图集并更新引用。
+  - 本地冗余已清理：旧交付 zip、jimeng 失败样本、旧评审录屏、过期截图共约 122MB；`design-assets/lab-review/intro-oil/` 只保留最新一轮评审材料。
+- **替代关系：** `asset-request-2026-09-04.md` 作废（保留为历史）；D-128 的 image2 路线与验收标准不变。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`design-assets/intro/oil-motion/source/package-spec.md`（新建）、`asset-request-2026-09-04.md`（标记作废）、`scripts/intro-materials/prepare-confirmed-materials.mjs`（contact sheet + 归一化锚点）。
+
+### D-132 · 接入素材接口 v2 与启动页新结尾
+
+- **状态：** Accepted（2026-09-09，依据包子交付 `baozi-space-assets-v2.0` 并指示「给到后重新配置」）
+- **决定：**
+  - 全站素材切换到 v2：`public/assets/intro/runtime/`、`public/assets/home/runtime/`、`public/manifest/asset-manifest.v2.json` 为唯一生产来源；v1 目录（`intro/oil-motion`、`intro/production`、`intro/placeholders`、`orbit/`）删除，git 历史即归档。源包存档于 `design-assets/intro/packages/baozi-space-assets-v2.0/`。
+  - 运行时全部从 v2 Manifest 读取 `src/frameCount/columns/rows/frameSize/frameIds/anchors/displayWidthVh`，不复制数值；帧序调试显示语义 frameId。
+  - **启动页结尾变更**：D-119/D-121 的「K4 角色全部右出 → 暖白遮罩交接」被 v2 时间线取代——人物摔倒滑出后从左侧高速滑入、减速到 D-120 冻结锚点、起身站定；嘉乐追逐冲出右界后从右侧返回、在人物脚边坐下；草地按 manifest `transitionOut`（0.78–0.82）退出；0.98–1.0 淡入 Home v2 交接层。「左进右出、不从右侧回进」约束仅适用于 0–0.82 的追逐段。
+  - 首页环绕资产路径换到 `/assets/home/runtime/`（grid 与 v1 CSS 预期一致：人物 4×3、嘉乐 4×8）；HomeOrbit / home-v2-preview 只改路径。
+  - A1 实验（`/lab/intro`、`src/lib/intro`、`src/components/intro`、intro-assets/intro-materials 脚本、对应测试）删除：v2 包是规范来源，A1 动作参考使命结束（PRD「A1 保留为动作参考」被本条取代）。`/lab/intro-materials-2026-08-31` 审计页随旧包一并删除。
+  - 生产场景 1 从 A1 `IntroSequence` 切换为 `IntroOilStage`（v2）；plate iframe 仅在 lab 页启用，生产由场景 2 自然衔接。
+  - 回退路径按 integration §6：Manifest 失败 → 直接显示 Home 内容层；角色素材失败 → `intro-final-still.webp`；reduced motion → 最终站立状态。均已实测。
+- **替代关系：** 取代 D-119/D-120/D-121 的 K4 结尾与遮罩交接、D-128 的过渡 4 帧映射（run→pulled-lunge→fall-dive→fall-slide-right）、PRD「A1 保留为动作参考」；D-121 的 `background_owner=page`、`driver=scroll`、alpha-atlas + DOM/CSS Sprite、WebGL/Canvas 停止条件继续有效。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`public/assets/{intro,home}/runtime/`、`public/manifest/`、`src/lib/intro-oil/{v2,timeline}.ts`、`src/components/intro-oil/*`、`src/components/scene/SceneRoot.astro`、`src/components/home/HomeOrbit.astro`、`src/components/home-v2/home-v2-preview.css`、`src/pages/index.astro`（preload）、`package.json`（移除 assets:intro/* 与 assets:oil:budget）、`tests/unit/intro-oil/`、删除项见上。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。

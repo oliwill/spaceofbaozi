@@ -1,54 +1,46 @@
-// CP5 主时间线（oil-motion 计划 §CP5 建议主时间线 + D-122 球先于嘉乐出画）。
-// 纯函数：同一个归一化进度同时决定球、嘉乐、人物、牵引绳、遮罩与 Home v2 交接层。
+// v2 启动页主时间线（asset-manifest.v2.json introTimeline + D-132 新结尾 + 2026-09-09 评审修订）。
+// 纯函数：同一归一化进度决定球、嘉乐、人物、牵引绳、草地退出与 Home v2 交接层。
+// 帧数/锚点不在这里复制——frameIndex 由本模块按局部进度算出序号，
+// 网格几何（columns/rows/frameSize）与锚点由运行时从 v2 Manifest 读取。
+// 评审修订：球延长到 0.48 出框；嘉乐 0.75 前先冲出（摔倒段不与人物重叠）；
+// 人物 pulled-lean 首帧只在进场窗口播放一次，跑步循环不含首帧。
 
-export interface TimelineConfig {
-  /** 各角色横向位置的视口宽度百分比锚点 */
-  ball: { enter: [number, number]; leadEnd: number; exitEnd: number };
-  jiale: { enter: [number, number]; chaseEnd: number; exitEnd: number };
-  person: { enter: [number, number]; dragEnd: number; pulledEnd: number; stumbleEnd: number; exitEnd: number };
-  /** 嘉乐跑循环：每 strideVw 视口宽度换一帧 */
-  jialeStrideVw: number;
+export type PersonSeq = "person-pulled-run-right" | "person-stumble-fall-exit-right" | "person-slide-in-rise-stand";
+export type DogSeq = "dog-chase-right" | "dog-look-up-settle";
+
+export interface V2AnchorsVw {
+  /** 首页冻结锚点（D-120）：人物脚底与嘉乐接地点，视口宽百分比 */
+  personHomeVw: number;
+  dogHomeVw: number;
 }
 
-export const TIMELINE: TimelineConfig = {
-  ball: { enter: [-12, 28], leadEnd: 72, exitEnd: 112 },
-  jiale: { enter: [-15, 45], chaseEnd: 68, exitEnd: 115 },
-  person: { enter: [-15, 15], dragEnd: 40, pulledEnd: 52, stumbleEnd: 64, exitEnd: 118 },
-  jialeStrideVw: 9,
+export const HOME_ANCHORS: Record<"desktop" | "mobile", V2AnchorsVw> = {
+  desktop: { personHomeVw: 68.77, dogHomeVw: 81.85 }, // 1440×900: (991.06, 1178.61)
+  mobile: { personHomeVw: 46.09, dogHomeVw: 76.48 }, // 390×844: (179.73, 298.28)
 };
 
-export const P = {
-  ballEnter: [0.08, 0.22],
-  ballLead: [0.22, 0.7],
-  ballExit: [0.7, 0.8],
-  jialeEnter: [0.16, 0.52],
-  jialeChase: [0.52, 0.72],
-  jialeExit: [0.72, 0.86],
-  personEnter: [0.3, 0.38],
-  personDrag: [0.38, 0.5],
-  personPulled: [0.5, 0.72],
-  personStumble: [0.72, 0.8],
-  personFall: [0.8, 0.95],
-  mask: [0.95, 0.98],
+export const SEG = {
+  ballEnter: [0.02, 0.08],
+  ballLead: [0.08, 0.4],
+  ballExit: [0.4, 0.48],
+  dogChase: [0.08, 0.75],
+  personRun: [0.25, 0.65],
+  personRunEntry: 0.3, // pulled-lean 首帧只播到此处，之后进入 1..7 跑循环
+  personFall: [0.65, 0.82],
+  personRise: [0.82, 1],
+  personSlideEnd: 0.88, // 滑入到位（home 锚点）的进度点，之后原地起身
+  dogSettle: [0.94, 1],
+  dogSettleEnd: 0.97,
+  grassOut: [0.78, 0.82], // manifest environment.transitionOut
   plate: [0.98, 1],
 } as const;
 
-export type PersonFrameId = "run" | "pulled-lunge" | "fall-dive" | "fall-slide-right";
-
-export interface ActorState {
-  /** 角色 ground 锚点的视口宽度百分比横坐标（负值 / 超 100 表示屏外） */
-  xVw: number;
-  frameIndex: number;
-  visible: boolean;
-}
-
-export interface IntroTimelineState {
-  ball: { xVw: number; visible: boolean };
-  jiale: ActorState;
-  person: ActorState & { frameId: PersonFrameId };
-  leashVisible: boolean;
-  maskOpacity: number;
-  /** Home v2 定帧交接层（CP6：遮罩盖满后才显现，避免角色瞬间重现） */
+export interface V2State {
+  ball: { xVw: number; bounceT: number; visible: boolean };
+  dog: { xVw: number; local: number; seqId: DogSeq; visible: boolean };
+  person: { xVw: number; local: number; seqId: PersonSeq; visible: boolean };
+  leash: { visible: boolean; taut: number };
+  grassOut: number;
   plateOpacity: number;
 }
 
@@ -57,63 +49,69 @@ function lerp(p: number, range: readonly [number, number], from: number, to: num
   return from + (to - from) * t;
 }
 
-function ballXVw(p: number, cfg: TimelineConfig): number {
-  if (p <= P.ballEnter[0]) return cfg.ball.enter[0];
-  if (p <= P.ballEnter[1]) return lerp(p, P.ballEnter, cfg.ball.enter[0], cfg.ball.enter[1]);
-  if (p <= P.ballLead[1]) return lerp(p, P.ballLead, cfg.ball.enter[1], cfg.ball.leadEnd);
-  if (p <= P.ballExit[1]) return lerp(p, P.ballExit, cfg.ball.leadEnd, cfg.ball.exitEnd);
-  return cfg.ball.exitEnd;
+function local(p: number, range: readonly [number, number]): number {
+  return Math.min(1, Math.max(0, (p - range[0]) / (range[1] - range[0])));
 }
 
-function jialeXVw(p: number, cfg: TimelineConfig): number {
-  if (p <= P.jialeEnter[0]) return cfg.jiale.enter[0];
-  if (p <= P.jialeEnter[1]) return lerp(p, P.jialeEnter, cfg.jiale.enter[0], cfg.jiale.enter[1]);
-  if (p <= P.jialeChase[1]) return lerp(p, P.jialeChase, cfg.jiale.enter[1], cfg.jiale.chaseEnd);
-  if (p <= P.jialeExit[1]) return lerp(p, P.jialeExit, cfg.jiale.chaseEnd, cfg.jiale.exitEnd);
-  return cfg.jiale.exitEnd;
+/** 球的弹跳相位：行进 10vw 一个弹跳周期 */
+export function ballBounceT(xVw: number): number {
+  return (Math.max(0, xVw + 10) / 10) % 1;
 }
 
-function personXVw(p: number, cfg: TimelineConfig): number {
-  if (p <= P.personEnter[0]) return cfg.person.enter[0];
-  if (p <= P.personEnter[1]) return lerp(p, P.personEnter, cfg.person.enter[0], cfg.person.enter[1]);
-  if (p <= P.personPulled[0]) return lerp(p, P.personDrag, cfg.person.enter[1], cfg.person.dragEnd);
-  if (p <= P.personStumble[0]) return lerp(p, P.personPulled, cfg.person.dragEnd, cfg.person.pulledEnd);
-  if (p <= P.personFall[0]) return lerp(p, P.personStumble, cfg.person.pulledEnd, cfg.person.stumbleEnd);
-  if (p <= P.personFall[1]) return lerp(p, P.personFall, cfg.person.stumbleEnd, cfg.person.exitEnd);
-  return cfg.person.exitEnd;
-}
-const PERSON_FRAME_ORDER: PersonFrameId[] = ["run", "pulled-lunge", "fall-dive", "fall-slide-right"];
-
-// 帧序（2026-09-05 cell 审计按内容定义）：被拽跑 → 前扑失衡 → 摔倒飞出 → 倒地滑出
-function personFrame(p: number): PersonFrameId {
-  if (p < P.personPulled[0]) return "run";
-  if (p < P.personStumble[0]) return "pulled-lunge";
-  if (p < 0.87) return "fall-dive";
-  return "fall-slide-right";
-}
-
-/** p 归一化进度 0..1，输出全部场景元素的确定性状态。xVw 单调不减（左进右出，不从右侧回进）。 */
-export function stateAtProgress(raw: number, cfg: TimelineConfig = TIMELINE): IntroTimelineState {
+export function stateAtProgress(raw: number, home: V2AnchorsVw = HOME_ANCHORS.desktop): V2State {
   const p = Math.min(1, Math.max(0, raw));
-  const ballX = ballXVw(p, cfg);
-  const jialeX = jialeXVw(p, cfg);
-  const personX = personXVw(p, cfg);
-  const frameId = personFrame(p);
-  // 嘉乐跑循环帧由行进距离决定，反向滚动时帧序同步倒放
-  const stride = Math.max(0, jialeX - cfg.jiale.enter[0]);
-  const jialeFrame = Math.floor(stride / cfg.jialeStrideVw) % 4;
+
+  // 球：左侧弹入 → 全程领跑嘉乐 → 0.48 前弹出右界
+  const ballX = p <= SEG.ballEnter[0] ? -10
+    : p <= SEG.ballEnter[1] ? lerp(p, SEG.ballEnter, -10, 22)
+    : p <= SEG.ballLead[1] ? lerp(p, SEG.ballLead, 22, 85)
+    : p <= SEG.ballExit[1] ? lerp(p, SEG.ballExit, 85, 118)
+    : 118;
+
+  // 嘉乐追逐：0.08 左进，始终领先人物，0.75 前先冲出右界（避免摔倒段人狗重叠）；0.94 起返回坐下
+  const dogChaseX = p <= SEG.dogChase[0] ? -12
+    : p <= 0.45 ? lerp(p, [SEG.dogChase[0], 0.45], -12, 45)
+    : p <= SEG.dogChase[1] ? lerp(p, [0.45, SEG.dogChase[1]], 45, 118)
+    : 118;
+  const dogSettling = p > SEG.dogSettle[0];
+  const dogX = dogSettling ? lerp(p, [SEG.dogSettle[0], SEG.dogSettleEnd], 112, home.dogHomeVw) : dogChaseX;
+
+  // 人物：被拽跑（左进右行）→ 摔倒滑出右界 → 从左侧高速滑入减速到首页锚点、原地起身站定
+  const personRunX = p <= SEG.personRun[0] ? -15 : lerp(p, SEG.personRun, -15, 50);
+  const personFallX = lerp(p, SEG.personFall, 50, 118);
+  const personRiseX = p <= SEG.personSlideEnd ? lerp(p, [SEG.personRise[0], SEG.personSlideEnd], -18, home.personHomeVw) : home.personHomeVw;
+
+  let personSeq: PersonSeq;
+  let personLocal: number;
+  let personX: number;
+  let personVisible: boolean;
+  if (p <= SEG.personRun[0]) {
+    personSeq = "person-pulled-run-right"; personLocal = 0; personX = -15; personVisible = false;
+  } else if (p <= SEG.personRun[1]) {
+    personSeq = "person-pulled-run-right"; personLocal = local(p, SEG.personRun); personX = personRunX; personVisible = true;
+  } else if (p <= SEG.personFall[1]) {
+    personSeq = "person-stumble-fall-exit-right"; personLocal = local(p, SEG.personFall); personX = personFallX; personVisible = true;
+  } else {
+    personSeq = "person-slide-in-rise-stand"; personLocal = local(p, SEG.personRise); personX = personRiseX; personVisible = true;
+  }
+
+  const dogVisible = p > SEG.dogChase[0] && p <= SEG.dogChase[1] ? true : dogSettling;
+
+  // 牵引绳：人物被拽跑与摔倒期间可见（绳子随摔倒消失），紧绷度摔倒段渐松
+  const leashVisible = personVisible && personSeq !== "person-slide-in-rise-stand" && p > SEG.personRun[0] && p <= SEG.personFall[1];
+  const taut = p <= SEG.personFall[0] ? 1 : 1 - local(p, SEG.personFall) * 0.7;
+
   return {
-    ball: { xVw: ballX, visible: p > P.ballEnter[0] && p <= P.ballExit[1] },
-    jiale: { xVw: jialeX, frameIndex: jialeFrame, visible: p > P.jialeEnter[0] && p <= P.jialeExit[1] },
-    person: {
-      xVw: personX,
-      frameIndex: PERSON_FRAME_ORDER.indexOf(frameId),
-      frameId,
-      visible: p > P.personEnter[0] && p <= P.personFall[1],
+    ball: { xVw: ballX, bounceT: ballBounceT(ballX), visible: p > SEG.ballEnter[0] && p <= SEG.ballExit[1] },
+    dog: {
+      xVw: dogX,
+      local: dogSettling ? local(p, SEG.dogSettle) : local(p, [SEG.dogChase[0], SEG.dogChase[1]]),
+      seqId: dogSettling ? "dog-look-up-settle" : "dog-chase-right",
+      visible: dogVisible,
     },
-    // 牵引绳：人物进场时松、拉拽期绷紧、摔倒滑出后再隐藏（manifest leash.hiddenAfter）
-    leashVisible: p > P.personEnter[0] && p <= P.personFall[1],
-    maskOpacity: p <= P.mask[0] ? 0 : lerp(p, P.mask, 0, 1),
-    plateOpacity: p <= P.plate[0] ? 0 : lerp(p, P.plate, 0, 1),
+    person: { xVw: personX, local: personLocal, seqId: personSeq, visible: personVisible },
+    leash: { visible: leashVisible, taut },
+    grassOut: p <= SEG.grassOut[0] ? 0 : local(p, SEG.grassOut),
+    plateOpacity: p <= SEG.plate[0] ? 0 : local(p, SEG.plate),
   };
 }

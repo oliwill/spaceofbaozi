@@ -1,4 +1,4 @@
-/* oil-motion 启动页静态舞台（D-121/D-122）：点阵纸 + 全宽草地，角色与牵引绳由 CP3+ 挂载 */
+/* 启动页舞台（D-132 / 素材接口 v2）：点阵纸 + 全宽草地 + v2 序列 sprite */
 .intro-oil-stage {
   --oil-grid-paper: #eef0ea;
   --oil-dot: rgba(63, 78, 82, 0.14);
@@ -14,9 +14,8 @@
   background-size: var(--oil-dot-gap) var(--oil-dot-gap);
 }
 
-/* 草地资产为 4:1 含约 32% 顶部透明；可见草高 ≈ 0.68 × 渲染高度。
-   规则：渲染高度取 max(25vw, 38svh) —— 25vw 保证宽度铺满（4:1 资产），
-   38svh 保证窄屏下可见草高 ≈ 26%（D-122 的约 24% 区间）。 */
+/* v2 草地资产 2560×640，可见草部为底部 360/640（visibleBounds.y=280）。
+   规则：渲染高度取 max(25vw, 38svh) —— 25vw 保证宽度铺满（4:1 资产）。 */
 .intro-oil-stage__grass {
   position: absolute;
   bottom: 0;
@@ -27,10 +26,10 @@
   max-width: none;
   user-select: none;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 
-
-/* CP5 运行时层：滚动轨道 + 角色 sprite + 牵引绳 + 交接遮罩 */
+/* 运行时层：滚动轨道 + 角色 sprite + 牵引绳 + 交接层 */
 .io-scroll {
   height: 400vh;
   position: relative;
@@ -56,11 +55,6 @@
   visibility: visible;
 }
 
-.io-ball {
-  background-size: contain;
-  will-change: transform;
-}
-
 .io-leash {
   position: absolute;
   inset: 0;
@@ -80,10 +74,28 @@
   stroke-linecap: round;
 }
 
-.io-mask {
+/* 素材失败回退定帧（integration §6：不回退 v1） */
+.io-still {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: min(70vw, 70svh);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.io-still.is-live {
+  visibility: visible;
+}
+
+/* Home v2 定帧交接层：0.98–1.0 淡入（D-120 capture mode 无 UI） */
+.io-plate {
   position: absolute;
   inset: 0;
-  background: #f6f3ea;
+  width: 100%;
+  height: 100%;
+  border: 0;
   opacity: 0;
   pointer-events: none;
 }
@@ -106,6 +118,20 @@
   background: #f6f3ea;
 }
 
+.io-debug {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 6;
+  margin: 0;
+  padding: 6px 10px;
+  background: rgba(38, 50, 54, 0.85);
+  color: #d7e4d2;
+  font: 12px/1.5 monospace;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .io-scroll {
     height: 100svh;
@@ -116,16 +142,6 @@
   }
 }
 
-/* CP6：Home v2 定帧交接层，遮罩盖满后显现（D-120 capture mode 无 UI） */
-.io-plate {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  opacity: 0;
-  pointer-events: none;
-}
 @media (max-aspect-ratio: 3/4) {
   .intro-oil-stage {
     --oil-dot-gap: 18px;

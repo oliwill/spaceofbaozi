@@ -58,8 +58,8 @@
 |---|---|
 | 技术骨架 | Astro 5 静态站可构建；`/` 已切换为场景式 IA（D-123/D-124）：三场景一屏滚动串联 + Lenis + React islands + motion |
 | Home v2 | 作为场景 2 视觉基线（D-118 冻结构图复用），不再是独立首页 |
-| 启动页开场 | 场景 1 仍为 D-121 oil-motion alpha-atlas scrub；动作素材为 image2 静态姿态帧（D-128），姿态缺口由包子补充 |
-| A1 `/lab/intro` | D-115 滚动 Sprite 实验保留为动作参考，不再是新开场方向 |
+| 启动页开场 | 场景 1 为素材接口 v2（D-132）：manifest 驱动 sprite scrub，结尾起身站定落入 Home v2 锚点 |
+| A1 `/lab/intro` | 已删除（D-132）：v2 包成为规范来源，A1 动作参考使命结束，git 历史归档 |
 | 目标 IA | 四入口（Blog / Photos / Resume / Projects）已确认并落地；thoughts→blog、ai-works→projects 迁移已执行（301 写入 `public/_redirects`）；书影音保留为归档路由 |
 | 用户正式内容 | 尚未完整批准，不满足生产发布门禁 |
 | Cloudflare Pages | 尚未接入 |

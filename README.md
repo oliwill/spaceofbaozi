@@ -73,11 +73,11 @@ tests/                    # A0-H / A1 接入 Vitest 与 Playwright
 
 ## 当前阶段
 
-D-121 已把启动页开场从「整屏 Seedance 视频」改为 oil-motion 帧映射方案；CP1 关键帧与 Identity Bible 已批准（D-122）；D-128（2026-09-04）进一步把动作素材从 Seedance 视频改为 image2 静态姿态帧，首轮基线图集已入库（person / jiale 各 4 帧 + 球），姿态缺口由包子按需补充。
+D-132（2026-09-09）：素材接口 v2 已接入——94 张语义命名规范源帧 + 预编译 WebP Sheet + `asset-manifest.v2.json`（含逐帧锚点与 introTimeline）。启动页结尾改为「摔倒滑出 → 左侧滑入 → 起身站定 + 嘉乐返回坐下」，直接落在 Home v2 冻结锚点。
 
-- 点阵纸、暖白大纸与草地由网页静态层提供；AI 工具只生成角色姿态，不生成任何背景、文字或导航；
-- oil-motion 固定到提交 `a5a384c804183d69529a85d2dcf84a7cfc99f7e4`；首选 alpha-atlas + DOM/CSS Sprite，WebGL 为停止条件；
-- CP1 关键帧 K0–K4 与 Identity Bible 已批准（D-122）；CP2 重定义为姿态帧清单核验（D-128），不再有视频候选；
+- 点阵纸、暖白大纸与草地由网页静态层提供；角色动作全部来自 v2 规范帧；
+- 运行时从 v2 Manifest 读取网格与锚点，不复制数值；DOM/CSS Sprite + ScrollTrigger scrub，WebGL 为停止条件；
+- A1 实验与 v1 素材目录已删除（D-132），git 历史即归档；
 - Home v2 CP0 已批准的桌面 1440×900 / 移动 390×844 静态首屏保持不变。
 
 后续按《baozi.space 启动页 Oil Motion 项目管理计划》的 CP1–CP7 逐 Checkpoint 放行；不得提前生成素材、修改运行时或制作 Rive。

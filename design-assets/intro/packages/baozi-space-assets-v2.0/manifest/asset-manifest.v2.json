@@ -1,0 +1,1664 @@
+{
+  "version": 2,
+  "mode": "production",
+  "style": "b-lite-watercolor-cut-paper",
+  "fps": 9,
+  "sequences": {
+    "ball-bounce": {
+      "src": "/assets/intro/runtime/ball-bounce-8f.webp",
+      "frameCount": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": {
+        "width": 160,
+        "height": 160
+      },
+      "loop": true,
+      "frameIds": [
+        "round-high",
+        "stretch-up",
+        "round-descend",
+        "stretch-descend",
+        "squash-impact",
+        "squash-max",
+        "rebound-stretch",
+        "rebound-round"
+      ],
+      "frames": [
+        {
+          "id": "round-high",
+          "file": "assets/intro/frames/ball/ball-bounce/01-round-high.png",
+          "description": "球在高位接近圆形",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.5
+            ]
+          }
+        },
+        {
+          "id": "stretch-up",
+          "file": "assets/intro/frames/ball/ball-bounce/02-stretch-up.png",
+          "description": "球向上拉伸",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.5
+            ]
+          }
+        },
+        {
+          "id": "round-descend",
+          "file": "assets/intro/frames/ball/ball-bounce/03-round-descend.png",
+          "description": "球下落并恢复圆形",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.5
+            ]
+          }
+        },
+        {
+          "id": "stretch-descend",
+          "file": "assets/intro/frames/ball/ball-bounce/04-stretch-descend.png",
+          "description": "球下落时纵向拉伸",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.5
+            ]
+          }
+        },
+        {
+          "id": "squash-impact",
+          "file": "assets/intro/frames/ball/ball-bounce/05-squash-impact.png",
+          "description": "球首次触地压扁",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.58
+            ]
+          }
+        },
+        {
+          "id": "squash-max",
+          "file": "assets/intro/frames/ball/ball-bounce/06-squash-max.png",
+          "description": "球最大压缩",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.63
+            ]
+          }
+        },
+        {
+          "id": "rebound-stretch",
+          "file": "assets/intro/frames/ball/ball-bounce/07-rebound-stretch.png",
+          "description": "球反弹时纵向拉伸",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.5
+            ]
+          }
+        },
+        {
+          "id": "rebound-round",
+          "file": "assets/intro/frames/ball/ball-bounce/08-rebound-round.png",
+          "description": "球反弹后恢复圆形",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.5
+            ]
+          }
+        }
+      ],
+      "scope": "intro",
+      "displayWidthVh": 5
+    },
+    "dog-chase-right": {
+      "src": "/assets/intro/runtime/dog-chase-right-8f.webp",
+      "frameCount": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": {
+        "width": 320,
+        "height": 240
+      },
+      "loop": true,
+      "frameIds": [
+        "extended-a",
+        "gather-a",
+        "extended-b",
+        "low-leap-a",
+        "extended-c",
+        "gather-b",
+        "extended-d",
+        "low-leap-b"
+      ],
+      "frames": [
+        {
+          "id": "extended-a",
+          "file": "assets/intro/frames/dog/dog-chase-right/01-extended-a.png",
+          "description": "向右奔跑，身体第一次伸展",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.56
+            ],
+            "collar": [
+              0.66,
+              0.38
+            ]
+          }
+        },
+        {
+          "id": "gather-a",
+          "file": "assets/intro/frames/dog/dog-chase-right/02-gather-a.png",
+          "description": "向右奔跑，四肢第一次收拢",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.56
+            ],
+            "collar": [
+              0.64,
+              0.42
+            ]
+          }
+        },
+        {
+          "id": "extended-b",
+          "file": "assets/intro/frames/dog/dog-chase-right/03-extended-b.png",
+          "description": "向右奔跑，身体第二次伸展",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.55
+            ],
+            "collar": [
+              0.66,
+              0.36
+            ]
+          }
+        },
+        {
+          "id": "low-leap-a",
+          "file": "assets/intro/frames/dog/dog-chase-right/04-low-leap-a.png",
+          "description": "向右低位跃起",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.62
+            ],
+            "collar": [
+              0.66,
+              0.51
+            ]
+          }
+        },
+        {
+          "id": "extended-c",
+          "file": "assets/intro/frames/dog/dog-chase-right/05-extended-c.png",
+          "description": "向右奔跑，身体第三次伸展",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.56
+            ],
+            "collar": [
+              0.66,
+              0.39
+            ]
+          }
+        },
+        {
+          "id": "gather-b",
+          "file": "assets/intro/frames/dog/dog-chase-right/06-gather-b.png",
+          "description": "向右奔跑，四肢第二次收拢",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.58
+            ],
+            "collar": [
+              0.66,
+              0.46
+            ]
+          }
+        },
+        {
+          "id": "extended-d",
+          "file": "assets/intro/frames/dog/dog-chase-right/07-extended-d.png",
+          "description": "向右奔跑，身体第四次伸展",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.57
+            ],
+            "collar": [
+              0.66,
+              0.41
+            ]
+          }
+        },
+        {
+          "id": "low-leap-b",
+          "file": "assets/intro/frames/dog/dog-chase-right/08-low-leap-b.png",
+          "description": "向右第二次低位跃起",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.64
+            ],
+            "collar": [
+              0.66,
+              0.52
+            ]
+          }
+        }
+      ],
+      "scope": "intro",
+      "displayWidthVh": 23
+    },
+    "dog-look-up-settle": {
+      "src": "/assets/intro/runtime/dog-look-up-settle-8f.webp",
+      "frameCount": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": {
+        "width": 320,
+        "height": 240
+      },
+      "loop": false,
+      "frameIds": [
+        "slow-step-a",
+        "slow-step-b",
+        "brake-step",
+        "look-up",
+        "step-closer",
+        "stand-alert",
+        "sit-down",
+        "sit-still"
+      ],
+      "frames": [
+        {
+          "id": "slow-step-a",
+          "file": "assets/intro/frames/dog/dog-look-up-settle/01-slow-step-a.png",
+          "description": "向右减速走近",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.56
+            ],
+            "collar": [
+              0.66,
+              0.43
+            ]
+          }
+        },
+        {
+          "id": "slow-step-b",
+          "file": "assets/intro/frames/dog/dog-look-up-settle/02-slow-step-b.png",
+          "description": "继续向右慢步",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.56
+            ],
+            "collar": [
+              0.67,
+              0.44
+            ]
+          }
+        },
+        {
+          "id": "brake-step",
+          "file": "assets/intro/frames/dog/dog-look-up-settle/03-brake-step.png",
+          "description": "收步准备停下",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.56
+            ],
+            "collar": [
+              0.67,
+              0.46
+            ]
+          }
+        },
+        {
+          "id": "look-up",
+          "file": "assets/intro/frames/dog/dog-look-up-settle/04-look-up.png",
+          "description": "站立并抬头看人物",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.57
+            ],
+            "collar": [
+              0.66,
+              0.48
+            ]
+          }
+        },
+        {
+          "id": "step-closer",
+          "file": "assets/intro/frames/dog/dog-look-up-settle/05-step-closer.png",
+          "description": "抬头再靠近一步",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.56
+            ],
+            "collar": [
+              0.66,
+              0.44
+            ]
+          }
+        },
+        {
+          "id": "stand-alert",
+          "file": "assets/intro/frames/dog/dog-look-up-settle/06-stand-alert.png",
+          "description": "四足站定并保持注意",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.58
+            ],
+            "collar": [
+              0.66,
+              0.49
+            ]
+          }
+        },
+        {
+          "id": "sit-down",
+          "file": "assets/intro/frames/dog/dog-look-up-settle/07-sit-down.png",
+          "description": "坐下",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.62
+            ],
+            "collar": [
+              0.64,
+              0.55
+            ]
+          }
+        },
+        {
+          "id": "sit-still",
+          "file": "assets/intro/frames/dog/dog-look-up-settle/08-sit-still.png",
+          "description": "坐定并抬头",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.62
+            ],
+            "collar": [
+              0.64,
+              0.55
+            ]
+          }
+        }
+      ],
+      "scope": "intro",
+      "displayWidthVh": 23
+    },
+    "person-pulled-run-right": {
+      "src": "/assets/intro/runtime/person-pulled-run-right-8f.webp",
+      "frameCount": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": {
+        "width": 384,
+        "height": 384
+      },
+      "loop": true,
+      "frameIds": [
+        "pulled-lean",
+        "long-stride",
+        "high-knee",
+        "run-contact-a",
+        "run-contact-b",
+        "run-gather-a",
+        "run-gather-b",
+        "run-contact-c"
+      ],
+      "frames": [
+        {
+          "id": "pulled-lean",
+          "file": "assets/intro/frames/person/person-pulled-run-right/01-pulled-lean.png",
+          "description": "绳子初次拉紧，人物双脚离地向右前倾",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.52
+            ],
+            "hand": [
+              0.89,
+              0.33
+            ]
+          }
+        },
+        {
+          "id": "long-stride",
+          "file": "assets/intro/frames/person/person-pulled-run-right/02-long-stride.png",
+          "description": "人物向右迈出长步",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.54
+            ],
+            "hand": [
+              0.88,
+              0.42
+            ]
+          }
+        },
+        {
+          "id": "high-knee",
+          "file": "assets/intro/frames/person/person-pulled-run-right/03-high-knee.png",
+          "description": "人物右膝抬高追赶",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.52
+            ],
+            "hand": [
+              0.61,
+              0.31
+            ]
+          }
+        },
+        {
+          "id": "run-contact-a",
+          "file": "assets/intro/frames/person/person-pulled-run-right/04-run-contact-a.png",
+          "description": "向右跑步接触期 A",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.53
+            ],
+            "hand": [
+              0.68,
+              0.38
+            ]
+          }
+        },
+        {
+          "id": "run-contact-b",
+          "file": "assets/intro/frames/person/person-pulled-run-right/05-run-contact-b.png",
+          "description": "向右跑步接触期 B",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.55
+            ],
+            "hand": [
+              0.75,
+              0.42
+            ]
+          }
+        },
+        {
+          "id": "run-gather-a",
+          "file": "assets/intro/frames/person/person-pulled-run-right/06-run-gather-a.png",
+          "description": "向右跑步收腿期 A",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.54
+            ],
+            "hand": [
+              0.72,
+              0.44
+            ]
+          }
+        },
+        {
+          "id": "run-gather-b",
+          "file": "assets/intro/frames/person/person-pulled-run-right/07-run-gather-b.png",
+          "description": "向右跑步收腿期 B",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.53
+            ],
+            "hand": [
+              0.72,
+              0.43
+            ]
+          }
+        },
+        {
+          "id": "run-contact-c",
+          "file": "assets/intro/frames/person/person-pulled-run-right/08-run-contact-c.png",
+          "description": "向右跑步接触期 C",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.55
+            ],
+            "hand": [
+              0.69,
+              0.44
+            ]
+          }
+        }
+      ],
+      "scope": "intro",
+      "displayWidthVh": 36
+    },
+    "person-stumble-fall-exit-right": {
+      "src": "/assets/intro/runtime/person-stumble-fall-exit-right-10f.webp",
+      "frameCount": 10,
+      "columns": 5,
+      "rows": 2,
+      "frameSize": {
+        "width": 384,
+        "height": 384
+      },
+      "loop": false,
+      "frameIds": [
+        "pulled-lean",
+        "off-balance-reach",
+        "stumble-catch-step",
+        "pre-fall-hop",
+        "forward-dive",
+        "fall-impact",
+        "hands-knees-impact",
+        "side-collapse",
+        "shoulder-roll",
+        "belly-slide-exit"
+      ],
+      "frames": [
+        {
+          "id": "pulled-lean",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/01-pulled-lean.png",
+          "description": "被绳拉住并向右前倾，是跌倒序列起点",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.52
+            ],
+            "hand": [
+              0.89,
+              0.33
+            ]
+          }
+        },
+        {
+          "id": "off-balance-reach",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/02-off-balance-reach.png",
+          "description": "失去平衡并向前伸手",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.53
+            ],
+            "hand": [
+              0.66,
+              0.39
+            ]
+          }
+        },
+        {
+          "id": "stumble-catch-step",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/03-stumble-catch-step.png",
+          "description": "身体前倾约 45 度，右脚前跨尝试找回支撑",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.55
+            ],
+            "hand": [
+              0.92,
+              0.44
+            ]
+          }
+        },
+        {
+          "id": "pre-fall-hop",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/04-pre-fall-hop.png",
+          "description": "救步失败，双脚即将离地",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.53
+            ],
+            "hand": [
+              0.78,
+              0.29
+            ]
+          }
+        },
+        {
+          "id": "forward-dive",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/05-forward-dive.png",
+          "description": "身体水平向右前扑",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.55
+            ],
+            "hand": [
+              0.88,
+              0.29
+            ]
+          }
+        },
+        {
+          "id": "fall-impact",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/06-fall-impact.png",
+          "description": "胸腹触地前的悬空瞬间，双手准备撑地",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.66
+            ],
+            "hand": [
+              0.92,
+              0.84
+            ]
+          }
+        },
+        {
+          "id": "hands-knees-impact",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/07-hands-knees-impact.png",
+          "description": "双手与膝盖触地承受冲击",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.68
+            ],
+            "hand": [
+              0.72,
+              0.82
+            ]
+          }
+        },
+        {
+          "id": "side-collapse",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/08-side-collapse.png",
+          "description": "向侧面蜷缩倒下",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.69
+            ],
+            "hand": [
+              0.57,
+              0.66
+            ]
+          }
+        },
+        {
+          "id": "shoulder-roll",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/09-shoulder-roll.png",
+          "description": "仰面翻滚经过肩背",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.69
+            ],
+            "hand": [
+              0.43,
+              0.71
+            ]
+          }
+        },
+        {
+          "id": "belly-slide-exit",
+          "file": "assets/intro/frames/person/person-stumble-fall-exit-right/10-belly-slide-exit.png",
+          "description": "趴地向右侧滑出画面",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.68
+            ],
+            "hand": [
+              0.89,
+              0.4
+            ]
+          }
+        }
+      ],
+      "scope": "intro",
+      "displayWidthVh": 36
+    },
+    "person-slide-in-rise-stand": {
+      "src": "/assets/intro/runtime/person-slide-in-rise-stand-8f.webp",
+      "frameCount": 8,
+      "columns": 4,
+      "rows": 2,
+      "frameSize": {
+        "width": 384,
+        "height": 384
+      },
+      "loop": false,
+      "frameIds": [
+        "belly-slide-in",
+        "push-up",
+        "hands-knees-start",
+        "hands-knees-steady",
+        "kneel",
+        "crouch-adjust-hat",
+        "stand-check-self",
+        "stand-neutral"
+      ],
+      "frames": [
+        {
+          "id": "belly-slide-in",
+          "file": "assets/intro/frames/person/person-slide-in-rise-stand/01-belly-slide-in.png",
+          "description": "从首页左侧趴地滑入",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.67
+            ],
+            "hand": [
+              0.13,
+              0.64
+            ]
+          }
+        },
+        {
+          "id": "push-up",
+          "file": "assets/intro/frames/person/person-slide-in-rise-stand/02-push-up.png",
+          "description": "双手撑地抬起上身",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.64
+            ],
+            "hand": [
+              0.31,
+              0.81
+            ]
+          }
+        },
+        {
+          "id": "hands-knees-start",
+          "file": "assets/intro/frames/person/person-slide-in-rise-stand/03-hands-knees-start.png",
+          "description": "进入手膝支撑",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.61
+            ],
+            "hand": [
+              0.38,
+              0.85
+            ]
+          }
+        },
+        {
+          "id": "hands-knees-steady",
+          "file": "assets/intro/frames/person/person-slide-in-rise-stand/04-hands-knees-steady.png",
+          "description": "手膝支撑并稳定身体",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.6
+            ],
+            "hand": [
+              0.38,
+              0.85
+            ]
+          }
+        },
+        {
+          "id": "kneel",
+          "file": "assets/intro/frames/person/person-slide-in-rise-stand/05-kneel.png",
+          "description": "单膝跪地准备起身",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.6
+            ],
+            "hand": [
+              0.38,
+              0.64
+            ]
+          }
+        },
+        {
+          "id": "crouch-adjust-hat",
+          "file": "assets/intro/frames/person/person-slide-in-rise-stand/06-crouch-adjust-hat.png",
+          "description": "蹲起并扶正帽子",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.57
+            ],
+            "hand": [
+              0.64,
+              0.28
+            ]
+          }
+        },
+        {
+          "id": "stand-check-self",
+          "file": "assets/intro/frames/person/person-slide-in-rise-stand/07-stand-check-self.png",
+          "description": "站起并整理衣服或查看手表",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.53
+            ],
+            "hand": [
+              0.58,
+              0.43
+            ]
+          }
+        },
+        {
+          "id": "stand-neutral",
+          "file": "assets/intro/frames/person/person-slide-in-rise-stand/08-stand-neutral.png",
+          "description": "完全站稳的中性姿态",
+          "anchors": {
+            "ground": [
+              0.5,
+              0.92
+            ],
+            "center": [
+              0.5,
+              0.52
+            ],
+            "hand": [
+              0.59,
+              0.55
+            ]
+          }
+        }
+      ],
+      "scope": "intro",
+      "displayWidthVh": 36
+    },
+    "person-look-around-12dir": {
+      "src": "/assets/home/runtime/person-look-around-12dir.webp",
+      "frameCount": 12,
+      "columns": 4,
+      "rows": 3,
+      "frameSize": {
+        "width": 384,
+        "height": 342
+      },
+      "loop": false,
+      "frameIds": [
+        "angle-000-right",
+        "angle-030-down-right",
+        "angle-060-down-right",
+        "angle-090-down",
+        "angle-120-down-left",
+        "angle-150-down-left",
+        "angle-180-left",
+        "angle-210-up-left",
+        "angle-240-up-left",
+        "angle-270-up",
+        "angle-300-up-right",
+        "angle-330-up-right"
+      ],
+      "frames": [
+        {
+          "id": "angle-000-right",
+          "file": "assets/home/frames/person/person-look-around-12dir/01-angle-000-right.png",
+          "description": "身体固定，头部看向屏幕右侧",
+          "angleDeg": 0
+        },
+        {
+          "id": "angle-030-down-right",
+          "file": "assets/home/frames/person/person-look-around-12dir/02-angle-030-down-right.png",
+          "description": "身体固定，头部看向右下",
+          "angleDeg": 30
+        },
+        {
+          "id": "angle-060-down-right",
+          "file": "assets/home/frames/person/person-look-around-12dir/03-angle-060-down-right.png",
+          "description": "身体固定，头部继续向右下转动",
+          "angleDeg": 60
+        },
+        {
+          "id": "angle-090-down",
+          "file": "assets/home/frames/person/person-look-around-12dir/04-angle-090-down.png",
+          "description": "身体固定，头部看向前下方",
+          "angleDeg": 90
+        },
+        {
+          "id": "angle-120-down-left",
+          "file": "assets/home/frames/person/person-look-around-12dir/05-angle-120-down-left.png",
+          "description": "身体固定，头部看向左下",
+          "angleDeg": 120
+        },
+        {
+          "id": "angle-150-down-left",
+          "file": "assets/home/frames/person/person-look-around-12dir/06-angle-150-down-left.png",
+          "description": "身体固定，头部继续向左下转动",
+          "angleDeg": 150
+        },
+        {
+          "id": "angle-180-left",
+          "file": "assets/home/frames/person/person-look-around-12dir/07-angle-180-left.png",
+          "description": "身体固定，头部看向屏幕左侧",
+          "angleDeg": 180
+        },
+        {
+          "id": "angle-210-up-left",
+          "file": "assets/home/frames/person/person-look-around-12dir/08-angle-210-up-left.png",
+          "description": "身体固定，头部看向左上",
+          "angleDeg": 210
+        },
+        {
+          "id": "angle-240-up-left",
+          "file": "assets/home/frames/person/person-look-around-12dir/09-angle-240-up-left.png",
+          "description": "身体固定，头部继续向左上转动",
+          "angleDeg": 240
+        },
+        {
+          "id": "angle-270-up",
+          "file": "assets/home/frames/person/person-look-around-12dir/10-angle-270-up.png",
+          "description": "身体固定，头部看向后上方",
+          "angleDeg": 270
+        },
+        {
+          "id": "angle-300-up-right",
+          "file": "assets/home/frames/person/person-look-around-12dir/11-angle-300-up-right.png",
+          "description": "身体固定，头部看向右上",
+          "angleDeg": 300
+        },
+        {
+          "id": "angle-330-up-right",
+          "file": "assets/home/frames/person/person-look-around-12dir/12-angle-330-up-right.png",
+          "description": "身体固定，头部回到右上方向",
+          "angleDeg": 330
+        }
+      ],
+      "scope": "home"
+    },
+    "dog-orbit-run-8dir-4f": {
+      "src": "/assets/home/runtime/dog-orbit-run-8dir-4f.webp",
+      "frameCount": 32,
+      "columns": 4,
+      "rows": 8,
+      "frameSize": {
+        "width": 256,
+        "height": 192
+      },
+      "loop": true,
+      "frameIds": [
+        "east-step-01",
+        "east-step-02",
+        "east-step-03",
+        "east-step-04",
+        "southeast-step-01",
+        "southeast-step-02",
+        "southeast-step-03",
+        "southeast-step-04",
+        "south-step-01",
+        "south-step-02",
+        "south-step-03",
+        "south-step-04",
+        "southwest-step-01",
+        "southwest-step-02",
+        "southwest-step-03",
+        "southwest-step-04",
+        "west-step-01",
+        "west-step-02",
+        "west-step-03",
+        "west-step-04",
+        "northwest-step-01",
+        "northwest-step-02",
+        "northwest-step-03",
+        "northwest-step-04",
+        "north-step-01",
+        "north-step-02",
+        "north-step-03",
+        "north-step-04",
+        "northeast-step-01",
+        "northeast-step-02",
+        "northeast-step-03",
+        "northeast-step-04"
+      ],
+      "frames": [
+        {
+          "id": "east-step-01",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/01-east-step-01.png",
+          "description": "向右跑，步态 1/4",
+          "direction": "east",
+          "angleDeg": 0,
+          "gaitFrame": 1
+        },
+        {
+          "id": "east-step-02",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/01-east-step-02.png",
+          "description": "向右跑，步态 2/4",
+          "direction": "east",
+          "angleDeg": 0,
+          "gaitFrame": 2
+        },
+        {
+          "id": "east-step-03",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/01-east-step-03.png",
+          "description": "向右跑，步态 3/4",
+          "direction": "east",
+          "angleDeg": 0,
+          "gaitFrame": 3
+        },
+        {
+          "id": "east-step-04",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/01-east-step-04.png",
+          "description": "向右跑，步态 4/4",
+          "direction": "east",
+          "angleDeg": 0,
+          "gaitFrame": 4
+        },
+        {
+          "id": "southeast-step-01",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/02-southeast-step-01.png",
+          "description": "向右下跑，步态 1/4",
+          "direction": "southeast",
+          "angleDeg": 45,
+          "gaitFrame": 1
+        },
+        {
+          "id": "southeast-step-02",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/02-southeast-step-02.png",
+          "description": "向右下跑，步态 2/4",
+          "direction": "southeast",
+          "angleDeg": 45,
+          "gaitFrame": 2
+        },
+        {
+          "id": "southeast-step-03",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/02-southeast-step-03.png",
+          "description": "向右下跑，步态 3/4",
+          "direction": "southeast",
+          "angleDeg": 45,
+          "gaitFrame": 3
+        },
+        {
+          "id": "southeast-step-04",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/02-southeast-step-04.png",
+          "description": "向右下跑，步态 4/4",
+          "direction": "southeast",
+          "angleDeg": 45,
+          "gaitFrame": 4
+        },
+        {
+          "id": "south-step-01",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/03-south-step-01.png",
+          "description": "朝前跑，步态 1/4",
+          "direction": "south",
+          "angleDeg": 90,
+          "gaitFrame": 1
+        },
+        {
+          "id": "south-step-02",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/03-south-step-02.png",
+          "description": "朝前跑，步态 2/4",
+          "direction": "south",
+          "angleDeg": 90,
+          "gaitFrame": 2
+        },
+        {
+          "id": "south-step-03",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/03-south-step-03.png",
+          "description": "朝前跑，步态 3/4",
+          "direction": "south",
+          "angleDeg": 90,
+          "gaitFrame": 3
+        },
+        {
+          "id": "south-step-04",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/03-south-step-04.png",
+          "description": "朝前跑，步态 4/4",
+          "direction": "south",
+          "angleDeg": 90,
+          "gaitFrame": 4
+        },
+        {
+          "id": "southwest-step-01",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/04-southwest-step-01.png",
+          "description": "向左下跑，步态 1/4",
+          "direction": "southwest",
+          "angleDeg": 135,
+          "gaitFrame": 1
+        },
+        {
+          "id": "southwest-step-02",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/04-southwest-step-02.png",
+          "description": "向左下跑，步态 2/4",
+          "direction": "southwest",
+          "angleDeg": 135,
+          "gaitFrame": 2
+        },
+        {
+          "id": "southwest-step-03",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/04-southwest-step-03.png",
+          "description": "向左下跑，步态 3/4",
+          "direction": "southwest",
+          "angleDeg": 135,
+          "gaitFrame": 3
+        },
+        {
+          "id": "southwest-step-04",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/04-southwest-step-04.png",
+          "description": "向左下跑，步态 4/4",
+          "direction": "southwest",
+          "angleDeg": 135,
+          "gaitFrame": 4
+        },
+        {
+          "id": "west-step-01",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/05-west-step-01.png",
+          "description": "向左跑，步态 1/4",
+          "direction": "west",
+          "angleDeg": 180,
+          "gaitFrame": 1
+        },
+        {
+          "id": "west-step-02",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/05-west-step-02.png",
+          "description": "向左跑，步态 2/4",
+          "direction": "west",
+          "angleDeg": 180,
+          "gaitFrame": 2
+        },
+        {
+          "id": "west-step-03",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/05-west-step-03.png",
+          "description": "向左跑，步态 3/4",
+          "direction": "west",
+          "angleDeg": 180,
+          "gaitFrame": 3
+        },
+        {
+          "id": "west-step-04",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/05-west-step-04.png",
+          "description": "向左跑，步态 4/4",
+          "direction": "west",
+          "angleDeg": 180,
+          "gaitFrame": 4
+        },
+        {
+          "id": "northwest-step-01",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/06-northwest-step-01.png",
+          "description": "向左上跑，步态 1/4",
+          "direction": "northwest",
+          "angleDeg": 225,
+          "gaitFrame": 1
+        },
+        {
+          "id": "northwest-step-02",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/06-northwest-step-02.png",
+          "description": "向左上跑，步态 2/4",
+          "direction": "northwest",
+          "angleDeg": 225,
+          "gaitFrame": 2
+        },
+        {
+          "id": "northwest-step-03",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/06-northwest-step-03.png",
+          "description": "向左上跑，步态 3/4",
+          "direction": "northwest",
+          "angleDeg": 225,
+          "gaitFrame": 3
+        },
+        {
+          "id": "northwest-step-04",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/06-northwest-step-04.png",
+          "description": "向左上跑，步态 4/4",
+          "direction": "northwest",
+          "angleDeg": 225,
+          "gaitFrame": 4
+        },
+        {
+          "id": "north-step-01",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/07-north-step-01.png",
+          "description": "朝后跑，步态 1/4",
+          "direction": "north",
+          "angleDeg": 270,
+          "gaitFrame": 1
+        },
+        {
+          "id": "north-step-02",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/07-north-step-02.png",
+          "description": "朝后跑，步态 2/4",
+          "direction": "north",
+          "angleDeg": 270,
+          "gaitFrame": 2
+        },
+        {
+          "id": "north-step-03",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/07-north-step-03.png",
+          "description": "朝后跑，步态 3/4",
+          "direction": "north",
+          "angleDeg": 270,
+          "gaitFrame": 3
+        },
+        {
+          "id": "north-step-04",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/07-north-step-04.png",
+          "description": "朝后跑，步态 4/4",
+          "direction": "north",
+          "angleDeg": 270,
+          "gaitFrame": 4
+        },
+        {
+          "id": "northeast-step-01",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/08-northeast-step-01.png",
+          "description": "向右上跑，步态 1/4",
+          "direction": "northeast",
+          "angleDeg": 315,
+          "gaitFrame": 1
+        },
+        {
+          "id": "northeast-step-02",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/08-northeast-step-02.png",
+          "description": "向右上跑，步态 2/4",
+          "direction": "northeast",
+          "angleDeg": 315,
+          "gaitFrame": 2
+        },
+        {
+          "id": "northeast-step-03",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/08-northeast-step-03.png",
+          "description": "向右上跑，步态 3/4",
+          "direction": "northeast",
+          "angleDeg": 315,
+          "gaitFrame": 3
+        },
+        {
+          "id": "northeast-step-04",
+          "file": "assets/home/frames/dog/dog-orbit-run-8dir-4f/08-northeast-step-04.png",
+          "description": "向右上跑，步态 4/4",
+          "direction": "northeast",
+          "angleDeg": 315,
+          "gaitFrame": 4
+        }
+      ],
+      "scope": "home",
+      "directions": [
+        {
+          "id": "east",
+          "angleDeg": 0,
+          "description": "向右跑"
+        },
+        {
+          "id": "southeast",
+          "angleDeg": 45,
+          "description": "向右下跑"
+        },
+        {
+          "id": "south",
+          "angleDeg": 90,
+          "description": "朝前跑"
+        },
+        {
+          "id": "southwest",
+          "angleDeg": 135,
+          "description": "向左下跑"
+        },
+        {
+          "id": "west",
+          "angleDeg": 180,
+          "description": "向左跑"
+        },
+        {
+          "id": "northwest",
+          "angleDeg": 225,
+          "description": "向左上跑"
+        },
+        {
+          "id": "north",
+          "angleDeg": 270,
+          "description": "朝后跑"
+        },
+        {
+          "id": "northeast",
+          "angleDeg": 315,
+          "description": "向右上跑"
+        }
+      ],
+      "stepsPerDirection": 4
+    }
+  },
+  "environment": {
+    "intro-grass": {
+      "src": "/assets/intro/runtime/intro-grass.webp",
+      "source": "assets/intro/environment/intro-grass.png",
+      "intrinsicSize": {
+        "width": 2560,
+        "height": 640
+      },
+      "visibleBounds": {
+        "x": 0,
+        "y": 280,
+        "width": 2560,
+        "height": 360
+      },
+      "align": "bottom",
+      "transitionOut": [
+        0.78,
+        0.82
+      ]
+    }
+  },
+  "fallback": {
+    "src": "/assets/intro/runtime/intro-final-still.webp",
+    "source": "assets/intro/fallback/intro-final-still.png",
+    "intrinsicSize": {
+      "width": 768,
+      "height": 768
+    }
+  },
+  "homePerspective": {
+    "scaleBack": 0.86,
+    "scaleSide": 0.97,
+    "scaleFront": 1.08,
+    "scaleOrigin": "ground-center",
+    "shadow": "runtime-only"
+  },
+  "legacyAliases": {
+    "/assets/intro/production/ball/ball-bounce.webp": {
+      "assetId": "ball-bounce",
+      "newPath": "/assets/intro/runtime/ball-bounce-8f.webp"
+    },
+    "/assets/intro/production/dog/dog-run-right.webp": {
+      "assetId": "dog-chase-right",
+      "newPath": "/assets/intro/runtime/dog-chase-right-8f.webp"
+    },
+    "/assets/intro/production/dog/dog-circle-settle.webp": {
+      "assetId": "dog-look-up-settle",
+      "newPath": "/assets/intro/runtime/dog-look-up-settle-8f.webp"
+    },
+    "/assets/intro/production/person/summer-pulled-run-right.webp": {
+      "assetId": "person-pulled-run-right",
+      "newPath": "/assets/intro/runtime/person-pulled-run-right-8f.webp"
+    },
+    "/assets/intro/production/person/summer-trip-exit-right.webp": {
+      "assetId": "person-stumble-fall-exit-right",
+      "newPath": "/assets/intro/runtime/person-stumble-fall-exit-right-10f.webp"
+    },
+    "/assets/intro/production/person/summer-land-stand.webp": {
+      "assetId": "person-slide-in-rise-stand",
+      "newPath": "/assets/intro/runtime/person-slide-in-rise-stand-8f.webp"
+    },
+    "/assets/intro/production/environment/intro-grass.webp": {
+      "assetId": "intro-grass",
+      "newPath": "/assets/intro/runtime/intro-grass.webp"
+    },
+    "/assets/intro/production/intro-final-still.webp": {
+      "assetId": "intro-final-still",
+      "newPath": "/assets/intro/runtime/intro-final-still.webp"
+    },
+    "/assets/orbit/runtime/person-look-12dir.webp": {
+      "assetId": "person-look-around-12dir",
+      "newPath": "/assets/home/runtime/person-look-around-12dir.webp"
+    },
+    "/assets/orbit/runtime/dog-orbit-run-8dir-4f.webp": {
+      "assetId": "dog-orbit-run-8dir-4f",
+      "newPath": "/assets/home/runtime/dog-orbit-run-8dir-4f.webp"
+    }
+  },
+  "introTimeline": [
+    {
+      "progress": [
+        0.0,
+        0.08
+      ],
+      "layers": [
+        "ball-bounce"
+      ]
+    },
+    {
+      "progress": [
+        0.08,
+        0.25
+      ],
+      "layers": [
+        "ball-bounce",
+        "dog-chase-right"
+      ]
+    },
+    {
+      "progress": [
+        0.25,
+        0.65
+      ],
+      "layers": [
+        "dog-chase-right",
+        "person-pulled-run-right"
+      ]
+    },
+    {
+      "progress": [
+        0.65,
+        0.82
+      ],
+      "layers": [
+        "dog-chase-right",
+        "person-stumble-fall-exit-right"
+      ]
+    },
+    {
+      "progress": [
+        0.82,
+        0.94
+      ],
+      "layers": [
+        "person-slide-in-rise-stand",
+        "dog-chase-right"
+      ]
+    },
+    {
+      "progress": [
+        0.94,
+        1.0
+      ],
+      "layers": [
+        "person-slide-in-rise-stand",
+        "dog-look-up-settle"
+      ]
+    }
+  ]
+}

@@ -257,7 +257,7 @@
   bottom: 13%;
   width: min(26vw, 330px);
   aspect-ratio: 384 / 342;
-  background-image: url("/assets/orbit/runtime/person-look-12dir.webp");
+  background-image: url("/assets/home/runtime/person-look-around-12dir.webp");
   background-position: 0 0;
   background-repeat: no-repeat;
   background-size: 400% 300%;
@@ -274,7 +274,7 @@
   bottom: 13%;
   width: min(13vw, 154px);
   aspect-ratio: 4 / 3;
-  background-image: url("/assets/orbit/runtime/dog-orbit-run-8dir-4f.webp");
+  background-image: url("/assets/home/runtime/dog-orbit-run-8dir-4f.webp");
   background-position: 0 28.571%;
   background-repeat: no-repeat;
   background-size: 400% 800%;
