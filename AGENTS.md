@@ -27,8 +27,8 @@
 场景式 IA 重构（D-123 / D-124）已确认并进入执行：站点改为「启动页 → 首页 → 项目矩阵」三场景下滑串联的场景式架构，首页主 tab 为 Blog / Photos / Resume / Projects；文章、相册（含灯箱）、简历、单项目页保持传统文档页。
 
 - 当前 `/` 从 D-105 数字手账基线替换为场景壳（SceneRoot）：三场景在一屏滚动序列内串连，Lenis 平滑滚动驱动，场景动效用 React islands + motion（数据仍由 Astro 构建期注入）；
-- 场景 1 仍是 oil-motion 启动页：点阵纸、暖白纸、草地由网页静态层提供，alpha-atlas CSS sprite + ScrollTrigger scrub，K0–K4 球→嘉乐→人左进右出→摔入首页；人物与嘉乐资产已冻结（D-118/D-119/D-120）；
-- 动作素材路线已改为 image2 静态姿态帧（D-128），不再有 Seedance 视频 Pilot；姿态缺口由包子用 image2 按需补充，Harness 核验入库；WebGL / Canvas 仍为停止条件，不得静默引入；
+- 场景 1 为 v2 启动页：点阵纸由网页静态层提供，v2 草地 + 序列 sprite + ScrollTrigger scrub；球弹跳 → 嘉乐追逐 → 人物被拽跑 → 摔倒滑出 → 滑入起身站定 → 嘉乐返回坐下（D-132）；
+- 素材接口 v2 已接入（D-132）：`public/assets/{intro,home}/runtime/` + `public/manifest/asset-manifest.v2.json` 为唯一生产来源，运行时从 Manifest 读几何与锚点；启动页结尾为「摔倒滑出→左侧滑入→起身站定 + 嘉乐返回坐下」，草地 0.78–0.82 退出；WebGL / Canvas 仍为停止条件，不得静默引入；
 - 书影音（books/music/movies/drinks）集合保留，退出主导航，作为归档路由存在；thoughts 并入 blog、ai-works 并入 projects，逐条 301 迁移（P6）。
 
 ## Architecture States
