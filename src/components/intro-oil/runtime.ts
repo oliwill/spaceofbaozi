@@ -43,8 +43,10 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
   const track = stage.closest<HTMLElement>("[data-io-scroll]")!;
 
   if (reduceMotion) {
+    track.style.height = "100svh"; // 场景 1 收缩为一屏静态草地，其后场景立即接上
     if (layers.plate) layers.plate.style.opacity = "1";
     layers.skip.style.display = "none";
+    requestAnimationFrame(() => ScrollTrigger.refresh()); // 场景 2/3 的 pin 需按新轨长重算
     return;
   }
 
