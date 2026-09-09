@@ -25,8 +25,10 @@ describe("stateAtProgress（v2 主时间线，D-132）", () => {
     expect(stateAtProgress(0.97).dog.seqId).toBe("dog-look-up-settle");
   });
 
-  it("球 0.25 后离场且不再出现", () => {
-    expect(stateAtProgress(0.26).ball.visible).toBe(false);
+
+  it("球全程领跑，0.48 后离场且不再出现", () => {
+    expect(stateAtProgress(0.3).ball.visible).toBe(true);
+    expect(stateAtProgress(0.49).ball.visible).toBe(false);
     expect(stateAtProgress(0.9).ball.visible).toBe(false);
   });
 

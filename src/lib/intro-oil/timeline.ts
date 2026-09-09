@@ -1,7 +1,9 @@
-// v2 启动页主时间线（asset-manifest.v2.json introTimeline + D-132 新结尾）。
+// v2 启动页主时间线（asset-manifest.v2.json introTimeline + D-132 新结尾 + 2026-09-09 评审修订）。
 // 纯函数：同一归一化进度决定球、嘉乐、人物、牵引绳、草地退出与 Home v2 交接层。
 // 帧数/锚点不在这里复制——frameIndex 由本模块按局部进度算出序号，
 // 网格几何（columns/rows/frameSize）与锚点由运行时从 v2 Manifest 读取。
+// 评审修订：球延长到 0.48 出框；嘉乐 0.75 前先冲出（摔倒段不与人物重叠）；
+// 人物 pulled-lean 首帧只在进场窗口播放一次，跑步循环不含首帧。
 
 export type PersonSeq = "person-pulled-run-right" | "person-stumble-fall-exit-right" | "person-slide-in-rise-stand";
 export type DogSeq = "dog-chase-right" | "dog-look-up-settle";
@@ -19,9 +21,11 @@ export const HOME_ANCHORS: Record<"desktop" | "mobile", V2AnchorsVw> = {
 
 export const SEG = {
   ballEnter: [0.02, 0.08],
-  ballExit: [0.08, 0.25],
-  dogChase: [0.08, 0.9],
+  ballLead: [0.08, 0.4],
+  ballExit: [0.4, 0.48],
+  dogChase: [0.08, 0.75],
   personRun: [0.25, 0.65],
+  personRunEntry: 0.3, // pulled-lean 首帧只播到此处，之后进入 1..7 跑循环
   personFall: [0.65, 0.82],
   personRise: [0.82, 1],
   personSlideEnd: 0.88, // 滑入到位（home 锚点）的进度点，之后原地起身
@@ -57,16 +61,17 @@ export function ballBounceT(xVw: number): number {
 export function stateAtProgress(raw: number, home: V2AnchorsVw = HOME_ANCHORS.desktop): V2State {
   const p = Math.min(1, Math.max(0, raw));
 
-  // 球：左侧弹入 → 右弹出走，0.25 后离场
+  // 球：左侧弹入 → 全程领跑嘉乐 → 0.48 前弹出右界
   const ballX = p <= SEG.ballEnter[0] ? -10
     : p <= SEG.ballEnter[1] ? lerp(p, SEG.ballEnter, -10, 22)
-    : p <= SEG.ballExit[1] ? lerp(p, SEG.ballExit, 22, 115)
-    : 115;
+    : p <= SEG.ballLead[1] ? lerp(p, SEG.ballLead, 22, 85)
+    : p <= SEG.ballExit[1] ? lerp(p, SEG.ballExit, 85, 118)
+    : 118;
 
-  // 嘉乐追逐：0.08 左进，0.90 右出；0.94 起从右侧返回坐下（overshoot 后回来）
+  // 嘉乐追逐：0.08 左进，始终领先人物，0.75 前先冲出右界（避免摔倒段人狗重叠）；0.94 起返回坐下
   const dogChaseX = p <= SEG.dogChase[0] ? -12
-    : p <= 0.5 ? lerp(p, [SEG.dogChase[0], 0.5], -12, 40)
-    : p <= SEG.dogChase[1] ? lerp(p, [0.5, SEG.dogChase[1]], 40, 118)
+    : p <= 0.45 ? lerp(p, [SEG.dogChase[0], 0.45], -12, 45)
+    : p <= SEG.dogChase[1] ? lerp(p, [0.45, SEG.dogChase[1]], 45, 118)
     : 118;
   const dogSettling = p > SEG.dogSettle[0];
   const dogX = dogSettling ? lerp(p, [SEG.dogSettle[0], SEG.dogSettleEnd], 112, home.dogHomeVw) : dogChaseX;

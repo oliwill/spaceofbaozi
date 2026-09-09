@@ -132,7 +132,9 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     const personSeq = manifest.sequences[state.person.seqId];
     setSequence(person, personSeq, state.person.seqId);
     const personFrame = state.person.seqId === "person-pulled-run-right"
-      ? frameAtDistance(personSeq, state.person.xVw + 15, 6)
+      ? state.person.local < 0.125
+        ? 0 // pulled-lean 首帧只在进场窗口播放一次，之后跑循环只用帧 1..7
+        : 1 + (frameAtDistance(personSeq, state.person.xVw + 15, 6) % (personSeq.frameCount - 1))
       : frameAtLocal(personSeq, state.person.local);
     placeSprite(person, state.person.xVw, personFrame, state.person.visible, ground);
 
