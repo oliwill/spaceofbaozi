@@ -22,6 +22,12 @@
 
 重要分析、设计评审和规划在形成结论前，还必须检索 `C:\Users\Lzw\Downloads\Documents\obsidian\Lzw\Lzw\Codex记忆\` 中的相关项目、决策、工作流和 open loops。仓库文档回答当前产品事实，优先级高于可能过时的笔记；Obsidian 提供用户长期偏好、历史教训和判断方法。必须说明采用了哪些笔记原则、排除了哪些过时记录，并在任务结束时将稳定事实和未闭环事项写回对应笔记。
 
+CE 解决方案库位于 `docs/solutions/`：收录已解决问题的文档化解法（bug、最佳实践、工作流模式），按类别组织，YAML frontmatter 含 `module`/`tags`/`problem_type`；在已有记录的领域实现或调试时可检索。
+
+After a solved, verified problem, offer once to invoke the `ce-compound` skill at the completion checkpoint only when the work produced durable project reasoning that is not readily recoverable from the final code, tests, types, comments, or existing documentation, and losing it would plausibly cause recurrence, material risk, or substantial rediscovery. Apply this counterfactual: if the learning document disappeared, would a future engineer reading the final implementation still be likely to repeat the mistake or redo substantial investigation? If not, do not offer. Completion, effort, and diff size alone are not enough. Offer at the checkpoint so a qualifying learning can ship in the PR that produced it, and only where the repository treats captured learnings as tracked, committed knowledge.
+
+Write every report, summary, or handoff to the user through the `ce-noslop` skill. This applies when you are the top-level agent writing to the user, not when you are a subagent reporting to its caller. Do not apply it to code, config, verbatim quotes, or text the user asked to post as written.
+
 ## Current Scope
 
 场景式 IA 重构（D-123 / D-124）已确认并进入执行：站点改为「启动页 → 首页 → 项目矩阵」三场景下滑串联的场景式架构，首页主 tab 为 Blog / Photos / Resume / Projects；文章、相册（含灯箱）、简历、单项目页保持传统文档页。
