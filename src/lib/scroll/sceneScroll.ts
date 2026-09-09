@@ -13,6 +13,7 @@ const MAX_ATTEMPTS = 120; // ~2s @60fps；client:idle island 通常更早就绪
  * 与 Lenis 共用 ScrollTrigger（lenis.ts 已回灌 ScrollTrigger.update）。
  * 仅在 no-preference 下启用；reduced-motion 用户直接看终态。
  * React islands 为 client:idle，首屏脚本运行时 DOM 可能未注入，故 poll 等待。
+ * 场景 3 用 fromTo 而非 from：from-tween 经 refresh revert 会把起始态烤成 px 基线，残留常量位移。
  */
 export function initSceneScroll(): void {
   const mm = gsap.matchMedia();
@@ -51,11 +52,13 @@ export function initSceneScroll(): void {
         const populated = cards.length > 0;
         const target = populated ? cards : projects;
         const from = populated
-          ? { yPercent: 55, opacity: 0, stagger: 0.12 }
+          ? { yPercent: 55, opacity: 0 }
           : { yPercent: 16, opacity: 0.5 };
         created.push(
-          gsap.from(target, {
-            ...from,
+          gsap.fromTo(target, from, {
+            yPercent: 0,
+            opacity: 1,
+            stagger: populated ? 0.12 : 0,
             ease: "none",
             scrollTrigger: {
               trigger: ".scene--projects",
