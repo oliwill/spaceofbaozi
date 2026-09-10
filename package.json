@@ -12,7 +12,8 @@
     "fonts:subset": "node scripts/subset-fonts.mjs",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
-    "publish": "node scripts/subset-fonts.mjs && git add -A && git commit -m \"content: update\" && git push"
+    "publish": "node scripts/subset-fonts.mjs && git add -A && git commit -m \"content: update\" && git push",
+    "deploy:cf": "bun run build && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.4",

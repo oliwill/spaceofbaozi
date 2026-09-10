@@ -57,3 +57,12 @@ output/
 /baozi-space-a0-v-production-v*.zip
 /assets-master/baozi-space-a0-v-production-v*.zip
 /assets-master/baozi-space-a0-v-production-v*/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+
+# 本地调试产物
+.tmp-chrome-profile*/
+.wrangler/

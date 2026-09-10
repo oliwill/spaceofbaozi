@@ -1,0 +1,10 @@
+# Cloudflare Pages 缓存策略（D-130）
+# Astro 产物指纹路径与 v2 素材 immutable；HTML 短缓存便于内容更新生效
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/manifest/*
+  Cache-Control: public, max-age=3600
+/*.html
+  Cache-Control: public, max-age=300
