@@ -155,7 +155,33 @@
   background-size: 24px 24px;
 }
 
+/* Home 提前 100svh 进入，与启动页最后一屏自然衔接（D-136） */
+.scene--home {
+  margin-top: -100svh;
+}
+
 /* home 纸离场：提示合成层，避免重排（D-125） */
 .home-v2 {
   will-change: transform, opacity;
+}
+
+.scene--home .home-orbit {
+  top: 12%;
+  right: 2%;
+  bottom: 8%;
+  left: 46%;
+  z-index: 7;
+}
+
+.scene--home:has(.home-orbit[data-orbit-active="true"]) .home-v2__portrait {
+  opacity: 0;
+}
+
+@media (max-width: 767px) {
+  .scene--home .home-orbit {
+    top: 38%;
+    right: 0;
+    bottom: 10%;
+    left: 0;
+  }
 }

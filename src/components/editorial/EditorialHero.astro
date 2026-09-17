@@ -1,0 +1,21 @@
+---
+interface Props {
+  kicker: string;
+  title: string;
+  description: string;
+  meta?: string;
+}
+
+const { kicker, title, description, meta } = Astro.props;
+---
+
+<header class="editorial-hero">
+  <p class="editorial-hero__kicker">{kicker}</p>
+  <div class="editorial-hero__row">
+    <div>
+      <h1>{title}</h1>
+      <p class="editorial-hero__desc">{description}</p>
+    </div>
+    {meta && <p class="editorial-hero__meta">{meta}</p>}
+  </div>
+</header>

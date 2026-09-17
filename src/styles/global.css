@@ -5,12 +5,6 @@
   font-display: swap;
 }
 
-/* 手写字体子集（scripts/subset-fonts.mjs 生成，chrome 文字字符集） */
-@font-face {
-  font-family: "BaoziHand";
-  src: url("/fonts/xiaxing-hand.woff2") format("woff2");
-  font-display: swap;
-}
 
 :root {
   --paper: #fdfdfc;
@@ -35,11 +29,11 @@
   --accent-lavender: #e6def7;
   /* 正文 / 编辑文字：系统宋体 */
   --font-body: "Songti SC", "STSong", "SimSun", serif;
-  /* 展示文字（大标题 / 日期数字 / 题字）：暂随正文宋体，待图片化设计文字替换 */
+  /* 展示文字（大标题 / 日期数字）：暂随正文宋体 */
   --font-display: "Songti SC", "STSong", "SimSun", serif;
-  /* 手写体：问候语 / 小节标签 / 页码 / 批注（display 与标签级，正文不用） */
-  --font-hand: "BaoziHand", "Songti SC", "STSong", "SimSun", serif;
-  /* 时间 / 编号 / 标签：IoskeleyMono Nerd Font，中文回退宋体 */
+  /* UI / 导航 / 标签：系统无衬线，不再使用手写字体 */
+  --font-ui: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  /* 时间 / 编号：IoskeleyMono Nerd Font，中文回退宋体 */
   --font-mono: "IoskeleyMono Nerd Font", "Songti SC", monospace;
   /* 字号 scale：所有 font-size 必须出自这里（typography skill: scale 制） */
   --fs-caption: 0.78rem;   /* 辅助信息：日期/标签/页脚元信息 */
@@ -470,7 +464,7 @@ a.tag:hover {
 .tag-clear {
   display: inline-block;
   padding: 3px 12px;
-  font-family: var(--font-hand);
+  font-family: var(--font-ui);
   font-size: var(--fs-lead);
   color: var(--vermilion);
   border: 1.5px solid var(--vermilion);
@@ -738,7 +732,7 @@ a.tag:hover {
 }
 
 .pf-num {
-  font-family: var(--font-hand);
+  font-family: var(--font-ui);
   font-size: var(--fs-title);
   color: var(--ink);
 }

@@ -1,36 +1,50 @@
 ---
 import { getCollection } from "astro:content";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
-import EntryList from "@/components/layout/EntryList.astro";
+import EditorialHero from "@/components/editorial/EditorialHero.astro";
+import PhotoStack from "@/components/photos/PhotoStack.astro";
+import AlbumList from "@/components/photos/AlbumList.astro";
 import Lightbox from "@/components/photos/Lightbox";
-import { isPublishable } from "@/lib/content/gates";
+import "@/components/editorial/editorial.css";
+import "@/components/photos/photos.css";
+import { albumLightboxItems, latestAlbumDate, publishableAlbums, splitAlbums } from "@/lib/photos/albums";
 import { getSection } from "@/lib/sections";
 
 const section = getSection("photos")!;
 const entries = await getCollection("photos");
-
-// 灯箱数据：只取有封面且已批准的相册（D-031/D-127：alt 必填，优先 coverAlt）
-const lightboxItems = entries
-  .filter((entry) => isPublishable(entry.data) && entry.data.cover)
-  .sort((a, b) => +b.data.date - +a.data.date)
-  .map((entry) => ({
-    slug: entry.id,
-    title: entry.data.title,
-    src: entry.data.cover!,
-    alt: entry.data.coverAlt ?? entry.data.title,
-    description: entry.data.description || undefined,
-  }));
-const hasPublishable = entries.some((e) => isPublishable(e.data));
+const albums = publishableAlbums(entries);
+const { featured, recent } = splitAlbums(entries);
+const latest = latestAlbumDate(entries);
+const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
 ---
 
-<ShellLayout title="照片 · baozi.space" description={section.desc} noindex={!hasPublishable}>
-  <div class="section-shell paper-page">
-    <header class="section-header">
-      <span class="section-kicker">{section.number} · {section.zh}</span>
-      <h1>{section.title}</h1>
-      <p>{section.desc}</p>
-    </header>
-    <EntryList entries={entries} emptyHint="相册整理好后会出现在这里。目前只有一张待放入的真实照片。" />
+<ShellLayout title="照片 · baozi.space" description={section.desc} noindex={albums.length === 0}>
+  <div class="editorial-page photos-page">
+    <EditorialHero
+      kicker={`${section.number} · ${section.title}`}
+      title={section.zh}
+      description={section.desc}
+      meta={latest ? `最近更新 ${formatDate(latest)}` : undefined}
+    />
+
+    {featured ? (
+      <>
+        <PhotoStack album={featured} />
+        {recent.length > 0 ? (
+          <AlbumList albums={recent} />
+        ) : (
+          <p class="editorial-empty">
+            <strong>更多相册正在整理。</strong>
+            下一组照片通过内容批准后，会出现在这里。
+          </p>
+        )}
+      </>
+    ) : (
+      <div class="editorial-empty photos-empty">
+        <strong>摄影正在整理。</strong>
+        第一组真实照片通过内容批准后，会以最新相册的形式出现在这里。当前不展示占位照片，也不把布局样本计入发布门禁。
+      </div>
+    )}
   </div>
-  <Lightbox client:load items={lightboxItems} />
+  <Lightbox client:load items={albumLightboxItems(entries)} />
 </ShellLayout>

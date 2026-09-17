@@ -40,7 +40,7 @@ const NAV = [
   <body class="shell-body">
     <a class="skip-link" href="#main">跳到正文</a>
     <header class="shell-nav">
-      <a class="shell-brand" href="/">baozi.space</a>
+      <a class="shell-brand" href="/#home">baozi.space</a>
       <nav class="shell-links" aria-label="主要栏目">
         {NAV.map((item) => (
           <a href={item.href} data-astro-prefetch="viewport">{item.label}</a>
@@ -56,7 +56,7 @@ const NAV = [
 
       const lenis = initLenis();
       const nav = document.querySelector<HTMLElement>(".shell-nav");
-      if (nav) initNavHide(lenis, nav);
+      if (nav && window.matchMedia("(max-width: 767px)").matches) initNavHide(lenis, nav);
     </script>
   </body>
 </html>

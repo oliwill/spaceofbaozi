@@ -27,7 +27,7 @@ const container: Variants = {
   visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
 };
 
-/** 场景 2：首页（Home v2 冻结构图 + 纸质索引 tab，D-118/D-123） */
+/** 场景 2：首页（Home v2 构图保留，仅整体右移，D-136） */
 export default function SceneHome() {
   const reduced = useReducedMotion();
   const now = new Date();
@@ -60,7 +60,7 @@ export default function SceneHome() {
           <motion.section
             className="home-v2__identity"
             variants={container}
-            initial={reduced ? false : "hidden"}
+            initial={false}
             whileInView={reduced ? undefined : "visible"}
             viewport={{ once: true, amount: 0.4 }}
           >

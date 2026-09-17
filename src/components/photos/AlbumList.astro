@@ -1,0 +1,37 @@
+---
+import type { PhotoAlbum } from "@/lib/photos/albums";
+
+interface Props {
+  albums: PhotoAlbum[];
+}
+
+const { albums } = Astro.props;
+const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
+---
+
+<section class="photo-albums" aria-labelledby="photo-albums-title">
+  <p class="editorial-section__label" id="photo-albums-title">相册列表</p>
+  <ul>
+    {albums.map((album) => (
+      <li>
+        <article>
+          {album.data.cover && (
+            <a class="photo-albums__thumb entry-link" href={`/photos/${album.id}`} aria-label={`预览《${album.data.title}》封面`}>
+              <img src={album.data.cover} alt={album.data.coverAlt ?? album.data.title} loading="lazy" decoding="async" />
+            </a>
+          )}
+          <div class="photo-albums__copy">
+            <div class="editorial-meta">
+              <time datetime={album.data.date.toISOString()}>{formatDate(album.data.date)}</time>
+              {album.data.tags.slice(0, 2).map((tag) => <span>#{tag}</span>)}
+            </div>
+            <h3>
+              <a href={`/photos/${album.id}`}>{album.data.title}</a>
+            </h3>
+            {album.data.description && <p>{album.data.description}</p>}
+          </div>
+        </article>
+      </li>
+    ))}
+  </ul>
+</section>

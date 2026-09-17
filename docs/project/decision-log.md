@@ -1,6 +1,6 @@
 # baozi.space V2 · 决策记录
 
-**最后更新：** 2026-09-01
+**最后更新：** 2026-09-17
 
 **规则：** 这里只记录已经确认、会约束后续工作的决策；想法和待讨论项放在 PRD 的 Open Questions 中。
 
@@ -1267,6 +1267,62 @@
   - 回退路径按 integration §6：Manifest 失败 → 直接显示 Home 内容层；角色素材失败 → `intro-final-still.webp`；reduced motion → 最终站立状态。均已实测。
 - **替代关系：** 取代 D-119/D-120/D-121 的 K4 结尾与遮罩交接、D-128 的过渡 4 帧映射（run→pulled-lunge→fall-dive→fall-slide-right）、PRD「A1 保留为动作参考」；D-121 的 `background_owner=page`、`driver=scroll`、alpha-atlas + DOM/CSS Sprite、WebGL/Canvas 停止条件继续有效。
 - **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`public/assets/{intro,home}/runtime/`、`public/manifest/`、`src/lib/intro-oil/{v2,timeline}.ts`、`src/components/intro-oil/*`、`src/components/scene/SceneRoot.astro`、`src/components/home/HomeOrbit.astro`、`src/components/home-v2/home-v2-preview.css`、`src/pages/index.astro`（preload）、`package.json`（移除 assets:intro/* 与 assets:oil:budget）、`tests/unit/intro-oil/`、删除项见上。
+
+### D-133 · 场景 2 恢复 HomeOrbit hero moment
+
+- **状态：** Accepted（2026-09-15，依据包子对 Home 交接体验的明确要求：进入 Home 后人物与嘉乐位于左侧，嘉乐随鼠标围绕人物转动，人物看向嘉乐）
+- **决定：** 场景 2 右侧角色区挂载 `HomeOrbit`，orbit 激活后隐藏 `.home-v2__portrait` 静态图；启动页 v2 时间线在进度 ≥99.5% 时派发 `baozi:intro-orbit-handoff` 与 `baozi:intro-person-stood`，回退到 <98% 时重置 orbit。HomeOrbit 只在角色区域接收指针，避免遮挡顶部导航、左侧身份文案与 CTA。
+- **边界：** 不恢复 A1 `/lab/intro`；生产素材仍只读取 D-132 的 v2 runtime 与 manifest；reduced-motion、无 JS、Manifest 或角色素材失败继续显示 Home v2 静态角色构图。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`src/components/scene/SceneRoot.astro`、`src/components/scene/scene.css`、`src/components/intro-oil/runtime.ts`、`tests/e2e/home-orbit.spec.ts`、`playwright.config.ts`。
+- **验证：** 生产 `/` 上 20 条 HomeOrbit Playwright 用例覆盖真实启动页完成交接、激活、透视、切线方向、人物注视、键盘 / 鼠标 / 触摸、资源失败、reduced-motion 与三视口；`bun run test:e2e` 20/20 通过。
+
+### D-134 · Editorial Pages 改造优先于 Cloudflare 切换，Blog 首个落地
+
+- **状态：** Accepted（2026-09-15，依据包子「先完成整体改造再切到 Cloudflare；目前只完成启动页，首页和其他具体页面还没完成改造」）
+- **决定：** Cloudflare Pages 切换继续暂缓，先完成 Blog / Photos / Resume / Projects 的 v2 Editorial Pages 改造。采用共享 Editorial Shell + 页面专属结构：Blog 总览为最新已批准文章 + 近期文章区 + 整理中空态，Blog 详情为单列约 720px 阅读页、MetaStrip、可选封面与前后篇导航。
+- **边界：** 不改变 D-127 内容发布门禁；不使用占位或假内容撑版；BookSpread 不作为 Blog 新详情的视觉来源；Cloudflare 的 301 与 DNS 验证等四页改造完成后再继续。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`docs/plans/2026-09-15-editorial-pages-design.md`、`src/components/editorial/{EditorialHero.astro,editorial.css}`、`src/pages/blog/index.astro`、`src/pages/blog/[...slug].astro`、`tests/e2e/blog-editorial.spec.ts`。
+- **验证：** Blog 总览和详情在真实已批准内容《料亭菜单 NO.5——将心注入》上通过桌面、移动、reduced-motion 与可读列宽检查；`bunx playwright test tests/e2e/blog-editorial.spec.ts` 4/4 通过。
+
+### D-135 · Blog 文章返回导航与 Waline 评论接入方式
+
+- **状态：** Accepted（2026-09-15，依据包子反馈：长文底部缺少返回；评论采用 Waline，先预留环境变量）
+- **决定：** Blog 详情页保留顶部返回，滚动超过 360px 后显示固定「返回文章」，底部文章导航同时保留返回 Blog 与前后篇。评论使用 `@waline/client`，仅当 `PUBLIC_WALINE_SERVER_URL` 存在时渲染；未配置服务端时不显示评论区，也不发起外部请求。表情、搜索、文章反应、pageview 与 RSS 订阅入口默认关闭。
+- **边界：** 不自建评论后端；Waline 服务端部署、账号策略、审核与通知策略后续单独确认。评论不进入内容批准门禁，也不改变 D-127。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`.env.example`、`package.json`、`bun.lock`、`src/components/editorial/{EditorialBackButton.astro,WalineComments.astro,editorial.css}`、`src/pages/blog/[...slug].astro`、`tests/e2e/blog-editorial.spec.ts`。
+- **验证：** Blog e2e 5/5；无 `PUBLIC_WALINE_SERVER_URL` 构建不渲染评论区；设置测试 URL 构建后输出 `data-server-url` 与文章 path。
+
+### D-136 · 去掉手写字体并改为左侧导航 / 角色栏
+
+- **状态：** Accepted（2026-09-15，依据包子反馈：手账方向已弃用；导航字体需与首页统一；首页与文章详情模块右移，左侧保留导航和角色装饰；参考 `new-game.fenx.work` 的纵向栏结构）
+- **决定：** 移除 BaoziHand 字体与字体子集化配置，Shell 品牌与导航统一使用系统无衬线。传统文档页改为桌面左侧 sticky 导航栏 + 右侧内容区，左侧底部保留嘉乐装饰；首页场景 2 改为左侧导航 / 人物与嘉乐、右侧身份信息。`baozi.space` 品牌链接指向 `/#home`，从文章详情返回首页时直接落到 Home 场景，不回到启动页开头。
+- **边界：** 不复制参考站内容或组件；Home v2 不再维持 D-118 的左文右角色冻结构图，本条的左栏构图取代该构图；D-133 的 HomeOrbit 交互继续有效，只调整挂载区域。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`src/styles/global.css`、`scripts/subset-fonts.mjs`、`public/fonts/xiaxing-hand.woff2`（删除）、`src/components/layout/{ShellLayout.astro,shell.css}`、`src/components/scene/{SceneRoot.astro,SceneHome.tsx,scene.css}`、`src/components/home-v2/home-v2-preview.css`、`src/components/editorial/editorial.css`、`tests/e2e/editorial-shell.spec.ts`。
+- **验证：** `editorial-shell.spec.ts` 4/4 覆盖字体统一、首页左栏构图、移动无横向溢出和文章详情返回 `/#home`；Blog e2e 5/5 继续通过。
+
+### D-137 · Home 恢复原有构图并仅向右对齐
+
+- **状态：** Accepted（2026-09-16，依据包子评审：首页原有设计可用，只需要整体向右移动；D-136 的首页左侧透明导航栏不采用，人物与嘉乐过小）
+- **决定：** 传统文档页继续保留 D-136 的左侧 sticky 导航栏与统一无衬线字体；首页场景 2 恢复 D-118 的左文右角色原有构图，不再使用首页左侧导航 / 角色栏，只将暖白内容纸右对齐到视口右缘。Shell 左栏底部角色装饰暂缓，不在本轮加入。启动页最后一屏与 Home 场景重叠 100svh，结束不再先落到独立过场页。
+- **边界：** D-136 对文档页 Shell、字体与 `/#home` 返回入口的决定继续有效；D-137 只取代 D-136 中首页左栏构图与 Shell 角色装饰部分。HomeOrbit 仍挂回首页右侧角色区；不引入 Canvas / WebGL。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`docs/plans/2026-09-15-editorial-pages-design.md`、`src/components/scene/{SceneHome.tsx,scene.css}`、`src/components/home-v2/home-v2-preview.css`、`src/components/layout/{ShellLayout.astro,shell.css}`、`tests/e2e/{editorial-shell.spec.ts,intro-oil.spec.ts}`。
+- **验证：** `bun run check` 0 errors；Playwright `intro-oil.spec.ts`、`editorial-shell.spec.ts`、`blog-editorial.spec.ts` 合计 11/11 通过；1440×900 截图确认 Home 右对齐、启动页结束直接进入 Home。
+
+### D-138 · Editorial Pages 新增 Anthropic / Sue Park 参考方向
+
+- **状态：** Accepted（2026-09-17，依据包子新增参考：Anthropic Economic Scenarios 的设计风格与动效最接近目标；Sue Park 的翻页动效最接近目标）
+- **决定：** Editorial Pages 的下一阶段以 `https://www.anthropic.com/institute/econ-scenarios` 作为整体视觉与滚动叙事参考，以 `https://suepark.xyz/` 作为页面切换参考。Anthropic 参考其克制的纸面底色、强编辑排版、手绘标记 / 高亮、滚动驱动的解释型动效；Sue Park 参考其左侧稳定导航、右侧整页纸面从右向左覆盖进入的翻页感。两者只作为方向参考，不复制文案、组件、素材或交互细节。
+- **边界：** 不推翻 D-123 场景式 IA、D-127 内容门禁、D-132 启动页素材接口、D-137 首页右对齐修正；不引入 Canvas / WebGL；Anthropic 的深色 hero 与数据探索器不直接搬到 baozi.space。Sue Park 的翻页只用于文档页 / 项目页切换试验，是否进入生产待 `/lab` 评审。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`docs/plans/2026-09-15-editorial-pages-design.md`、后续 Photos / Resume / Projects 设计与可能的 `/lab` 翻页 demo。
+- **验证：** 本轮只记录参考；后续实现需提供 1440×900 / 390×844 / reduced-motion 截图或录屏，并由包子人工评审。
+
+### D-139 · Photos Editorial 首个实现与翻页 lab demo
+
+- **状态：** Accepted（2026-09-17，依据 D-134 页面改造顺序与 D-138 新增参考；当前 Photos 无已批准真实相册，本轮同时落地生产空态与有内容代码路径）
+- **决定：** `/photos` 改为 Editorial 页面：最新已批准相册作为 `PhotoStack` 主相册，其余进入 `AlbumList`；无已批准相册时只显示「摄影正在整理」空态并 `noindex`，不展示占位照片。`/photos/[slug]` 改为单栏摄影详情：页首 MetaStrip、可选封面、正文拍摄笔记、返回与上下组导航；封面预览继续使用现有 Lightbox。新增 `/lab/page-turn` 作为 Sue Park 式翻页评审 demo：左侧导航稳定，右侧整页纸面从右向左覆盖进入，340ms ease-out，reduced-motion 直接切换。
+- **边界：** 不把 `/lab/page-turn` 接入生产路由；Photos 总览 / 详情有内容状态的浏览器视觉验收必须等第一组真实相册 `draft: false && approved: true` 后补做；不改变 D-127 门禁、现有图片顺序和 Lightbox 交互；不引入 Canvas / WebGL。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`docs/plans/2026-09-15-editorial-pages-design.md`、`src/lib/photos/albums.ts`、`src/components/photos/{PhotoStack.astro,AlbumList.astro,photos.css}`、`src/pages/photos/{index.astro,[...slug].astro}`、`src/pages/lab/page-turn.astro`、`tests/unit/photos/albums.test.ts`、`tests/e2e/{photos-editorial.spec.ts,page-turn.spec.ts}`。
+- **验证：** `bun run check` 0 errors（2 个既有 hints）；unit 54/54；build 18 pages；Playwright 单 worker 35/35。空态已做 1440×900 / 390×844 浏览器验证；翻页 demo 已做桌面、移动和 reduced-motion 验证。
 
 ## 变更规则
 

@@ -59,6 +59,7 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
   let rafId = 0;
   let running = false;
   let target = 0;
+  let homeHandoffSent = false;
   const damp: DampState = { current: 0, velocity: 0 };
   let lastTime = 0;
 
@@ -224,6 +225,19 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
     person = { el: layers.person, seq: null, seqId: "", dispW: 0, dispH: 0, lastFrame: -1 };
     if (layers.grass.complete) measureGrass();
     else layers.grass.addEventListener("load", measureGrass, { once: true });
+    const syncHomeOrbit = (progress: number) => {
+      if (progress >= 0.995 && !homeHandoffSent) {
+        window.dispatchEvent(new CustomEvent("baozi:intro-orbit-handoff", {
+          detail: { angle: 35 * Math.PI / 180, angularVelocity: 0 },
+        }));
+        window.dispatchEvent(new CustomEvent("baozi:intro-person-stood"));
+        homeHandoffSent = true;
+      } else if (progress < 0.98 && homeHandoffSent) {
+        window.dispatchEvent(new CustomEvent("baozi:intro-orbit-reset"));
+        homeHandoffSent = false;
+      }
+    };
+
 
     ScrollTrigger.create({
       trigger: track,
@@ -231,6 +245,7 @@ export function initIntroOilRuntime(stage: HTMLElement): void {
       end: "bottom bottom",
       onUpdate: (self) => {
         target = self.progress;
+        syncHomeOrbit(self.progress);
         wake();
       },
     });

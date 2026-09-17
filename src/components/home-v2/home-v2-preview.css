@@ -42,7 +42,7 @@
   position: relative;
   width: min(88vw, 1360px);
   min-height: calc(100svh - 28px);
-  margin: 0 auto;
+  margin: 0 0 0 auto;
   overflow: visible;
   background: var(--home-content-paper);
   box-shadow: 0 8px 30px rgba(46, 48, 42, 0.08);
@@ -542,6 +542,7 @@ body[data-home-v2-capture] astro-dev-toolbar {
     margin-top: 14px;
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .home-v2__tab,

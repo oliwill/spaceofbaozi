@@ -1,0 +1,42 @@
+---
+import type { PhotoAlbum } from "@/lib/photos/albums";
+
+interface Props {
+  album: PhotoAlbum;
+}
+
+const { album } = Astro.props;
+const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
+const titleId = `photo-feature-${album.id}`;
+---
+
+<section class="photo-feature" aria-labelledby={titleId}>
+  <div class="photo-feature__copy">
+    <p class="editorial-feature__label">最新相册</p>
+    <div class="editorial-meta">
+      <time datetime={album.data.date.toISOString()}>{formatDate(album.data.date)}</time>
+      {album.data.tags.slice(0, 3).map((tag) => <span>#{tag}</span>)}
+    </div>
+    <h2 id={titleId}>
+      <a href={`/photos/${album.id}`}>{album.data.title}</a>
+    </h2>
+    {album.data.description && <p class="editorial-feature__summary">{album.data.description}</p>}
+    <a class="editorial-text-link" href={`/photos/${album.id}`}>进入相册 →</a>
+  </div>
+
+  {album.data.cover && (
+    <a
+      class="photo-feature__cover entry-link"
+      href={`/photos/${album.id}`}
+      aria-label={`预览《${album.data.title}》封面`}
+    >
+      <img
+        src={album.data.cover}
+        alt={album.data.coverAlt ?? album.data.title}
+        loading="eager"
+        decoding="async"
+      />
+      {album.data.coverCredit && <span>{album.data.coverCredit}</span>}
+    </a>
+  )}
+</section>

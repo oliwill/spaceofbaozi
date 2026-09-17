@@ -1,23 +1,73 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { isPublishable } from "@/lib/content/gates";
 import type { GetStaticPaths } from "astro";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
-import BookSpread from "@/components/layout/BookSpread.astro";
+import EditorialBackButton from "@/components/editorial/EditorialBackButton.astro";
+import WalineComments from "@/components/editorial/WalineComments.astro";
+import "@/components/editorial/editorial.css";
 import { getSection } from "@/lib/sections";
 
 export const getStaticPaths = (async () => {
-  const entries = await getCollection("blog", ({ data }) => isPublishable(data));
-  return entries.map((entry) => ({
+  const entries = (await getCollection("blog", ({ data }) => isPublishable(data)))
+    .sort((a, b) => +b.data.date - +a.data.date);
+  return entries.map((entry, index) => ({
     params: { slug: entry.id },
-    props: { entry },
+    props: {
+      entry,
+      newer: index > 0 ? entries[index - 1] : null,
+      older: index < entries.length - 1 ? entries[index + 1] : null,
+    },
   }));
 }) satisfies GetStaticPaths;
 
-const { entry } = Astro.props;
+const { entry, newer, older } = Astro.props;
+const { Content } = await render(entry);
 const section = getSection("blog")!;
+const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
 ---
 
 <ShellLayout title={`${entry.data.title} · ${section.title} · baozi.space`} description={entry.data.description || section.desc}>
-  <BookSpread section={section} entry={entry} navVariant="tags" />
+  <article class="editorial-page article-page">
+    <a class="article-page__back" href="/blog">← 返回文章</a>
+
+    <header class="article-page__header">
+      <p class="editorial-hero__kicker">{section.number} · {section.title}</p>
+      <h1>{entry.data.title}</h1>
+      {entry.data.description && <p class="article-page__description">{entry.data.description}</p>}
+      <div class="editorial-meta article-page__meta">
+        <time datetime={entry.data.date.toISOString()}>
+          {entry.data.updated ? `更新于 ${formatDate(entry.data.updated)}` : formatDate(entry.data.date)}
+        </time>
+        {entry.data.tags.slice(0, 3).map((tag) => (
+          <a class="editorial-tag" href={`/blog/tag/${encodeURIComponent(tag)}`}>#{tag}</a>
+        ))}
+      </div>
+    </header>
+
+    {entry.data.cover && (
+      <figure class="article-page__cover">
+        <img src={entry.data.cover} alt={entry.data.coverAlt ?? entry.data.title} loading="eager" decoding="async" />
+        {entry.data.coverCredit && <figcaption>{entry.data.coverCredit}</figcaption>}
+      </figure>
+    )}
+
+    <div class="editorial-prose">
+      <Content />
+    </div>
+
+    <EditorialBackButton href="/blog" label="返回文章" />
+    <WalineComments />
+
+
+    <nav class="article-page__nav" aria-label="文章导航">
+      <a href="/blog">返回文章</a>
+      <span>
+        {older && <a href={`/blog/${older.id}`}>← 上一篇：{older.data.title}</a>}
+      </span>
+      <span>
+        {newer && <a href={`/blog/${newer.id}`}>下一篇：{newer.data.title} →</a>}
+      </span>
+    </nav>
+  </article>
 </ShellLayout>

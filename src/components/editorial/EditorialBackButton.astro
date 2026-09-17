@@ -1,0 +1,21 @@
+---
+interface Props {
+  href: string;
+  label: string;
+}
+
+const { href, label } = Astro.props;
+---
+
+<a class="editorial-back-button" href={href} data-editorial-back>{label}</a>
+
+<script>
+  const backButton = document.querySelector<HTMLElement>("[data-editorial-back]");
+  if (backButton) {
+    const update = () => {
+      backButton.dataset.visible = String(window.scrollY > 360);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+  }
+</script>

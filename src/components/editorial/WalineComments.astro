@@ -1,0 +1,43 @@
+---
+interface Props {
+  path?: string;
+}
+
+const { path = Astro.url.pathname } = Astro.props;
+const serverURL = import.meta.env.PUBLIC_WALINE_SERVER_URL;
+---
+
+{serverURL && (
+  <section class="article-comments" aria-labelledby="article-comments-title">
+    <h2 id="article-comments-title">评论</h2>
+    <p>欢迎留言。评论由 Waline 承载，发布前会显示 Waline 的账号与隐私提示。</p>
+    <div class="article-comments__waline" data-waline-comments data-server-url={serverURL} data-path={path}></div>
+  </section>
+)}
+
+{serverURL && (
+  <script>
+    import { init } from "@waline/client";
+    import "@waline/client/style";
+
+    const el = document.querySelector<HTMLElement>("[data-waline-comments]");
+    if (el?.dataset.serverUrl) {
+      init({
+        el,
+        serverURL: el.dataset.serverUrl,
+        path: el.dataset.path,
+        lang: "zh-CN",
+        meta: ["nick", "mail"],
+        requiredMeta: ["nick"],
+        comment: false,
+        pageview: false,
+        reaction: false,
+        emoji: false,
+        search: false,
+        highlighter: false,
+        noRss: true,
+        commentSorting: "latest",
+      });
+    }
+  </script>
+)}

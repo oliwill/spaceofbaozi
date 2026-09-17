@@ -1,24 +1,85 @@
 ---
 import { getCollection } from "astro:content";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
-import EntryList from "@/components/layout/EntryList.astro";
+import EditorialHero from "@/components/editorial/EditorialHero.astro";
+import "@/components/editorial/editorial.css";
 import { isPublishable } from "@/lib/content/gates";
 import { getSection } from "@/lib/sections";
 
 const section = getSection("blog")!;
 const entries = await getCollection("blog");
-
-// 无已批准内容时保留 URL 但 noindex（D-127，内容批准清单发布规则）
-const hasPublishable = entries.some((e) => isPublishable(e.data));
+const posts = entries
+  .filter((entry) => isPublishable(entry.data))
+  .sort((a, b) => +b.data.date - +a.data.date);
+const [featured, ...recent] = posts;
+const latest = posts[0]?.data.updated ?? posts[0]?.data.date;
+const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
 ---
 
-<ShellLayout title="文章 · baozi.space" description={section.desc} noindex={!hasPublishable}>
-  <div class="section-shell paper-page">
-    <header class="section-header">
-      <span class="section-kicker">{section.number} · {section.zh}</span>
-      <h1>{section.title}</h1>
-      <p>{section.desc}</p>
-    </header>
-    <EntryList entries={entries} tagBaseHref="/blog/tag" />
+<ShellLayout title="文章 · baozi.space" description={section.desc} noindex={posts.length === 0}>
+  <div class="editorial-page blog-page">
+    <EditorialHero
+      kicker={`${section.number} · ${section.title}`}
+      title={section.zh}
+      description={section.desc}
+      meta={latest ? `最近更新 ${formatDate(latest)}` : undefined}
+    />
+
+    {featured ? (
+      <>
+        <section class="editorial-feature" aria-labelledby="featured-story-title">
+          <p class="editorial-feature__label">最新文章</p>
+          <article>
+            <div class="editorial-meta">
+              <time datetime={featured.data.date.toISOString()}>{formatDate(featured.data.date)}</time>
+              {featured.data.tags.slice(0, 3).map((tag) => (
+                <a class="editorial-tag" href={`/blog/tag/${encodeURIComponent(tag)}`}>#{tag}</a>
+              ))}
+            </div>
+            <h2 id="featured-story-title">
+              <a href={`/blog/${featured.id}`}>{featured.data.title}</a>
+            </h2>
+            {featured.data.description && (
+              <p class="editorial-feature__summary">{featured.data.description}</p>
+            )}
+            <a class="editorial-text-link" href={`/blog/${featured.id}`}>阅读全文 →</a>
+          </article>
+        </section>
+
+        {recent.length > 0 ? (
+          <section class="editorial-section" aria-labelledby="recent-stories-title">
+            <p class="editorial-section__label" id="recent-stories-title">近期文章</p>
+            <ul class="editorial-section__grid">
+              {recent.map((entry) => (
+                <li>
+                  <article>
+                    <div class="editorial-meta">
+                      <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+                      {entry.data.tags.slice(0, 2).map((tag) => (
+                        <a class="editorial-tag" href={`/blog/tag/${encodeURIComponent(tag)}`}>#{tag}</a>
+                      ))}
+                    </div>
+                    <h3>
+                      <a href={`/blog/${entry.id}`}>{entry.data.title}</a>
+                    </h3>
+                    {entry.data.description && <p>{entry.data.description}</p>}
+                  </article>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : (
+          <p class="editorial-empty">
+            <strong>更多文章正在整理。</strong>
+            通过内容批准后，会按时间顺序出现在这里。
+          </p>
+        )}
+      </>
+    ) : (
+      <div class="editorial-empty">
+        <strong>文章正在整理。</strong>
+        第一篇正式文章通过内容批准后会出现在这里。
+      </div>
+    )}
   </div>
 </ShellLayout>

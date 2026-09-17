@@ -1,0 +1,361 @@
+---
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#eef0ea" />
+    <title>翻页手法评审 demo · baozi.space</title>
+    <style>
+      :root {
+        color: #25231f;
+        background: #eef0ea;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100svh;
+        margin: 0;
+        background-color: #eef0ea;
+        background-image: radial-gradient(circle, rgba(63, 78, 82, 0.14) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+
+      .skip-link {
+        position: fixed;
+        top: 0.75rem;
+        left: 0.75rem;
+        z-index: 20;
+        padding: 0.5rem 0.75rem;
+        color: #25231f;
+        background: #fffdf7;
+        transform: translateY(-200%);
+      }
+
+      .skip-link:focus {
+        transform: none;
+      }
+
+      .review-badge {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 20;
+        margin: 0;
+        padding: 0.35rem 0.6rem;
+        color: rgba(37, 35, 31, 0.72);
+        background: rgba(255, 253, 247, 0.86);
+        border: 1px solid rgba(37, 35, 31, 0.12);
+        font-size: 0.75rem;
+      }
+
+      .page-turn {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        min-height: 100svh;
+      }
+
+      .page-turn__rail {
+        position: sticky;
+        top: 0;
+        height: 100svh;
+        padding: 2rem 1.5rem;
+        border-right: 1px solid rgba(37, 35, 31, 0.1);
+      }
+
+      .page-turn__brand {
+        display: inline-block;
+        color: #25231f;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .page-turn__nav {
+        display: grid;
+        gap: 0.85rem;
+        margin-top: 4rem;
+      }
+
+      .page-turn__nav button {
+        padding: 0;
+        color: rgba(37, 35, 31, 0.62);
+        text-align: left;
+        background: none;
+        border: 0;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .page-turn__nav button[aria-current="page"],
+      .page-turn__nav button:hover {
+        color: #25231f;
+      }
+
+      .page-turn__hint {
+        margin: 4rem 0 0;
+        color: rgba(37, 35, 31, 0.52);
+        font-size: 0.78rem;
+        line-height: 1.7;
+      }
+
+      .page-turn__viewport {
+        position: relative;
+        overflow: hidden;
+        min-height: 100svh;
+      }
+
+      .turn-page {
+        position: absolute;
+        inset: 0;
+        overflow: auto;
+        padding: clamp(2rem, 6vw, 6rem);
+        visibility: hidden;
+        background: #fffdf7;
+        box-shadow: -18px 0 45px rgba(46, 48, 42, 0.12);
+        transform: translateX(102%);
+      }
+
+      .turn-page.is-armed,
+      .turn-page.is-active,
+      .turn-page.is-exiting {
+        visibility: visible;
+      }
+
+      .turn-page.is-active,
+      .turn-page.is-exiting {
+        transition: transform 340ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 340ms ease-out;
+      }
+
+      .turn-page.is-active {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .turn-page.is-exiting {
+        opacity: 0.72;
+        transform: translateX(-7%);
+      }
+
+      .turn-page__inner {
+        max-width: 760px;
+      }
+
+      .turn-page__kicker {
+        margin: 0 0 1rem;
+        color: #b8513d;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+
+      .turn-page h1 {
+        margin: 0;
+        font-family: "Songti SC", "STSong", "SimSun", serif;
+        font-size: clamp(2.8rem, 7vw, 6rem);
+        font-weight: 600;
+        letter-spacing: -0.05em;
+        line-height: 1.04;
+      }
+
+      .turn-page__desc {
+        max-width: 38rem;
+        margin: 1.5rem 0 0;
+        color: rgba(37, 35, 31, 0.68);
+        font-size: 1.08rem;
+        line-height: 1.8;
+      }
+
+      .turn-page__mark {
+        display: inline-block;
+        margin-top: 2.5rem;
+        background: linear-gradient(100deg, transparent 0 2%, rgba(240, 172, 84, 0.28) 4% 94%, transparent 97%);
+        font-size: 0.9rem;
+      }
+
+      .turn-page__grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 3rem;
+      }
+
+      .turn-page__tile {
+        min-height: 10rem;
+        padding: 1rem;
+        background: #f2eee5;
+        border: 1px solid rgba(37, 35, 31, 0.1);
+      }
+
+      .turn-page__tile p {
+        margin: 0;
+        color: rgba(37, 35, 31, 0.58);
+        font-size: 0.85rem;
+        line-height: 1.7;
+      }
+
+      .turn-page__action {
+        display: inline-block;
+        margin-top: 3rem;
+        padding: 0;
+        color: #284d5b;
+        background: none;
+        border: 0;
+        border-bottom: 1px solid rgba(40, 77, 91, 0.35);
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .page-turn__status {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        margin: 0;
+        color: rgba(37, 35, 31, 0.58);
+        font-size: 0.75rem;
+      }
+
+      @media (max-width: 767px) {
+        .page-turn {
+          display: block;
+        }
+
+        .page-turn__rail {
+          position: relative;
+          display: flex;
+          height: auto;
+          min-height: 56px;
+          padding: 0.85rem 1rem;
+          align-items: center;
+          justify-content: space-between;
+          border-right: 0;
+          border-bottom: 1px solid rgba(37, 35, 31, 0.1);
+        }
+
+        .review-badge {
+          display: none;
+        }
+
+        .page-turn__nav {
+          display: flex;
+          gap: 1rem;
+          margin: 0;
+        }
+
+        .page-turn__hint {
+          display: none;
+        }
+
+        .turn-page {
+          padding: 2rem 1.25rem 4rem;
+        }
+
+        .turn-page__grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .turn-page,
+        .turn-page.is-active,
+        .turn-page.is-exiting {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到 demo 内容</a>
+    <p class="review-badge">评审 demo：Sue Park 式翻页 · 不进生产</p>
+
+    <div class="page-turn" data-page-turn data-active-page="list">
+      <aside class="page-turn__rail" aria-label="demo 导航">
+        <a class="page-turn__brand" href="/">baozi.space</a>
+        <nav class="page-turn__nav" aria-label="翻页 demo">
+          <button type="button" data-show-page="list" aria-current="page">相册列表</button>
+          <button type="button" data-show-page="detail">相册详情</button>
+        </nav>
+        <p class="page-turn__hint">左侧导航保持稳定；右侧内容纸从右向左覆盖进入。参考方向：suepark.xyz，不复制其内容。</p>
+      </aside>
+
+      <main class="page-turn__viewport" id="main" tabindex="-1">
+        <section class="turn-page is-active" data-page="list" aria-labelledby="turn-list-title">
+          <div class="turn-page__inner">
+            <p class="turn-page__kicker">03 · PHOTOS / DEMO</p>
+            <h1 id="turn-list-title">相册列表</h1>
+            <p class="turn-page__desc">这页模拟未来的 Photos 总览。翻页的重点不是 3D 翻书，而是新内容像一张纸从右侧盖上来，旧内容轻微退后。</p>
+            <span class="turn-page__mark">纸面覆盖 · 340ms · ease-out</span>
+            <div class="turn-page__grid" aria-hidden="true">
+              <div class="turn-page__tile"><p>相册封面区域</p></div>
+              <div class="turn-page__tile"><p>说明文字区域</p></div>
+            </div>
+            <button class="turn-page__action" type="button" data-show-page="detail">进入相册详情 →</button>
+          </div>
+        </section>
+
+        <section class="turn-page" data-page="detail" aria-labelledby="turn-detail-title">
+          <div class="turn-page__inner">
+            <p class="turn-page__kicker">03 · PHOTOS / DETAIL</p>
+            <h1 id="turn-detail-title">相册详情</h1>
+            <p class="turn-page__desc">这页模拟未来的 Photos 详情。进入时左侧栏不跳动；返回时反向使用同一规则，保持路径和焦点清楚。</p>
+            <span class="turn-page__mark">左侧稳定 · 右侧覆盖 · 可回退</span>
+            <div class="turn-page__grid" aria-hidden="true">
+              <div class="turn-page__tile"><p>大图区域</p></div>
+              <div class="turn-page__tile"><p>拍摄笔记区域</p></div>
+            </div>
+            <button class="turn-page__action" type="button" data-show-page="list">← 返回相册列表</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <p class="page-turn__status" data-page-status aria-live="polite">当前：相册列表</p>
+
+    <script>
+      const root = document.querySelector("[data-page-turn]");
+      const status = document.querySelector("[data-page-status]");
+      const buttons = Array.from(document.querySelectorAll("[data-show-page]"));
+      const pages = Array.from(document.querySelectorAll("[data-page]"));
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const duration = reduced ? 0 : 340;
+
+      const showPage = (name: string | null) => {
+        if (!name) return;
+        const nextName = name;
+        const currentName = root?.getAttribute("data-active-page");
+        const current = pages.find((page) => page.getAttribute("data-page") === currentName);
+        const incoming = pages.find((page) => page.getAttribute("data-page") === nextName);
+        if (!root || !incoming || !current || currentName === nextName) return;
+
+        incoming.classList.remove("is-exiting");
+        incoming.classList.add("is-armed");
+        incoming.getBoundingClientRect();
+        current.classList.remove("is-active");
+        current.classList.add("is-exiting");
+        incoming.classList.add("is-active");
+
+        window.setTimeout(() => {
+          root.setAttribute("data-active-page", nextName);
+          current.classList.remove("is-exiting");
+          incoming.classList.remove("is-armed");
+          buttons.forEach((button) => {
+            const selected = button.getAttribute("data-show-page") === nextName;
+            if (selected) button.setAttribute("aria-current", "page");
+            else button.removeAttribute("aria-current");
+          });
+          if (status) status.textContent = nextName === "detail" ? "当前：相册详情" : "当前：相册列表";
+        }, duration);
+      };
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => showPage(button.getAttribute("data-show-page")));
+      });
+    </script>
+  </body>
+</html>

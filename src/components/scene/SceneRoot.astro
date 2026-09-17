@@ -1,5 +1,6 @@
 ---
 import IntroOilStage from "@/components/intro-oil/IntroOilStage.astro";
+import HomeOrbit from "@/components/home/HomeOrbit.astro";
 import SceneHome from "@/components/scene/SceneHome";
 import SceneProjects from "@/components/scene/SceneProjects";
 import type { SceneProject } from "@/components/scene/types";
@@ -17,9 +18,10 @@ const { projects } = Astro.props;
   <IntroOilStage />
 
   <!-- 场景 2：首页（Home v2 冻结构图，D-118） -->
-  <section class="scene scene--home" data-scene="home">
+  <section class="scene scene--home" id="home" data-scene="home">
     <div class="scene__stage">
       <SceneHome client:idle />
+      <HomeOrbit />
     </div>
   </section>
 

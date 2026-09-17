@@ -1,23 +1,71 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { isPublishable } from "@/lib/content/gates";
 import type { GetStaticPaths } from "astro";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
-import BookSpread from "@/components/layout/BookSpread.astro";
+import Lightbox from "@/components/photos/Lightbox";
+import "@/components/editorial/editorial.css";
+import "@/components/photos/photos.css";
+import { albumLightboxItems } from "@/lib/photos/albums";
 import { getSection } from "@/lib/sections";
 
 export const getStaticPaths = (async () => {
-  const entries = await getCollection("photos", ({ data }) => isPublishable(data));
-  return entries.map((entry) => ({
+  const entries = (await getCollection("photos", ({ data }) => isPublishable(data)))
+    .sort((a, b) => +b.data.date - +a.data.date);
+  return entries.map((entry, index) => ({
     params: { slug: entry.id },
-    props: { entry },
+    props: {
+      entry,
+      newer: index > 0 ? entries[index - 1] : null,
+      older: index < entries.length - 1 ? entries[index + 1] : null,
+    },
   }));
 }) satisfies GetStaticPaths;
 
-const { entry } = Astro.props;
+const { entry, newer, older } = Astro.props;
+const { Content } = await render(entry);
 const section = getSection("photos")!;
+const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
 ---
 
 <ShellLayout title={`${entry.data.title} · ${section.title} · baozi.space`} description={entry.data.description || section.desc}>
-  <BookSpread section={section} entry={entry} navVariant="album-index" />
+  <article class="editorial-page photo-detail">
+    <a class="article-page__back" href="/photos">← 返回摄影</a>
+
+    <header class="photo-detail__header">
+      <p class="editorial-hero__kicker">{section.number} · {section.title}</p>
+      <h1>{entry.data.title}</h1>
+      {entry.data.description && <p class="photo-detail__description">{entry.data.description}</p>}
+      <div class="editorial-meta article-page__meta">
+        <time datetime={entry.data.date.toISOString()}>
+          {entry.data.updated ? `更新于 ${formatDate(entry.data.updated)}` : formatDate(entry.data.date)}
+        </time>
+        {entry.data.tags.slice(0, 3).map((tag) => <span>#{tag}</span>)}
+      </div>
+    </header>
+
+    {entry.data.cover && (
+      <figure class="photo-detail__cover">
+        <a class="entry-link" href={`/photos/${entry.id}`} aria-label={`放大查看《${entry.data.title}》封面`}>
+          <img src={entry.data.cover} alt={entry.data.coverAlt ?? entry.data.title} loading="eager" decoding="async" />
+        </a>
+        {entry.data.coverCredit && <figcaption>{entry.data.coverCredit}</figcaption>}
+      </figure>
+    )}
+
+    <div class="editorial-prose">
+      <Content />
+    </div>
+
+    <nav class="photo-detail__nav" aria-label="相册导航">
+      <a href="/photos">返回摄影</a>
+      <span>
+        {older && <a href={`/photos/${older.id}`}>← 上一组：{older.data.title}</a>}
+      </span>
+      <span>
+        {newer && <a href={`/photos/${newer.id}`}>下一组：{newer.data.title} →</a>}
+      </span>
+    </nav>
+  </article>
+  <Lightbox client:load items={albumLightboxItems([entry])} />
 </ShellLayout>

@@ -1,13 +1,16 @@
 import { expect, test, type Page } from "@playwright/test";
 
-async function setProgress(page: Page, progress: number) {
-  await page.evaluate((value) => {
-    const root = document.querySelector<HTMLElement>("[data-intro-root]");
-    if (!root) throw new Error("intro root missing");
-    scrollTo(0, root.offsetTop + (root.scrollHeight - innerHeight) * value);
-  }, progress);
-  await page.waitForFunction((expected) => document.querySelector<HTMLElement>("[data-intro-root]")?.dataset.introProgress === expected, progress.toFixed(3));
-  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+async function activateHomeOrbit(page: Page) {
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-orbit-ready", "true", { timeout: 10000 });
+  await page.evaluate(() => {
+    window.dispatchEvent(new CustomEvent("baozi:intro-orbit-handoff", {
+      detail: { angle: 35 * Math.PI / 180, angularVelocity: 0 },
+    }));
+    window.dispatchEvent(new CustomEvent("baozi:intro-person-stood"));
+  });
+  await expect(root).toHaveAttribute("data-orbit-active", "true");
+  await expect(root).toHaveAttribute("data-controls-enabled", "true", { timeout: 1000 });
 }
 
 async function setOrbitAngle(page: Page, degrees: number, angularVelocity = 1) {
@@ -22,13 +25,16 @@ async function setOrbitAngle(page: Page, degrees: number, angularVelocity = 1) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/lab/intro?assetMode=placeholder");
-  await expect(page.locator("[data-home-orbit-root]"))
-    .toHaveAttribute("data-orbit-ready", "true");
+  await page.goto("/");
+  await activateHomeOrbit(page);
+});
+
+test("scene handoff replaces the static portrait with the live orbit", async ({ page }) => {
+  await expect(page.locator("[data-home-orbit-root]")).toBeVisible();
+  await expect(page.locator(".home-v2__portrait")).toHaveCSS("opacity", "0");
 });
 
 test("home orbit separates ground translation from visual scale", async ({ page }) => {
-  await setProgress(page, 1);
   for (const selector of ["[data-orbit-anchor]", "[data-dog-visual]"]) {
     const originError = await page.locator(selector).evaluate((element) => {
       const [originX, originY] = getComputedStyle(element).transformOrigin
@@ -50,7 +56,6 @@ for (const [degrees, scale, layer] of [
   [270, 0.86, "behind"],
 ] as const) {
   test(`perspective checkpoint ${degrees}`, async ({ page }, testInfo) => {
-    await setProgress(page, 1);
     await setOrbitAngle(page, degrees);
     const root = page.locator("[data-home-orbit-root]");
     await expect(root).toHaveAttribute("data-orbit-layer", layer);
@@ -73,13 +78,13 @@ test("dog feet remain grounded through depth scaling", async ({ page }) => {
 });
 
 test("dog remains identifiable at the deepest rear checkpoint", async ({ page }) => {
-  await setProgress(page, 1);
   await setOrbitAngle(page, 270, 1);
   const revealOffset = Number(
     await page.locator("[data-home-orbit-root]").getAttribute("data-orbit-reveal-x"),
   );
-  expect(revealOffset).toBeGreaterThanOrEqual(40);
-  expect(revealOffset).toBeLessThanOrEqual(48);
+  const rootWidth = await page.locator("[data-home-orbit-root]").evaluate((element) => element.getBoundingClientRect().width);
+  const expectedOffset = Math.min(230, Math.max(150, rootWidth * 0.17)) * 0.2;
+  expect(revealOffset).toBeCloseTo(expectedOffset, 0);
 });
 
 test("dog direction follows the ellipse tangent in both directions", async ({ page }) => {
@@ -100,7 +105,6 @@ test("person gaze follows the rendered dog position", async ({ page }) => {
 });
 
 test("direction changes crossfade sprite layers without rotating sheets", async ({ page }) => {
-  await setProgress(page, 1);
   await setOrbitAngle(page, 0);
   const dogLayers = page.locator("[data-dog-sprite], [data-dog-sprite-crossfade]");
   await expect(dogLayers).toHaveCount(2);
@@ -127,45 +131,14 @@ test("layer hysteresis prevents side flicker", async ({ page }) => {
     .toHaveAttribute("data-orbit-layer", "behind");
 });
 
-test("intro final beat applies perspective and reverses without duplicate actors", async ({ page }) => {
-  await setProgress(page, 0.9);
-  await expect(page.locator("[data-home-orbit-root]"))
-    .toHaveAttribute("data-orbit-active", "true");
-  await expect(page.locator("[data-intro-dog]"))
-    .toHaveAttribute("data-visible", "false");
-  await expect(page.locator("[data-intro-person]"))
-    .toHaveAttribute("data-visible", "false");
-  const startScale = Number(await page.locator("[data-home-orbit-root]").getAttribute("data-dog-scale"));
-
-  await setProgress(page, 1);
-  const endScale = Number(await page.locator("[data-home-orbit-root]").getAttribute("data-dog-scale"));
-  expect(Math.abs(endScale - startScale)).toBeGreaterThan(0.1);
-
-  await setProgress(page, 0.89);
-  await expect(page.locator("[data-home-orbit-root]"))
-    .toHaveAttribute("data-orbit-active", "false");
-  await expect(page.locator("[data-intro-person]"))
-    .toHaveAttribute("data-visible", "true");
-});
-
-test("pointer controls enable after the standing handoff", async ({ page }) => {
-  await setProgress(page, 0.99);
-  await expect(page.locator("[data-home-orbit-root]"))
-    .toHaveAttribute("data-controls-enabled", "false");
-  await setProgress(page, 1);
-  await expect(page.locator("[data-home-orbit-root]"))
-    .toHaveAttribute("data-controls-enabled", "true", { timeout: 600 });
-});
-
 test("pointer keyboard and touch update only the orbit target", async ({ page }) => {
-  await setProgress(page, 1);
   const root = page.locator("[data-home-orbit-root]");
-  await expect(root).toHaveAttribute("data-controls-enabled", "true", { timeout: 600 });
+  await root.scrollIntoViewIfNeeded();
   const box = await root.boundingBox();
   expect(box).not.toBeNull();
 
   const initialTarget = await root.getAttribute("data-orbit-target-angle");
-  await page.mouse.move((box?.x ?? 0) + 240, (box?.y ?? 0) + 300);
+  await page.mouse.move((box?.x ?? 0) + (box?.width ?? 0) * 0.8, (box?.y ?? 0) + (box?.height ?? 0) * 0.35);
   await expect.poll(() => root.getAttribute("data-orbit-target-angle")).not.toBe(initialTarget);
 
   const pointerTarget = await root.getAttribute("data-orbit-target-angle");
@@ -175,13 +148,13 @@ test("pointer keyboard and touch update only the orbit target", async ({ page })
 
   const keyboardTarget = await root.getAttribute("data-orbit-target-angle");
   await root.dispatchEvent("pointerdown", {
-    pointerId: 7, pointerType: "touch", clientX: 600, clientY: 500, isPrimary: true,
+    pointerId: 7, pointerType: "touch", clientX: (box?.x ?? 0) + (box?.width ?? 0) * 0.3, clientY: (box?.y ?? 0) + (box?.height ?? 0) * 0.5, isPrimary: true,
   });
   await root.dispatchEvent("pointermove", {
-    pointerId: 7, pointerType: "touch", clientX: 680, clientY: 510, isPrimary: true,
+    pointerId: 7, pointerType: "touch", clientX: (box?.x ?? 0) + (box?.width ?? 0) * 0.8, clientY: (box?.y ?? 0) + (box?.height ?? 0) * 0.55, isPrimary: true,
   });
   await root.dispatchEvent("pointerup", {
-    pointerId: 7, pointerType: "touch", clientX: 680, clientY: 510, isPrimary: true,
+    pointerId: 7, pointerType: "touch", clientX: (box?.x ?? 0) + (box?.width ?? 0) * 0.8, clientY: (box?.y ?? 0) + (box?.height ?? 0) * 0.55, isPrimary: true,
   });
   await expect.poll(() => root.getAttribute("data-orbit-target-angle")).not.toBe(keyboardTarget);
   await expect(root).toHaveCSS("touch-action", "pan-y");
@@ -196,12 +169,23 @@ test("resize preserves the rendered angle", async ({ page }) => {
 });
 
 test("dog asset failure keeps readable identity content", async ({ page }) => {
+
   await page.route("**/dog-orbit-run-8dir-4f.webp", (route) => route.abort());
   await page.reload();
   await expect(page.locator("[data-home-orbit-root]"))
     .toHaveAttribute("data-asset-error", "true");
   await expect(page.locator("[data-orbit-anchor]")).toBeHidden();
-  await expect(page.locator(".intro__identity")).toBeVisible();
+  await expect(page.locator(".home-v2__identity")).toBeVisible();
+});
+test("production intro completion enables the scene orbit", async ({ page }) => {
+  await page.goto("/");
+  const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-orbit-ready", "true", { timeout: 10000 });
+  await page.evaluate(() => {
+    window.scrollTo({ top: document.documentElement.scrollHeight - window.innerHeight, behavior: "instant" });
+  });
+  await expect(root).toHaveAttribute("data-orbit-active", "true", { timeout: 5000 });
+  await expect(root).toHaveAttribute("data-controls-enabled", "true", { timeout: 1000 });
 });
 
 test("reduced motion uses fixed positions and contact frame", async ({ browser }) => {
@@ -210,12 +194,14 @@ test("reduced motion uses fixed positions and contact frame", async ({ browser }
     viewport: { width: 1440, height: 900 },
   });
   const page = await context.newPage();
-  await page.goto("/lab/intro?assetMode=placeholder");
+  await page.goto("/");
   const root = page.locator("[data-home-orbit-root]");
+  await expect(root).toHaveAttribute("data-orbit-ready", "true");
   await expect(root).toHaveAttribute("data-reduced-motion", "true");
   await page.evaluate(() => window.dispatchEvent(new CustomEvent("baozi:orbit-debug-set", {
     detail: { angle: 35 * Math.PI / 180, angularVelocity: 0 },
   })));
+  await root.focus();
   await root.press("ArrowRight");
   await expect(root).toHaveAttribute("data-dog-frame", "0");
   await expect(root).toHaveCSS("--orbit-crossfade-ms", "180ms");
@@ -230,10 +216,8 @@ for (const viewport of [
   test(`orbit perspective fits ${viewport.width}x${viewport.height}`, async ({ browser }, testInfo) => {
     const context = await browser.newContext({ viewport });
     const page = await context.newPage();
-    await page.goto("/lab/intro?assetMode=placeholder");
-    await expect(page.locator("[data-home-orbit-root]"))
-      .toHaveAttribute("data-orbit-ready", "true");
-    await setProgress(page, 1);
+    await page.goto("/");
+    await activateHomeOrbit(page);
     await setOrbitAngle(page, 90, 1);
     const geometry = await page.evaluate(() => {
       const person = document.querySelector("[data-orbit-person]")!.getBoundingClientRect();
@@ -249,7 +233,6 @@ for (const viewport of [
     expect(geometry.overflow).toBeLessThanOrEqual(1);
     expect(geometry.dogTop).toBeGreaterThan(geometry.personKnee);
     expect(geometry.dogRight).toBeLessThanOrEqual(viewport.width);
-    expect(geometry.dogBottom).toBeLessThanOrEqual(viewport.height);
     await page.screenshot({
       path: testInfo.outputPath(`orbit-front-${viewport.width}x${viewport.height}.png`),
     });

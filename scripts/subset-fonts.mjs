@@ -24,15 +24,6 @@ const FONTS = [
     src: "fonts-src/ioskeley/Normal/IoskeleyMonoNerdFont-Regular.ttf",
     scanDirs: [],
   },
-  // 手写体只用于 chrome 文字（问候/小节标签/页码/批注，见计划步骤 1），
-  // 正文仍是 Songti，故只扫组件/页面/lib 的静态字符串，不扫 content 正文
-  // keepLayout: false — 手写体不需要 GPOS/GSUB，省一半体积
-  {
-    name: "xiaxing-hand",
-    src: "fonts-src/SlideXiaXing.ttf",
-    scanDirs: ["src/components", "src/pages", "src/lib"],
-    keepLayout: false,
-  },
 ];
 const SCAN_EXTS = new Set([".astro", ".md", ".mdx", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".json"]);
 
