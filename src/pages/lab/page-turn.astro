@@ -14,6 +14,8 @@
         color: #25231f;
         background: #eef0ea;
         font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --paper: #fffdf7;
+        --ease-swing: cubic-bezier(0.23, 1, 0.32, 1);
       }
 
       * {
@@ -32,10 +34,10 @@
         position: fixed;
         top: 0.75rem;
         left: 0.75rem;
-        z-index: 20;
+        z-index: 70;
         padding: 0.5rem 0.75rem;
         color: #25231f;
-        background: #fffdf7;
+        background: var(--paper);
         transform: translateY(-200%);
       }
 
@@ -47,7 +49,7 @@
         position: fixed;
         top: 1rem;
         right: 1rem;
-        z-index: 20;
+        z-index: 70;
         margin: 0;
         padding: 0.35rem 0.6rem;
         color: rgba(37, 35, 31, 0.72);
@@ -65,9 +67,9 @@
       .page-turn__rail {
         position: sticky;
         top: 0;
+        z-index: 10;
         height: 100svh;
         padding: 2rem 1.5rem;
-        border-right: 1px solid rgba(37, 35, 31, 0.1);
       }
 
       .page-turn__brand {
@@ -105,46 +107,155 @@
         line-height: 1.7;
       }
 
-      .page-turn__viewport {
+      /* 舞台：卡片从点阵背景中凸显，运动可见 */
+      .page-turn__stage {
         position: relative;
-        overflow: hidden;
         min-height: 100svh;
       }
 
       .turn-page {
         position: absolute;
         inset: 0;
-        overflow: auto;
-        padding: clamp(2rem, 6vw, 6rem);
+        padding: clamp(20px, 5vh, 56px) clamp(20px, 4vw, 56px) clamp(28px, 6vh, 64px);
         visibility: hidden;
-        background: #fffdf7;
-        box-shadow: -18px 0 45px rgba(46, 48, 42, 0.12);
-        transform: translateX(102%);
-      }
-
-      .turn-page.is-armed,
-      .turn-page.is-active,
-      .turn-page.is-exiting {
-        visibility: visible;
-      }
-
-      .turn-page.is-active,
-      .turn-page.is-exiting {
-        transition: transform 340ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 340ms ease-out;
       }
 
       .turn-page.is-active {
-        opacity: 1;
-        transform: translateX(0);
+        visibility: visible;
       }
 
-      .turn-page.is-exiting {
-        opacity: 0.72;
-        transform: translateX(-7%);
+      .paper-card {
+        height: 100%;
+        overflow: auto;
+        padding: clamp(1.75rem, 4vw, 3.5rem);
+        background: var(--paper);
+        border: 1px solid rgba(37, 35, 31, 0.1);
+        box-shadow: 0 1px 2px rgba(37, 35, 31, 0.05), 0 24px 48px -24px rgba(37, 35, 31, 0.18);
+        transform-origin: 50% 45%;
       }
 
-      .turn-page__inner {
-        max-width: 760px;
+      /* 前进：卡片自上方（偏右）落定，复刻 paper-entrance */
+      @keyframes card-in-forward {
+        0% {
+          opacity: 0;
+          filter: blur(10px);
+          transform: translate(40px, -32px) rotate(2deg);
+        }
+
+        55% {
+          opacity: 1;
+        }
+
+        75% {
+          filter: blur(0);
+        }
+
+        100% {
+          opacity: 1;
+          filter: blur(0);
+          transform: translate(0, 0) rotate(0deg);
+        }
+      }
+
+      /* 返回：卡片自下而上升起 */
+      @keyframes card-in-back {
+        0% {
+          opacity: 0;
+          filter: blur(8px);
+          transform: translateY(40px) rotate(-1.5deg);
+        }
+
+        55% {
+          opacity: 1;
+        }
+
+        75% {
+          filter: blur(0);
+        }
+
+        100% {
+          opacity: 1;
+          filter: blur(0);
+          transform: translateY(0) rotate(0deg);
+        }
+      }
+
+      .turn-page.is-entering-forward .paper-card {
+        animation: 0.45s var(--ease-swing) both card-in-forward;
+      }
+
+      .turn-page.is-entering-back .paper-card {
+        animation: 0.45s var(--ease-swing) both card-in-back;
+      }
+
+      /* 内容行：opacity 先行、模糊后散，逐行不同速度（复刻 contentBlurReveal + 逐行 stagger） */
+      @keyframes row-reveal {
+        0% {
+          opacity: 0;
+          filter: blur(6px);
+          transform: translateY(12px);
+        }
+
+        100% {
+          opacity: 1;
+          filter: blur(0);
+          transform: translateY(0);
+        }
+      }
+
+      .turn-page.is-entering-forward [data-row],
+      .turn-page.is-entering-back [data-row] {
+        animation: 0.35s var(--ease-swing) backwards row-reveal;
+        animation-delay: calc(0.26s + var(--row, 0) * 0.07s);
+      }
+
+      .turn-page.is-entering-back [data-row] {
+        animation-duration: 0.3s;
+        animation-delay: calc(0.14s + var(--row, 0) * 0.05s);
+      }
+
+      /* 章节跳转后重播该节行进入 */
+      [data-section].is-replaying [data-row] {
+        animation: 0.32s var(--ease-swing) backwards row-reveal;
+        animation-delay: calc(var(--row, 0) * 0.06s);
+      }
+
+      /* 移动端：48px 羽化边纸面遮罩横扫（suepark.xyz blog-post-transition-mask） */
+      .turn-mask {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        z-index: 55;
+        display: none;
+        width: calc(100% + 48px);
+        visibility: hidden;
+        pointer-events: none;
+        background: var(--paper);
+        contain: paint;
+        transition: none;
+      }
+
+      .turn-mask[data-direction="next"] {
+        left: -48px;
+        background: linear-gradient(to right, transparent 0, var(--paper) 48px);
+        transform: translate(100%);
+      }
+
+      .turn-mask[data-direction="previous"] {
+        right: -48px;
+        background: linear-gradient(to left, transparent 0, var(--paper) 48px);
+        transform: translate(-100%);
+      }
+
+      .turn-mask[data-phase="preparing"],
+      .turn-mask[data-phase="covering"] {
+        visibility: visible;
+        will-change: transform;
+      }
+
+      .turn-mask[data-phase="covering"] {
+        transform: translate(0, 0);
+        transition: transform 0.36s var(--ease-swing);
       }
 
       .turn-page__kicker {
@@ -158,23 +269,30 @@
       .turn-page h1 {
         margin: 0;
         font-family: "Songti SC", "STSong", "SimSun", serif;
-        font-size: clamp(2.8rem, 7vw, 6rem);
+        font-size: clamp(2.2rem, 5vw, 4.2rem);
         font-weight: 600;
         letter-spacing: -0.05em;
         line-height: 1.04;
       }
 
+      .turn-page h2 {
+        margin: 0;
+        font-family: "Songti SC", "STSong", "SimSun", serif;
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
       .turn-page__desc {
         max-width: 38rem;
-        margin: 1.5rem 0 0;
+        margin: 1.25rem 0 0;
         color: rgba(37, 35, 31, 0.68);
-        font-size: 1.08rem;
+        font-size: 1.02rem;
         line-height: 1.8;
       }
 
       .turn-page__mark {
         display: inline-block;
-        margin-top: 2.5rem;
+        margin-top: 1.75rem;
         background: linear-gradient(100deg, transparent 0 2%, rgba(240, 172, 84, 0.28) 4% 94%, transparent 97%);
         font-size: 0.9rem;
       }
@@ -183,11 +301,11 @@
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 1rem;
-        margin-top: 3rem;
+        margin-top: 2.25rem;
       }
 
       .turn-page__tile {
-        min-height: 10rem;
+        min-height: 9rem;
         padding: 1rem;
         background: #f2eee5;
         border: 1px solid rgba(37, 35, 31, 0.1);
@@ -202,7 +320,7 @@
 
       .turn-page__action {
         display: inline-block;
-        margin-top: 3rem;
+        margin-top: 2.25rem;
         padding: 0;
         color: #284d5b;
         background: none;
@@ -212,13 +330,58 @@
         cursor: pointer;
       }
 
+      .turn-toc {
+        display: flex;
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+        padding: 0;
+        list-style: none;
+      }
+
+      .turn-toc button {
+        padding: 0;
+        color: rgba(37, 35, 31, 0.6);
+        background: none;
+        border: 0;
+        border-bottom: 1px solid transparent;
+        font: inherit;
+        font-size: 0.92rem;
+        cursor: pointer;
+      }
+
+      .turn-toc button:hover {
+        color: #25231f;
+        border-bottom-color: rgba(37, 35, 31, 0.35);
+      }
+
+      .turn-section {
+        margin-top: 2.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(37, 35, 31, 0.1);
+      }
+
+      .turn-section p {
+        max-width: 38rem;
+        margin: 0.85rem 0 0;
+        color: rgba(37, 35, 31, 0.68);
+        font-size: 0.98rem;
+        line-height: 1.8;
+      }
+
       .page-turn__status {
         position: fixed;
         right: 1rem;
         bottom: 1rem;
+        z-index: 70;
         margin: 0;
         color: rgba(37, 35, 31, 0.58);
         font-size: 0.75rem;
+      }
+
+      @media (max-width: 639.98px) {
+        .turn-mask {
+          display: block;
+        }
       }
 
       @media (max-width: 767px) {
@@ -234,8 +397,6 @@
           padding: 0.85rem 1rem;
           align-items: center;
           justify-content: space-between;
-          border-right: 0;
-          border-bottom: 1px solid rgba(37, 35, 31, 0.1);
         }
 
         .review-badge {
@@ -252,8 +413,19 @@
           display: none;
         }
 
+        .page-turn__stage {
+          min-height: calc(100svh - 57px);
+        }
+
         .turn-page {
-          padding: 2rem 1.25rem 4rem;
+          position: absolute;
+          inset: 0;
+          padding: 0;
+        }
+
+        .paper-card {
+          border: 0;
+          box-shadow: none;
         }
 
         .turn-page__grid {
@@ -262,9 +434,15 @@
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .turn-page,
-        .turn-page.is-active,
-        .turn-page.is-exiting {
+        .turn-page.is-entering-forward .paper-card,
+        .turn-page.is-entering-back .paper-card,
+        .turn-page.is-entering-forward [data-row],
+        .turn-page.is-entering-back [data-row],
+        [data-section].is-replaying [data-row] {
+          animation: none;
+        }
+
+        .turn-mask[data-phase="covering"] {
           transition: none;
         }
       }
@@ -272,7 +450,7 @@
   </head>
   <body>
     <a class="skip-link" href="#main">跳到 demo 内容</a>
-    <p class="review-badge">评审 demo：Sue Park 式翻页 · 不进生产</p>
+    <p class="review-badge">评审 demo：Sue Park 式卡片切换 · 不进生产</p>
 
     <div class="page-turn" data-page-turn data-active-page="list">
       <aside class="page-turn__rail" aria-label="demo 导航">
@@ -281,40 +459,61 @@
           <button type="button" data-show-page="list" aria-current="page">相册列表</button>
           <button type="button" data-show-page="detail">相册详情</button>
         </nav>
-        <p class="page-turn__hint">左侧导航保持稳定；右侧内容纸从右向左覆盖进入。参考方向：suepark.xyz，不复制其内容。</p>
+        <p class="page-turn__hint">复刻 suepark.xyz：进入详情 = 卡片自上方落定 + 内容逐行模糊散去；返回列表 = 卡片自下方升起。详情页内点章节，对应行按不同速度进入。</p>
       </aside>
 
-      <main class="page-turn__viewport" id="main" tabindex="-1">
+      <main class="page-turn__stage" id="main" tabindex="-1">
         <section class="turn-page is-active" data-page="list" aria-labelledby="turn-list-title">
-          <div class="turn-page__inner">
-            <p class="turn-page__kicker">03 · PHOTOS / DEMO</p>
-            <h1 id="turn-list-title">相册列表</h1>
-            <p class="turn-page__desc">这页模拟未来的 Photos 总览。翻页的重点不是 3D 翻书，而是新内容像一张纸从右侧盖上来，旧内容轻微退后。</p>
-            <span class="turn-page__mark">纸面覆盖 · 340ms · ease-out</span>
+          <div class="paper-card">
+            <p class="turn-page__kicker" data-row style="--row: 0">03 · PHOTOS / DEMO</p>
+            <h1 id="turn-list-title" data-row style="--row: 1">相册列表</h1>
+            <p class="turn-page__desc" data-row style="--row: 2">这页模拟未来的 Photos 总览。进入详情时，新卡片从上方偏右落定，内容逐行从模糊中清晰。</p>
+            <span class="turn-page__mark" data-row style="--row: 3">卡片自上而下 · 0.45s · easeOutQuint</span>
             <div class="turn-page__grid" aria-hidden="true">
-              <div class="turn-page__tile"><p>相册封面区域</p></div>
-              <div class="turn-page__tile"><p>说明文字区域</p></div>
+              <div class="turn-page__tile" data-row style="--row: 4"><p>相册封面区域</p></div>
+              <div class="turn-page__tile" data-row style="--row: 5"><p>说明文字区域</p></div>
             </div>
-            <button class="turn-page__action" type="button" data-show-page="detail">进入相册详情 →</button>
+            <button class="turn-page__action" type="button" data-show-page="detail" data-row style="--row: 6">进入相册详情 →</button>
           </div>
         </section>
 
         <section class="turn-page" data-page="detail" aria-labelledby="turn-detail-title">
-          <div class="turn-page__inner">
-            <p class="turn-page__kicker">03 · PHOTOS / DETAIL</p>
-            <h1 id="turn-detail-title">相册详情</h1>
-            <p class="turn-page__desc">这页模拟未来的 Photos 详情。进入时左侧栏不跳动；返回时反向使用同一规则，保持路径和焦点清楚。</p>
-            <span class="turn-page__mark">左侧稳定 · 右侧覆盖 · 可回退</span>
-            <div class="turn-page__grid" aria-hidden="true">
-              <div class="turn-page__tile"><p>大图区域</p></div>
-              <div class="turn-page__tile"><p>拍摄笔记区域</p></div>
-            </div>
-            <button class="turn-page__action" type="button" data-show-page="list">← 返回相册列表</button>
+          <div class="paper-card">
+            <p class="turn-page__kicker" data-row style="--row: 0">03 · PHOTOS / DETAIL</p>
+            <h1 id="turn-detail-title" data-row style="--row: 1">相册详情</h1>
+            <p class="turn-page__desc" data-row style="--row: 2">详情页内部分了三个章节。点下面章节名，页面平滑滚动过去，对应章节的行按不同速度依次进入。</p>
+
+            <nav class="turn-toc" aria-label="章节" data-row style="--row: 3">
+              <button type="button" data-goto-section="overview">概览</button>
+              <button type="button" data-goto-section="notes">拍摄笔记</button>
+              <button type="button" data-goto-section="impact">影响</button>
+            </nav>
+
+            <section class="turn-section" data-section="overview" aria-label="概览">
+              <h2 data-row style="--row: 4">概览</h2>
+              <p data-row style="--row: 5">这是概览章节的第一行文字，用来观察章节重播时第一行的进入速度。</p>
+              <p data-row style="--row: 6">第二行稍晚一点进入，形成层级递进的节奏。</p>
+            </section>
+
+            <section class="turn-section" data-section="notes" aria-label="拍摄笔记">
+              <h2 data-row style="--row: 7">拍摄笔记</h2>
+              <p data-row style="--row: 8">拍摄笔记的第一行，点「拍摄笔记」时这几行会重新按序进入。</p>
+              <p data-row style="--row: 9">第二行继续递进，模糊从 6px 收敛到 0。</p>
+            </section>
+
+            <section class="turn-section" data-section="impact" aria-label="影响">
+              <h2 data-row style="--row: 10">影响</h2>
+              <p data-row style="--row: 11">影响章节的第一行，用来验证最末章节的滚动定位。</p>
+              <p data-row style="--row: 12">最后一行，整段层级动画到这里收束。</p>
+            </section>
+
+            <button class="turn-page__action" type="button" data-show-page="list" data-row style="--row: 13">← 返回相册列表</button>
           </div>
         </section>
       </main>
     </div>
 
+    <div class="turn-mask" data-turn-mask data-direction="next" data-phase="idle" aria-hidden="true"></div>
     <p class="page-turn__status" data-page-status aria-live="polite">当前：相册列表</p>
 
     <script>
@@ -322,39 +521,90 @@
       const status = document.querySelector("[data-page-status]");
       const buttons = Array.from(document.querySelectorAll("[data-show-page]"));
       const pages = Array.from(document.querySelectorAll("[data-page]"));
+      const mask = document.querySelector("[data-turn-mask]");
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const duration = reduced ? 0 : 340;
+      const mobile = window.matchMedia("(max-width: 639.98px)").matches;
+      let turning = false;
+
+      const settle = (name: string) => {
+        root?.setAttribute("data-active-page", name);
+        buttons.forEach((button) => {
+          const selected = button.getAttribute("data-show-page") === name;
+          if (selected) button.setAttribute("aria-current", "page");
+          else button.removeAttribute("aria-current");
+        });
+        if (status) status.textContent = name === "detail" ? "当前：相册详情" : "当前：相册列表";
+      };
+
+      const swap = (name: string, entrance: "forward" | "back" | null) => {
+        pages.forEach((page) => {
+          const active = page.getAttribute("data-page") === name;
+          page.classList.remove("is-entering-forward", "is-entering-back");
+          page.classList.toggle("is-active", active);
+          if (active && entrance) {
+            page.getBoundingClientRect();
+            page.classList.add(entrance === "forward" ? "is-entering-forward" : "is-entering-back");
+            window.setTimeout(() => page.classList.remove("is-entering-forward", "is-entering-back"), 900);
+          }
+          const card = page.querySelector(".paper-card");
+          if (active && card) card.scrollTop = 0;
+        });
+        settle(name);
+      };
 
       const showPage = (name: string | null) => {
-        if (!name) return;
-        const nextName = name;
-        const currentName = root?.getAttribute("data-active-page");
-        const current = pages.find((page) => page.getAttribute("data-page") === currentName);
-        const incoming = pages.find((page) => page.getAttribute("data-page") === nextName);
-        if (!root || !incoming || !current || currentName === nextName) return;
+        if (!name || turning || !root) return;
+        const currentName = root.getAttribute("data-active-page");
+        if (currentName === name) return;
+        const forward = name === "detail";
 
-        incoming.classList.remove("is-exiting");
-        incoming.classList.add("is-armed");
-        incoming.getBoundingClientRect();
-        current.classList.remove("is-active");
-        current.classList.add("is-exiting");
-        incoming.classList.add("is-active");
+        if (reduced) {
+          swap(name, null);
+          return;
+        }
 
-        window.setTimeout(() => {
-          root.setAttribute("data-active-page", nextName);
-          current.classList.remove("is-exiting");
-          incoming.classList.remove("is-armed");
-          buttons.forEach((button) => {
-            const selected = button.getAttribute("data-show-page") === nextName;
-            if (selected) button.setAttribute("aria-current", "page");
-            else button.removeAttribute("aria-current");
+        turning = true;
+
+        if (mobile && mask) {
+          mask.setAttribute("data-direction", forward ? "next" : "previous");
+          mask.setAttribute("data-phase", "preparing");
+          requestAnimationFrame(() => {
+            mask.setAttribute("data-phase", "covering");
+            window.setTimeout(() => {
+              swap(name, forward ? "forward" : null);
+              requestAnimationFrame(() => {
+                mask.setAttribute("data-phase", "idle");
+                window.setTimeout(() => {
+                  turning = false;
+                }, 350);
+              });
+            }, 360);
           });
-          if (status) status.textContent = nextName === "detail" ? "当前：相册详情" : "当前：相册列表";
-        }, duration);
+          return;
+        }
+
+        swap(name, forward ? "forward" : "back");
+        window.setTimeout(() => {
+          turning = false;
+        }, 620);
       };
 
       buttons.forEach((button) => {
         button.addEventListener("click", () => showPage(button.getAttribute("data-show-page")));
+      });
+
+      document.querySelectorAll("[data-goto-section]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const key = button.getAttribute("data-goto-section");
+          const section = key ? document.querySelector(`[data-section="${key}"]`) : null;
+          if (!section) return;
+          section.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+          if (reduced) return;
+          section.classList.remove("is-replaying");
+          section.getBoundingClientRect();
+          section.classList.add("is-replaying");
+          window.setTimeout(() => section.classList.remove("is-replaying"), 900);
+        });
       });
     </script>
   </body>

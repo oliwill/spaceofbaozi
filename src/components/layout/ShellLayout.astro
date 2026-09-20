@@ -1,6 +1,7 @@
 ---
 import "@/styles/global.css";
 import "@/components/layout/shell.css";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title?: string;
@@ -36,6 +37,7 @@ const NAV = [
     <meta property="og:type" content="website" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{title}</title>
+    <ClientRouter fallback="none" />
   </head>
   <body class="shell-body">
     <a class="skip-link" href="#main">跳到正文</a>
@@ -47,12 +49,16 @@ const NAV = [
         ))}
       </nav>
     </header>
-    <main id="main">
+    <main id="main" transition:name="page-card">
       <slot />
     </main>
+    <div class="turn-mask" data-turn-mask data-direction="next" data-phase="idle" aria-hidden="true" transition:persist />
     <script>
       import { initLenis } from "@/lib/scroll/lenis";
       import { initNavHide } from "@/lib/scroll/navHide";
+      import { initPageTurn } from "@/lib/transitions/pageTurn";
+
+      initPageTurn();
 
       const lenis = initLenis();
       const nav = document.querySelector<HTMLElement>(".shell-nav");

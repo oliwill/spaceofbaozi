@@ -1324,6 +1324,44 @@
 - **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`docs/plans/2026-09-15-editorial-pages-design.md`、`src/lib/photos/albums.ts`、`src/components/photos/{PhotoStack.astro,AlbumList.astro,photos.css}`、`src/pages/photos/{index.astro,[...slug].astro}`、`src/pages/lab/page-turn.astro`、`tests/unit/photos/albums.test.ts`、`tests/e2e/{photos-editorial.spec.ts,page-turn.spec.ts}`。
 - **验证：** `bun run check` 0 errors（2 个既有 hints）；unit 54/54；build 18 pages；Playwright 单 worker 35/35。空态已做 1440×900 / 390×844 浏览器验证；翻页 demo 已做桌面、移动和 reduced-motion 验证。
 
+### D-140 · 翻页方向改为左下到右上对角扫入
+
+- **状态：** Accepted（2026-09-17，依据包子评审：正常人翻页是右手从左下角往右上角翻页，不是水平翻页）
+- **决定：** `/lab/page-turn` 的 Sue Park 参考从水平覆盖改为对角翻页：新页面从 `translate(-22%, 22%) rotate(-5deg)` 进入，旧页面向 `translate(9%, -9%) rotate(1.5deg)` 退后，360ms ease-out；左侧导航保持稳定；reduced-motion 直接切换。该手法仍只停留在 lab 评审，不进入生产路由。
+- **边界：** 本条只修正 D-139 的翻页角度，不改变 Photos Editorial 结构、D-138 参考边界或 D-127 内容门禁；不引入 3D 翻书、Canvas 或 WebGL。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`docs/plans/2026-09-15-editorial-pages-design.md`、`src/pages/lab/page-turn.astro`、`tests/e2e/page-turn.spec.ts`。
+- **验证：** `bun run check` 0 errors（2 个既有 hints）；`page-turn.spec.ts` 2/2；新增 30ms 中段截图确认对角扫入角度。
+
+### D-141 · 复刻 Sue Park 真实换页机制（CDP 逆向结论）
+
+- **状态：** Accepted（2026-09-18，依据包子评审要求「直接照搬 suepark.xyz 做法」；本条取代 D-140 的对角翻页实验）
+- **CDP 逆向结论（2026-09-18 实测 suepark.xyz，Next.js + framer-motion + Tailwind）：**
+  - **桌面端（≥640px）纸面摆离：** 点击链接后 SPA 路由立即切换，新页面被一层纸色 overlay（`position:fixed`、`background:var(--paper-bg)` 浅色下无阴影、`transform-origin:var(--paper-swing-origin)` = 50% 50vh）盖住；overlay 随即从 REST `{x:0,y:0,rotate:0,blur:0,opacity:1}` 摆向 OFFSCREEN `{x:40,y:-32,rotate:2deg,blur:10px,opacity:0}`，时长 0.7s，ease `[0.16,1,0.3,1]`（easeOutExpo），opacity 单独 0.5s 并延迟 0.2s；动画完成后移除。同时新页内容播 `contentRise` 入场（0.5s `cubic-bezier(.23,1,.32,1)`：opacity 0 + blur(1.5px) + translateY(20px) → 归位）。
+  - **移动端（<640px）羽化遮罩横扫：** 拦截点击派发 CustomEvent，遮罩（fixed、宽 `calc(100% + 48px)`、引导边 48px 渐变羽化）先 `data-phase=preparing` 瞬移到屏外（next=右侧 / previous=左侧），下一帧进入 `covering`，0.36s `cubic-bezier(.23,1,.32,1)` 横扫覆盖全屏；第 360ms 整路由切换；60ms + rAF 后遮罩直接隐藏（`idle`，无滑出动画），350ms 后解锁。
+  - **back / reload / reduced-motion 不播放入场：** `html[data-paper-nav=back]`、`html[data-page-reload]` 下 entrance `animation:none`；reduced-motion 下全部时长归 0，直接 `router.push`。
+- **本站套用（仍只在 `/lab/page-turn` 评审，不进生产路由）：** 桌面端 = 纸面 overlay 摆离（40px / -32px / 2° / blur 10px / 0.7s easeOutExpo，opacity 0.5s 延迟 0.2s）+ 前进方向 contentRise 入场；移动端 = 48px 羽化遮罩 preparing → covering（360ms）→ 覆盖后瞬时换页 → idle；返回不播入场直接切换；reduced-motion 直接切换。
+- **边界：** 复刻的是机制与数值，不是素材与文案；不引入 framer-motion/Next.js，lab 内用原生 CSS transition/keyframes + 约 60 行 vanilla JS 状态机实现同等效果；不改变 D-127 内容门禁与 D-139 的 Photos 结构。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条，取代 D-140）、`docs/plans/2026-09-15-editorial-pages-design.md`、`src/pages/lab/page-turn.astro`、`tests/e2e/page-turn.spec.ts`。
+- **验证：** `bun run check` 0 errors（2 个既有 hints）；`page-turn.spec.ts` 3/3（桌面摆离、移动遮罩「覆盖前不换页」时序断言、reduced-motion 即时切换）。
+
+### D-142 · 方向性卡片切换（前进自上而下 / 返回自下而上 + 章节行级 stagger）
+
+- **状态：** Accepted（2026-09-18，依据包子录屏评审反馈：「不同层级主题切换时要有卡片切换效果」；本条取代 D-141 的纸面摆离实现，D-141 的 CDP 逆向数据保留为参考）
+- **完整逆向补充（2026-09-18 二轮 CDP + 录屏逐帧）：** suepark.xyz 文章页到达 = 纸面卡片在点阵背景上内嵌（有边距和柔和阴影，卡片边缘可见，运动才可感知）+ `paper-entrance` 0.45s `cubic-bezier(.23,1,.32,1)`（`translate(40px,-32px) rotate(2°) blur(10px)` → 归位，opacity 55% 先到 1，blur 75% 前散尽）+ `paper-underlay-retire` 0.5s ease-out 延迟 0.45s + 内容行 `contentBlurReveal`（opacity 0.35s 延迟 0.26s + blur 6px→0 0.3s 延迟 0.4s，backwards）+ 栏目导航 `rail-blur-in` 0.35s。
+- **本站套用（仍只在 `/lab/page-turn` 评审）：** 卡片改为内嵌纸面（点阵背景可见卡片边缘）；前进 = 卡片自上方偏右落定（完整复刻 `paper-entrance` 参数）+ 内容行逐行 stagger（0.26s 起每行 +0.07s）；**返回 = 卡片自下而上升起（`translateY(40px) rotate(-1.5°) blur(8px)` → 归位，0.45s 同曲线）——这是包子明确要求的偏差，Sue 原站 back 实际不播入场**；详情页内置三个章节，点章节平滑滚动并对该节行重播 stagger 进入（每行 +0.06s）；移动端保留 D-141 的羽化遮罩横扫；reduced-motion 全部直切。
+- **工程教训：** 常驻 dev server 的 Vite 模块缓存会导致 `.astro` 内联脚本发旧包（HTML 新、脚本旧），lab 视觉改动后必须重启预览服务并让评审者硬刷新；因此类问题已造成一轮误报。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`docs/plans/2026-09-15-editorial-pages-design.md`、`src/pages/lab/page-turn.astro`、`tests/e2e/page-turn.spec.ts`。
+- **验证：** `bun run check` 0 errors（2 个既有 hints）；`page-turn.spec.ts` 5/5（前进 card-in-forward、返回 card-in-back、章节 TOC stagger 重播、移动遮罩时序、reduced-motion 直切）；预览服务重启后实测前进 / 返回双向动画在线。
+
+### D-143 · 卡片切换接入生产路由（ShellLayout 文档页）
+
+- **状态：** Accepted（2026-09-18，包子评审通过 `/lab/page-turn` v3 后接入生产）
+- **决定：** ShellLayout（Blog / Photos / Resume / Projects 列表与详情）启用 `ClientRouter`，`<main>` 作为 `transition:name="page-card"` 的纸面卡片。前进 = `card-in-forward`（40px/-32px/2°/blur10px → 归位，0.45s `cubic-bezier(.23,1,.32,1)`，D-141 逆向的 `paper-entrance` 参数）；返回 = `card-in-back`（translateY(40px)/-1.5°/blur8px 升起，包子明确要求的偏差）；前进时内容行按 suepark `contentBlurReveal` 错峰 reveal（opacity 0.35s@0.26s + blur 6px→0 0.3s@0.4s）；旧卡片瞬时不播退出。移动端（<640px）= 48px 羽化遮罩横扫 360ms 盖住后换页；reduced-motion 一律直切。方向判定：`e.direction === "back"` 或同栏目内路径层级变浅（详情 → 列表）记为 back。
+- **Astro 机制教训（写入实现注释）：** ① 取消 `astro:before-preparation` 会退化成 `location.href` 整页刷新，延迟交换必须在 `astro:before-swap` 里 `preventDefault()` 后手动调 `event.swap()`；② `swapRootAttributes` 会在交换时剥掉 `<html>` 上所有自定义 `data-*`，方向标记只能在 `astro:after-swap` 里落，晚于此 VT 快照已带旧属性，早于此会被剥掉；③ `astro:page-load` 计时器清理需带导航序号守卫，否则初次加载的定时器会误清后续导航的属性。
+- **边界：** 只作用于 ShellLayout 文档页之间的导航；首页场景壳（SceneRoot）与栏目间跳入不加卡片动画；不改变 D-127 内容门禁；不引入 framer-motion，全部原生 CSS + VT API。
+- **受影响文档 / 代码：** `src/components/layout/ShellLayout.astro`（ClientRouter + page-card + 遮罩元素）、`src/components/layout/shell.css`（VT 规则、卡片 keyframes、行 reveal、遮罩）、`src/lib/transitions/pageTurn.ts`（新增）、`tests/e2e/page-turn-production.spec.ts`（新增）、`docs/plans/2026-09-15-editorial-pages-design.md`。
+- **验证：** `bun run check` 0 errors；`bun run build` 18 pages；Playwright 全量 43/43；浏览器实测 `/blog → /blog/ryoutei-menu-05` 前进（卡片空白落定帧 + 行 reveal）与返回（列表升起）均在线。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。

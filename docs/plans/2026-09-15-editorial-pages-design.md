@@ -1,6 +1,6 @@
 # Editorial Pages 改造设计
 
-状态：方案 A 已选定；Blog / Photos 已实现；D-139 新增 Photos 空态与 `/lab/page-turn` 翻页 demo；Resume / Projects 待实现
+状态：方案 A 已选定；Blog / Photos 已实现；D-142 卡片切换已在 `/lab/page-turn` 评审通过并由 D-143 接入生产（ShellLayout 文档页：ClientRouter + page-card VT，前进自上而下 / 返回自下而上 / 移动端羽化遮罩 / reduced-motion 直切）；Resume / Projects 待实现
 依据：D-123 / D-124 / D-127 / D-132 / D-133，`docs/design/baozi-space-design-spec.md` v2.1，`baozi-space-prd.md`
 
 ## 1. 目标
@@ -20,7 +20,7 @@
 ## 1.1 新参考（D-138）
 
 - `https://www.anthropic.com/institute/econ-scenarios`：整体视觉与滚动叙事参考。可吸收纸面底色、编辑排版、手绘标记 / 高亮和滚动驱动解释型动效；不复制深色 hero、数据探索器、组件或素材。
-- `https://suepark.xyz/`：页面切换参考。可吸收左侧稳定导航 + 右侧整页纸面覆盖进入的翻页感；先做 `/lab` demo，评审前不进入生产路由。
+- `https://suepark.xyz/`：页面切换参考。D-141/D-142 已用 CDP + 逐帧录屏逆向其真实实现：卡片内嵌于点阵背景（边缘可见）+ `paper-entrance` 0.45s easeOutQuint（40px/-32px/2°/blur10px 落定）+ 内容行 opacity/blur 错峰 reveal + 移动端 48px 羽化遮罩 360ms 横扫；reduced-motion / reload / back 原站不播入场，本站按包子要求给返回加了自下而上入场。已复刻进 `/lab/page-turn`，评审前不进入生产路由。
 
 ## 2. 共享 Editorial Shell
 

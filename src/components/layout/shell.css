@@ -92,3 +92,160 @@
     transform: translateY(-100%);
   }
 }
+
+/* D-143 方向性卡片切换：复刻 suepark.xyz paper-entrance（D-141/D-142 逆向参数） */
+
+@keyframes card-in-forward {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translate(40px, -32px) rotate(2deg);
+  }
+
+  55% {
+    opacity: 1;
+  }
+
+  75% {
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes card-in-back {
+  0% {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(40px) rotate(-1.5deg);
+  }
+
+  55% {
+    opacity: 1;
+  }
+
+  75% {
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(page-card) {
+  animation: none;
+}
+
+::view-transition-old(page-card) {
+  animation: none;
+  opacity: 0;
+}
+
+::view-transition-new(page-card) {
+  animation: none;
+}
+
+html[data-nav-direction="forward"] ::view-transition-new(page-card) {
+  animation: 0.45s cubic-bezier(0.23, 1, 0.32, 1) both card-in-forward;
+}
+
+html[data-nav-direction="back"] ::view-transition-new(page-card) {
+  animation: 0.45s cubic-bezier(0.23, 1, 0.32, 1) both card-in-back;
+}
+
+/* 内容行 reveal：opacity 先行、blur 后散（suepark contentBlurReveal） */
+@keyframes content-opacity-reveal {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes content-blur-reveal {
+  0% {
+    filter: blur(6px);
+  }
+
+  100% {
+    filter: blur(0);
+  }
+}
+
+html[data-nav-direction="forward"] .editorial-page > * {
+  animation:
+    0.35s cubic-bezier(0.23, 1, 0.32, 1) 0.26s backwards content-opacity-reveal,
+    0.3s cubic-bezier(0.23, 1, 0.32, 1) 0.4s backwards content-blur-reveal;
+}
+
+/* 移动端羽化遮罩横扫（suepark blog-post-transition-mask） */
+.turn-mask {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  z-index: 55;
+  display: none;
+  width: calc(100% + 48px);
+  visibility: hidden;
+  pointer-events: none;
+  background: #fffdf7;
+  contain: paint;
+  transition: none;
+}
+
+.turn-mask[data-direction="next"] {
+  left: -48px;
+  background: linear-gradient(to right, transparent 0, #fffdf7 48px);
+  transform: translate(100%);
+}
+
+.turn-mask[data-direction="previous"] {
+  right: -48px;
+  background: linear-gradient(to left, transparent 0, #fffdf7 48px);
+  transform: translate(-100%);
+}
+
+.turn-mask[data-phase="preparing"],
+.turn-mask[data-phase="covering"] {
+  visibility: visible;
+  will-change: transform;
+}
+
+.turn-mask[data-phase="covering"] {
+  transform: translate(0, 0);
+  transition: transform 0.36s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (max-width: 639.98px) {
+  .turn-mask {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(page-card) {
+    animation: none;
+  }
+
+  html[data-nav-direction="forward"] .editorial-page > * {
+    animation: none;
+  }
+
+  .turn-mask[data-phase="covering"] {
+    transition: none;
+  }
+}
