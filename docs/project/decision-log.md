@@ -1370,6 +1370,14 @@
 - **受影响文档 / 代码：** `src/components/layout/shell.css`（删 `card-in-back`，新增 `paper-exit-move/fade` 与 `.turn-exit`）、`src/components/layout/ShellLayout.astro`（新增 overlay）、`src/pages/lab/page-turn.astro`（lab 同步）、`tests/e2e/page-turn.spec.ts`、`tests/e2e/page-turn-production.spec.ts`。
 - **验证：** `bun run check` 0 errors；`bun run build` 18 pages；Playwright 两个 spec 10/10；浏览器采样确认返回 overlay 时序：覆盖（opacity 1 保持 0.2s）→ 摆离 + 0.5s 淡出至 0。
 
+### D-145 · 文档页纸面改为内嵌卡片（换页动效可读性的结构前提）
+
+- **状态：** Accepted（2026-09-18，依据包子复验「依旧没有动效」；根因 = 纸面贴满视口，纸在纸上动，肉眼不可见）
+- **决定：** ShellLayout 的 `<main>` 从四面贴边改为内嵌卡片：上 / 右 / 下留 `clamp(20-56px)` 边距、左侧贴导航栏，四边 1px 描边 + 柔和投影，点阵背景在卡片边缘可见——与 v2.1「点阵环境 + 暖白大内容纸」结构及 lab 评审形态一致。≤767px 移动端保持贴边无阴影（走遮罩路径）。D-143 的前进飞入与 D-144 的返回掀开都在这张可见卡片上发生。
+- **教训：** 换页类动效的可读性前提是「被移动的面」与背景有可感知边界；贴边同色面怎么动都看不见。验证此类动效必须看真实录屏帧，不能只信 computed 数值。
+- **受影响文档 / 代码：** `src/components/layout/shell.css`（main 内嵌规则 + 移动端回退）。
+- **验证：** `bun run check` 0 errors；Playwright 全量 43/43；screencast 逐帧确认：前进 = 空白内嵌卡片落定 + 内容错峰清晰（0.15s 空白 → 0.55s 显影 → 0.8s 落定），返回 = 纸面覆盖后掀开淡出（0.45s 薄纱 → 0.7s 收束）。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。

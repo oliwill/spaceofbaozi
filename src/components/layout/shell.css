@@ -55,14 +55,23 @@
 }
 
 
+/* D-144 补：纸面内嵌于点阵环境，卡片边缘可见，换页动效才读得出（同 lab 评审形态） */
 .shell-body > main {
-  min-height: 100vh;
-  min-height: 100svh;
+  min-height: calc(100svh - clamp(20px, 4vh, 48px) - clamp(24px, 5vh, 56px));
+  margin: clamp(20px, 4vh, 48px) clamp(20px, 4vw, 48px) clamp(24px, 5vh, 56px) 0;
   background: #fffdf7;
-  border-left: 1px solid rgba(43, 38, 32, 0.08);
+  border: 1px solid rgba(43, 38, 32, 0.1);
+  box-shadow: 0 1px 2px rgba(43, 38, 32, 0.05), 0 24px 48px -24px rgba(43, 38, 32, 0.16);
 }
 
 @media (max-width: 767px) {
+  .shell-body > main {
+    min-height: calc(100svh - 52px);
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
   .shell-body {
     display: block;
     background-size: 18px 18px;
