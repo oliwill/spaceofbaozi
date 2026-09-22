@@ -1362,6 +1362,14 @@
 - **受影响文档 / 代码：** `src/components/layout/ShellLayout.astro`（ClientRouter + page-card + 遮罩元素）、`src/components/layout/shell.css`（VT 规则、卡片 keyframes、行 reveal、遮罩）、`src/lib/transitions/pageTurn.ts`（新增）、`tests/e2e/page-turn-production.spec.ts`（新增）、`docs/plans/2026-09-15-editorial-pages-design.md`。
 - **验证：** `bun run check` 0 errors；`bun run build` 18 pages；Playwright 全量 43/43；浏览器实测 `/blog → /blog/ryoutei-menu-05` 前进（卡片空白落定帧 + 行 reveal）与返回（列表升起）均在线。
 
+### D-144 · 返回动效对齐 Sue Park：纸面掀开，不做卡片入场
+
+- **状态：** Accepted（2026-09-18，依据包子生产复验：「进入和返回动效没有保持一致，都要与 Sue Park 保持一致」；本条修正 D-142/D-143 中「返回自下而上」的偏差实现）
+- **决定：** 返回方向（详情 → 列表 / 浏览器后退）不再播放任何卡片或内容入场动画。改为复刻 suepark.xyz 的 `PAPER_EXIT`：交换完成后目的地页面已就位，一层纸面 overlay（`.turn-exit`，覆盖内容栏区域）从 REST 摆向 OFFSCREEN（`translate(40px,-32px) rotate(2°)` + blur 10px），transform/filter 走 0.7s `cubic-bezier(.16,1,.3,1)`，opacity 走 0.5s 同曲线并延迟 0.2s——即「纸从目的地上方向右上方掀开飞走」。前进方向保持 D-143 的 `paper-entrance` 不变。进入是纸飞进来，返回是纸掀走，同一套纸面语言。
+- **边界：** 移动端返回仍走羽化遮罩（previous 方向），与 Sue 一致；reduced-motion 直切；`.turn-exit` 为 `transition:persist` 固定元素，640–767px 区间全宽覆盖，<640px 隐藏。
+- **受影响文档 / 代码：** `src/components/layout/shell.css`（删 `card-in-back`，新增 `paper-exit-move/fade` 与 `.turn-exit`）、`src/components/layout/ShellLayout.astro`（新增 overlay）、`src/pages/lab/page-turn.astro`（lab 同步）、`tests/e2e/page-turn.spec.ts`、`tests/e2e/page-turn-production.spec.ts`。
+- **验证：** `bun run check` 0 errors；`bun run build` 18 pages；Playwright 两个 spec 10/10；浏览器采样确认返回 overlay 时序：覆盖（opacity 1 保持 0.2s）→ 摆离 + 0.5s 淡出至 0。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。

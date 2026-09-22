@@ -17,16 +17,17 @@ test("page-turn demo flies the card in from above on desktop forward nav", async
   await page.screenshot({ path: testInfo.outputPath("page-turn-detail-desktop.png") });
 });
 
-test("page-turn demo lifts the card from below on desktop back nav", async ({ page }) => {
+test("page-turn demo sweeps the paper sheet away on desktop back nav", async ({ page }) => {
   await page.goto("/lab/page-turn");
   await page.locator(".turn-page__action[data-show-page='detail']").click();
   await expect(page.locator("[data-page-turn]")).toHaveAttribute("data-active-page", "detail");
   await page.waitForTimeout(700);
   await page.locator(".turn-page__action[data-show-page='list']").click();
   await expect(page.locator("[data-page-turn]")).toHaveAttribute("data-active-page", "list");
-  await expect(page.locator("[data-page='list']")).toHaveClass(/is-entering-back/);
-  const animation = await page.locator("[data-page='list'] .paper-card").evaluate((el) => getComputedStyle(el).animationName);
-  expect(animation).toContain("card-in-back");
+  await expect(page.locator("[data-turn-exit]")).toHaveClass(/is-exiting/);
+  const animation = await page.locator("[data-turn-exit]").evaluate((el) => getComputedStyle(el).animationName);
+  expect(animation).toContain("paper-exit-move");
+  await expect(page.locator("[data-page='list']")).not.toHaveClass(/is-entering-forward/);
 });
 
 test("page-turn demo replays section rows with stagger on TOC click", async ({ page }) => {

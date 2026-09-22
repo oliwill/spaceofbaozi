@@ -53,6 +53,7 @@ const NAV = [
       <slot />
     </main>
     <div class="turn-mask" data-turn-mask data-direction="next" data-phase="idle" aria-hidden="true" transition:persist />
+    <div class="turn-exit" data-turn-exit aria-hidden="true" transition:persist />
     <script>
       import { initLenis } from "@/lib/scroll/lenis";
       import { initNavHide } from "@/lib/scroll/navHide";

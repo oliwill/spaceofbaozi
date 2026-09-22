@@ -117,25 +117,28 @@
   }
 }
 
-@keyframes card-in-back {
+/* 返回：纸面从目的地上方掀开飞走（suepark PAPER_EXIT：REST → OFFSCREEN） */
+@keyframes paper-exit-move {
   0% {
-    opacity: 0;
-    filter: blur(8px);
-    transform: translateY(40px) rotate(-1.5deg);
-  }
-
-  55% {
-    opacity: 1;
-  }
-
-  75% {
     filter: blur(0);
+    transform: translate(0, 0) rotate(0deg);
   }
 
   100% {
+    filter: blur(10px);
+    transform: translate(40px, -32px) rotate(2deg);
+  }
+}
+
+@keyframes paper-exit-fade {
+  0% {
     opacity: 1;
-    filter: blur(0);
-    transform: translateY(0) rotate(0deg);
+    visibility: visible;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
   }
 }
 
@@ -161,8 +164,36 @@ html[data-nav-direction="forward"] ::view-transition-new(page-card) {
   animation: 0.45s cubic-bezier(0.23, 1, 0.32, 1) both card-in-forward;
 }
 
-html[data-nav-direction="back"] ::view-transition-new(page-card) {
-  animation: 0.45s cubic-bezier(0.23, 1, 0.32, 1) both card-in-back;
+.turn-exit {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 280px;
+  z-index: 54;
+  visibility: hidden;
+  pointer-events: none;
+  background: #fffdf7;
+  transform-origin: 50% 45%;
+}
+
+html[data-nav-direction="back"] .turn-exit {
+  visibility: visible;
+  animation:
+    0.7s cubic-bezier(0.16, 1, 0.3, 1) both paper-exit-move,
+    0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both paper-exit-fade;
+}
+
+@media (max-width: 767px) {
+  .turn-exit {
+    left: 0;
+  }
+}
+
+@media (max-width: 639.98px) {
+  .turn-exit {
+    display: none;
+  }
 }
 
 /* 内容行 reveal：opacity 先行、blur 后散（suepark contentBlurReveal） */

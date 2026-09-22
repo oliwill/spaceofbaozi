@@ -157,26 +157,28 @@
         }
       }
 
-      /* 返回：卡片自下而上升起 */
-      @keyframes card-in-back {
+      /* 返回：纸面从目的地上方掀开飞走（suepark PAPER_EXIT：REST → OFFSCREEN） */
+      @keyframes paper-exit-move {
         0% {
-          opacity: 0;
-          filter: blur(8px);
-          transform: translateY(40px) rotate(-1.5deg);
-        }
-
-        55% {
-          opacity: 1;
-        }
-
-        75% {
           filter: blur(0);
+          transform: translate(0, 0) rotate(0deg);
         }
 
         100% {
+          filter: blur(10px);
+          transform: translate(40px, -32px) rotate(2deg);
+        }
+      }
+
+      @keyframes paper-exit-fade {
+        0% {
           opacity: 1;
-          filter: blur(0);
-          transform: translateY(0) rotate(0deg);
+          visibility: visible;
+        }
+
+        100% {
+          opacity: 0;
+          visibility: hidden;
         }
       }
 
@@ -184,8 +186,21 @@
         animation: 0.45s var(--ease-swing) both card-in-forward;
       }
 
-      .turn-page.is-entering-back .paper-card {
-        animation: 0.45s var(--ease-swing) both card-in-back;
+      .turn-exit {
+        position: absolute;
+        inset: 0;
+        z-index: 6;
+        visibility: hidden;
+        pointer-events: none;
+        background: var(--paper);
+        transform-origin: 50% 45%;
+      }
+
+      .turn-exit.is-exiting {
+        visibility: visible;
+        animation:
+          0.7s cubic-bezier(0.16, 1, 0.3, 1) both paper-exit-move,
+          0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both paper-exit-fade;
       }
 
       /* 内容行：opacity 先行、模糊后散，逐行不同速度（复刻 contentBlurReveal + 逐行 stagger） */
@@ -203,15 +218,9 @@
         }
       }
 
-      .turn-page.is-entering-forward [data-row],
-      .turn-page.is-entering-back [data-row] {
+      .turn-page.is-entering-forward [data-row] {
         animation: 0.35s var(--ease-swing) backwards row-reveal;
         animation-delay: calc(0.26s + var(--row, 0) * 0.07s);
-      }
-
-      .turn-page.is-entering-back [data-row] {
-        animation-duration: 0.3s;
-        animation-delay: calc(0.14s + var(--row, 0) * 0.05s);
       }
 
       /* 章节跳转后重播该节行进入 */
@@ -435,11 +444,14 @@
 
       @media (prefers-reduced-motion: reduce) {
         .turn-page.is-entering-forward .paper-card,
-        .turn-page.is-entering-back .paper-card,
         .turn-page.is-entering-forward [data-row],
-        .turn-page.is-entering-back [data-row],
+        .turn-exit.is-exiting,
         [data-section].is-replaying [data-row] {
           animation: none;
+        }
+
+        .turn-exit.is-exiting {
+          visibility: hidden;
         }
 
         .turn-mask[data-phase="covering"] {
@@ -459,7 +471,7 @@
           <button type="button" data-show-page="list" aria-current="page">相册列表</button>
           <button type="button" data-show-page="detail">相册详情</button>
         </nav>
-        <p class="page-turn__hint">复刻 suepark.xyz：进入详情 = 卡片自上方落定 + 内容逐行模糊散去；返回列表 = 卡片自下方升起。详情页内点章节，对应行按不同速度进入。</p>
+        <p class="page-turn__hint">复刻 suepark.xyz：进入详情 = 卡片自上方落定 + 内容逐行模糊散去；返回列表 = 纸面从目的地上方向右上方掀开飞走，内容不播入场。详情页内点章节，对应行按不同速度进入。</p>
       </aside>
 
       <main class="page-turn__stage" id="main" tabindex="-1">
@@ -510,6 +522,7 @@
             <button class="turn-page__action" type="button" data-show-page="list" data-row style="--row: 13">← 返回相册列表</button>
           </div>
         </section>
+        <div class="turn-exit" data-turn-exit aria-hidden="true"></div>
       </main>
     </div>
 
@@ -536,15 +549,17 @@
         if (status) status.textContent = name === "detail" ? "当前：相册详情" : "当前：相册列表";
       };
 
-      const swap = (name: string, entrance: "forward" | "back" | null) => {
+      const exitOverlay = document.querySelector("[data-turn-exit]");
+
+      const swap = (name: string, entrance: "forward" | null) => {
         pages.forEach((page) => {
           const active = page.getAttribute("data-page") === name;
-          page.classList.remove("is-entering-forward", "is-entering-back");
+          page.classList.remove("is-entering-forward");
           page.classList.toggle("is-active", active);
           if (active && entrance) {
             page.getBoundingClientRect();
-            page.classList.add(entrance === "forward" ? "is-entering-forward" : "is-entering-back");
-            window.setTimeout(() => page.classList.remove("is-entering-forward", "is-entering-back"), 900);
+            page.classList.add("is-entering-forward");
+            window.setTimeout(() => page.classList.remove("is-entering-forward"), 900);
           }
           const card = page.querySelector(".paper-card");
           if (active && card) card.scrollTop = 0;
@@ -583,10 +598,20 @@
           return;
         }
 
-        swap(name, forward ? "forward" : "back");
+        swap(name, forward ? "forward" : null);
+        if (forward || !exitOverlay) {
+          window.setTimeout(() => {
+            turning = false;
+          }, 620);
+          return;
+        }
+        exitOverlay.classList.remove("is-exiting");
+        exitOverlay.getBoundingClientRect();
+        exitOverlay.classList.add("is-exiting");
         window.setTimeout(() => {
+          exitOverlay.classList.remove("is-exiting");
           turning = false;
-        }, 620);
+        }, 950);
       };
 
       buttons.forEach((button) => {

@@ -15,6 +15,8 @@ test("desktop return link sets back direction", async ({ page }) => {
   await page.locator("a.article-page__back").click();
   await expect(page).toHaveURL(/\/blog\/?$/);
   expect(await page.locator("html").getAttribute("data-nav-direction")).toBe("back");
+  const exitAnimation = await page.locator("[data-turn-exit]").evaluate((el) => getComputedStyle(el).animationName);
+  expect(exitAnimation).toContain("paper-exit-move");
 });
 
 test("mobile covers with the mask before swapping routes", async ({ browser }) => {

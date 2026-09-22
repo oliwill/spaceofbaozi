@@ -1,6 +1,6 @@
 # Editorial Pages 改造设计
 
-状态：方案 A 已选定；Blog / Photos 已实现；D-142 卡片切换已在 `/lab/page-turn` 评审通过并由 D-143 接入生产（ShellLayout 文档页：ClientRouter + page-card VT，前进自上而下 / 返回自下而上 / 移动端羽化遮罩 / reduced-motion 直切）；Resume / Projects 待实现
+状态：方案 A 已选定；Blog / Photos 已实现；D-143 卡片切换已接入生产（ShellLayout 文档页：ClientRouter + page-card VT）；D-144 对齐 Sue Park 返回动效（纸面掀开 PAPER_EXIT，不再做返回入场）；Resume / Projects 待实现
 依据：D-123 / D-124 / D-127 / D-132 / D-133，`docs/design/baozi-space-design-spec.md` v2.1，`baozi-space-prd.md`
 
 ## 1. 目标
