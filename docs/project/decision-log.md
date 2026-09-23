@@ -1378,6 +1378,15 @@
 - **受影响文档 / 代码：** `src/components/layout/shell.css`（main 内嵌规则 + 移动端回退）。
 - **验证：** `bun run check` 0 errors；Playwright 全量 43/43；screencast 逐帧确认：前进 = 空白内嵌卡片落定 + 内容错峰清晰（0.15s 空白 → 0.55s 显影 → 0.8s 落定），返回 = 纸面覆盖后掀开淡出（0.45s 薄纱 → 0.7s 收束）。
 
+### D-146 · 修复 VT 卡片动画从不触发 + 放大飞入幅度
+
+- **状态：** Accepted（2026-09-18，依据包子复验「进入没有相应动效，返回动效有问题」）
+- **根因（两个叠加 bug）：** ① VT 伪元素选择器写了后代连接符 `html[x] ::view-transition-new(...)`——VT 伪元素树挂在根元素上，伪元素只能紧跟其起源元素，空格导致选择器永不匹配，进入动画从未播放；② 方向门控用自己的 `data-nav-direction`（after-swap 才落），晚于 VT 快照渲染——改用 Astro 自身的 `data-astro-transition`（router 在 `startViewTransition` 前就写到 `<html>`，`finished` 时移除），并在 `before-preparation` 里覆写可写的 `event.direction` 让「详情→列表」链接点击也标记为 back。
+- **幅度调整：** Sue 原数值（40px/-32px/2°）在本站稀疏排版下读不出卡片切换感，放大为 56px/-48px/2.5°/blur(12px)，进入 0.5s、返回掀开 0.6s + opacity 0.45s 延迟 0.15s；`.turn-exit` 改为与卡片同矩形、同描边、同投影（返回时就是「这张卡」被掀开）。结构、时序、ease 仍忠实 Sue（`cubic-bezier(.23,1,.32,1)` / `(.16,1,.3,1)`），只缩放位移量。
+- **评审环境根因：** 用户「没有动效」部分来自长寿 dev server 重启后模块图失真；已把评审切到 `astro preview`（构建产物，无 HMR 缓存），e2e 两例失败亦证实为同一原因。
+- **受影响文档 / 代码：** `src/components/layout/shell.css`、`src/lib/transitions/pageTurn.ts`、`src/pages/lab/page-turn.astro`（同步）。
+- **验证：** `getAnimations()` 实测 `card-in-forward` 在 `::view-transition-new(page-card)` 上运行；CDP 真帧截图确认进入飞入与返回掀开；Playwright 全量 43/43（两例疑似回归在全新 dev server 上 24/24 通过）。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。

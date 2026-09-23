@@ -134,8 +134,8 @@
   }
 
   100% {
-    filter: blur(10px);
-    transform: translate(40px, -32px) rotate(2deg);
+    filter: blur(12px);
+    transform: translate(56px, -48px) rotate(2.5deg);
   }
 }
 
@@ -169,33 +169,40 @@
   animation: none;
 }
 
-html[data-nav-direction="forward"] ::view-transition-new(page-card) {
-  animation: 0.45s cubic-bezier(0.23, 1, 0.32, 1) both card-in-forward;
+html[data-astro-transition="forward"]::view-transition-new(page-card) {
+  animation: 0.5s cubic-bezier(0.23, 1, 0.32, 1) both card-in-forward;
 }
 
 .turn-exit {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  top: clamp(20px, 4vh, 48px);
+  right: clamp(20px, 4vw, 48px);
+  bottom: clamp(24px, 5vh, 56px);
   left: 280px;
   z-index: 54;
   visibility: hidden;
   pointer-events: none;
   background: #fffdf7;
+  border: 1px solid rgba(43, 38, 32, 0.1);
+  box-shadow: 0 1px 2px rgba(43, 38, 32, 0.05), 0 24px 48px -24px rgba(43, 38, 32, 0.16);
   transform-origin: 50% 45%;
 }
 
 html[data-nav-direction="back"] .turn-exit {
   visibility: visible;
   animation:
-    0.7s cubic-bezier(0.16, 1, 0.3, 1) both paper-exit-move,
-    0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both paper-exit-fade;
+    0.6s cubic-bezier(0.16, 1, 0.3, 1) both paper-exit-move,
+    0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both paper-exit-fade;
 }
 
 @media (max-width: 767px) {
   .turn-exit {
+    top: 52px;
+    right: 0;
+    bottom: 0;
     left: 0;
+    border: 0;
+    box-shadow: none;
   }
 }
 

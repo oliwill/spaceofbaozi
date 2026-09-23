@@ -1,8 +1,11 @@
-// D-142/D-143：ShellLayout 文档页之间的方向性卡片切换。
-// 桌面端由 view-transition（main[transition:name="page-card"]）+ data-nav-direction 驱动；
+// D-142~D-145：ShellLayout 文档页之间的方向性卡片切换。
+// 桌面端由 view-transition（main[transition:name="page-card"]）驱动，VT 快照 CSS 门在
+// Astro 自己的 data-astro-transition 上（router 在 startViewTransition 前就把它写到 <html>，
+// 伪元素树渲染时必然已就位）；direction 字段可写，覆写后同栏目「详情→列表」也会得到 back。
+// 行入场与返回掀纸用我们自己的 data-nav-direction（after-swap 才落，避开 swapRootAttributes
+// 剥 <html> data-* 的问题），生命周期独立于 VT。
 // 移动端复刻 suepark.xyz 的羽化遮罩横扫：before-preparation 起扫，before-swap 推迟到
-// 遮罩盖满后再交换文档（Astro 里取消 before-preparation 会退化成整页刷新，不能用它做延迟；
-// swapRootAttributes 会剥掉 <html> 上的自定义 data-*，所以方向属性只能在 after-swap 里落）。
+// 遮罩盖满后再交换文档（取消 before-preparation 会退化成整页刷新，不能用它做延迟）。
 const EDITORIAL_SECTIONS = /^\/(blog|photos|projects|resume)(\/|$)/;
 
 interface PreparationEvent extends Event {
@@ -40,17 +43,20 @@ export const initPageTurn = () => {
 
   document.addEventListener("astro:before-preparation", (event) => {
     if (masking) return;
-    const { from, to, direction } = event as unknown as PreparationEvent;
+    const prep = event as unknown as PreparationEvent;
+    const { from, to, direction } = prep;
     if (!editorialPath(from) || !editorialPath(to) || reduced) {
       pendingDirection = null;
       return;
     }
     navSeq += 1;
+    const resolved = resolveDirection(from, to, direction);
+    if (resolved !== direction) prep.direction = resolved;
 
     if (mobile && mask) {
       masking = true;
       pendingDirection = "mask";
-      mask.dataset.direction = resolveDirection(from, to, direction) === "back" ? "previous" : "next";
+      mask.dataset.direction = resolved === "back" ? "previous" : "next";
       mask.dataset.phase = "preparing";
       requestAnimationFrame(() => {
         mask.dataset.phase = "covering";
@@ -65,7 +71,7 @@ export const initPageTurn = () => {
       return;
     }
 
-    pendingDirection = resolveDirection(from, to, direction);
+    pendingDirection = resolved;
   });
 
   document.addEventListener("astro:before-swap", (event) => {
