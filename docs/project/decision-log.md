@@ -1387,6 +1387,24 @@
 - **受影响文档 / 代码：** `src/components/layout/shell.css`、`src/lib/transitions/pageTurn.ts`、`src/pages/lab/page-turn.astro`（同步）。
 - **验证：** `getAnimations()` 实测 `card-in-forward` 在 `::view-transition-new(page-card)` 上运行；CDP 真帧截图确认进入飞入与返回掀开；Playwright 全量 43/43（两例疑似回归在全新 dev server 上 24/24 通过）。
 
+### D-147 · claude.dev 文章页左栏手法登记（进度条 / 目录高亮 / 章节跳转）
+
+- **状态：** Accepted（2026-09-30，依据包子要求把 claude.dev 文章页左栏拆解落入仓库文档）
+- **决定：** 只登记手法与适用边界，本轮不改变任何生产行为。拆解全文见 `docs/research/claude-dev-article-rail-teardown.md`。
+- **可采用（若采用，先出 `/lab` demo 评审）：**
+  - 块字符阅读进度条：28 格 `▓ / ░` 加百分比，纯文本，沿用左栏等宽字体，零新增依赖；分母只算正文容器，正文读完即 100%，不等整页。
+  - 0.4 屏线的目录高亮：滚动时取最后一个越过视口 40% 线的标题为当前项，不用 IntersectionObserver。
+  - 子章节分组用 `grid-template-rows: 0fr → 1fr` 展开，同步 `aria-expanded`。
+  - 左栏顶部当前文章标题在 h1 滚出视口后浮出，用 `max-height` 过渡避免目录跳位。
+- **必须改写才能移植（不可照抄）：**
+  - 章节跳转：claude.dev 用原生 `scrollIntoView({ behavior: "smooth" })`，因为它没有平滑滚动库；本站文档页由 Lenis 驱动（D-124），原生平滑滚动与 Lenis 逐帧写位互相覆盖，须改用 `lenis.scrollTo(target, { offset: … })` 或等价封装。
+  - 返回键：claude.dev 用 `pushState` 且不监听 `popstate`，返回键只换 URL 不回滚；本站需补 `popstate` 处理。
+  - 落点偏移：claude.dev 的 `scroll-margin-top: 2rem` 之所以安全，是因为导航容器只包导航自身、sticky 无行程空间（实测导航随页面滚走）；本站 `≤767px` 有导航收放，落点须按「导航高度 + 间隙」计算。
+- **拒绝：** 照搬其每帧重写 `innerHTML` 加逐标题 `getBoundingClientRect` 的未节流实现；本站实现需 rAF 合并，或仅在格数变化时改 DOM。
+- **边界：** 不引入新依赖，不引入 SVG / Canvas / 滚动库；不改变 D-127 内容门禁与 D-138 参考边界；采用前先按 D-138 流程出 `/lab` demo，通过包子 checkpoint 评审后方可进生产路由。
+- **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`docs/research/claude-dev-article-rail-teardown.md`（新建）。本轮无生产代码改动。
+- **验证：** 拆解结论以浏览器运行时测量复核（Chromium 1440×900）：左栏 `sticky / top 36px / min-height 828px`；点击目录第 6 项后目标标题 `rect.top = 36px`；26 个标题对 26 个目录项、6 个 `.subs`，中段 1 个展开且 `aria-expanded="true"`；正文可滚动 11215px 对整页 12877px，进度在正文结束处已达 100%。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。
