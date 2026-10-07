@@ -1,3 +1,4 @@
+import { servedUrl } from "@/lib/site/paths";
 import type { SceneProject } from "./types";
 import "@/components/scene/scene.css";
 
@@ -27,13 +28,13 @@ export default function SceneProjects({ projects }: Props) {
           {projects.map((project) => (
             <li key={project.slug} className="scene-projects__card">
               {project.link ? (
-                <a href={project.link} target="_blank" rel="noreferrer">
+                <a href={servedUrl(project.link)} target="_blank" rel="noreferrer">
                   <h2>{project.title}</h2>
                   <p>{project.intro}</p>
                   <span className="scene-projects__arrow" aria-hidden="true">↗</span>
                 </a>
               ) : (
-                <a href={`/projects/${project.slug}`}>
+                <a href={servedUrl(`/projects/${project.slug}`)}>
                   <h2>{project.title}</h2>
                   <p>{project.intro}</p>
                   <span className="scene-projects__arrow" aria-hidden="true">→</span>

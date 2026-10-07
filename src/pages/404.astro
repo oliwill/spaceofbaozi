@@ -1,0 +1,8 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import ShellLayout from "@/components/layout/ShellLayout.astro";
+import "@/components/editorial/editorial.css";
+---
+<ShellLayout title="内容暂不可用 · baozi.space" description="内容暂不可用，请返回影集或主页。" noindex>
+<article class="editorial-page"><h1>内容暂不可用</h1><p>这页内容尚未公开，或已移走。</p><p><a href={servedUrl('/photos')}>返回影集</a> · <a href={servedUrl('/#home')}>返回主页</a></p></article>
+</ShellLayout>

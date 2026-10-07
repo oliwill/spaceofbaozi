@@ -1,0 +1,30 @@
+---
+import type { ArchiveView } from '@/lib/media/schema';
+import { listHref,listPath,filters,changeArchiveState } from '@/lib/media/routes';
+import { readPublicSnapshot } from '@/lib/media/publicSnapshot.server';
+import MediaCalendar from '@/components/media/MediaCalendar.astro';
+import MediaList from '@/components/media/MediaList.astro';
+import '@/components/editorial/editorial.css';
+import '@/components/media/media.css';
+interface Props { view:ArchiveView }
+const {view}=Astro.props;const state=view.state;const snapshot=readPublicSnapshot();
+const labels={all:'全部',book:'书',movie:'影',music:'音'};const from=listHref(state);
+---
+<section class="editorial-page media-page" data-media-list data-media-key={listPath(state)}>
+ <header class="editorial-hero media-heading"><h1 id="media-list-title" tabindex="-1">书影音</h1></header>
+ {view.coverage.description.startsWith('合成测试记录')&&<p class="media-fixture">合成测试记录 · 仅用于私下验证，不是真实阅读史。</p>}
+ <nav class="media-years" aria-label="归档年份">
+ {view.availableYears.map(year=><a href={listHref({...state,year,day:null,page:1})} aria-current={state.year===year?'page':undefined}>{year}</a>)}
+ <a href={listHref({...state,year:'undated',day:null,page:1})} aria-current={state.year==='undated'?'page':undefined}>日期待补</a>
+ </nav>
+ <nav class="media-filters" aria-label="作品类型">{filters.map(type=><a href={listHref(changeArchiveState(state,{type},snapshot,new Date()))} aria-current={state.type===type?'page':undefined}>{labels[type]}</a>)}</nav>
+ <MediaCalendar view={view}/>
+ {state.day&&<p class="media-day-filter">{state.day}<a href={listHref({...state,day:null,page:1})}>查看全年</a></p>}
+ {!view.hasPublicEntries?<p class="media-empty">书影音正在整理。</p>:view.entries.length===0?<div class="media-empty"><p>这一年还没有公开记录</p>{view.newestYear&&view.newestYear!==state.year&&<a href={listHref({...state,year:view.newestYear,day:null,page:1})}>查看最近有记录的年份</a>}</div>:<>
+  <p class="media-result" role="status">已收录 {view.totalEntries} 条{view.totalPages>1?` · 第 ${state.page} / ${view.totalPages} 页`:''}</p>
+  <MediaList entries={view.entries} from={from}/>
+ </>}
+ {view.totalPages>1&&<nav class="media-pagination" aria-label="分页">{state.page>1&&<a href={listHref({...state,page:state.page-1})}>上一页</a>}<span>第 {state.page} / {view.totalPages} 页</span>{state.page < view.totalPages && <a href={listHref({...state,page:state.page+1})}>下一页</a>}</nav>}
+</section>
+
+<script>import {initMediaLifecycle} from '@/lib/media/lifecycle';initMediaLifecycle();</script>

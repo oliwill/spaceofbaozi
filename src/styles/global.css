@@ -7,18 +7,19 @@
 
 
 :root {
-  --paper: #fdfdfc;
-  --ink: #2b2620;
-  --ink-light: #565049;
-  --ink-lighter: #8b857b;
+  --ground: #f0efea;
+  --paper: #faf9f6;
+  --ink: #292825;
+  --ink-light: #686660;
+  --ink-lighter: #7d7970;
   --mist-blue: #6b8cae;
   --moss: #6b8f71;
   --brick: #b86a5a;
-  --vermilion: #c14a36;
+  --vermilion: #686660;
   /* 手账纸张令牌（数字纸张方向，取代拟真桌面） */
-  --paper-warm: #f7f4ed;
-  --indigo: #3f4a63;
-  --rule-line: rgba(43, 38, 32, 0.07);
+  --paper-warm: #faf9f6;
+  --indigo: #292825;
+  --rule-line: #dedcd5;
   --spine-shadow: linear-gradient(90deg, rgba(43, 38, 32, 0.12), rgba(43, 38, 32, 0.04) 20px, transparent 56px);
   --fold-edge: linear-gradient(180deg, rgba(43, 38, 32, 0.1), transparent 14px);
   --accent-yellow: #ffe9a8;
@@ -67,7 +68,7 @@ html {
 
 /* 选中色也是设计面 */
 ::selection {
-  background: rgba(193, 74, 54, 0.16);
+  background: #dedbd2;
   color: var(--ink);
 }
 

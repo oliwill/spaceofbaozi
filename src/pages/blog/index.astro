@@ -1,4 +1,5 @@
 ---
+import { servedUrl } from "@/lib/site/paths";
 import { getCollection } from "astro:content";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
 import EditorialHero from "@/components/editorial/EditorialHero.astro";
@@ -33,16 +34,16 @@ const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
             <div class="editorial-meta">
               <time datetime={featured.data.date.toISOString()}>{formatDate(featured.data.date)}</time>
               {featured.data.tags.slice(0, 3).map((tag) => (
-                <a class="editorial-tag" href={`/blog/tag/${encodeURIComponent(tag)}`}>#{tag}</a>
+                <a class="editorial-tag" href={servedUrl(`/blog/tag/${encodeURIComponent(tag)}`)}>#{tag}</a>
               ))}
             </div>
             <h2 id="featured-story-title">
-              <a href={`/blog/${featured.id}`}>{featured.data.title}</a>
+              <a href={servedUrl(`/blog/${featured.id}`)}>{featured.data.title}</a>
             </h2>
             {featured.data.description && (
               <p class="editorial-feature__summary">{featured.data.description}</p>
             )}
-            <a class="editorial-text-link" href={`/blog/${featured.id}`}>阅读全文 →</a>
+            <a class="editorial-text-link" href={servedUrl(`/blog/${featured.id}`)}>阅读全文 →</a>
           </article>
         </section>
 
@@ -56,11 +57,11 @@ const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
                     <div class="editorial-meta">
                       <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
                       {entry.data.tags.slice(0, 2).map((tag) => (
-                        <a class="editorial-tag" href={`/blog/tag/${encodeURIComponent(tag)}`}>#{tag}</a>
+                        <a class="editorial-tag" href={servedUrl(`/blog/tag/${encodeURIComponent(tag)}`)}>#{tag}</a>
                       ))}
                     </div>
                     <h3>
-                      <a href={`/blog/${entry.id}`}>{entry.data.title}</a>
+                      <a href={servedUrl(`/blog/${entry.id}`)}>{entry.data.title}</a>
                     </h3>
                     {entry.data.description && <p>{entry.data.description}</p>}
                   </article>
@@ -71,14 +72,14 @@ const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
         ) : (
           <p class="editorial-empty">
             <strong>更多文章正在整理。</strong>
-            通过内容批准后，会按时间顺序出现在这里。
+            之后会按时间顺序更新。
           </p>
         )}
       </>
     ) : (
       <div class="editorial-empty">
         <strong>文章正在整理。</strong>
-        第一篇正式文章通过内容批准后会出现在这里。
+        第一篇文章整理好后会出现在这里。
       </div>
     )}
   </div>

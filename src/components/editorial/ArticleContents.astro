@@ -1,0 +1,21 @@
+---
+import { majorReadingHeadings, type ReadingHeading } from "@/lib/reading/model";
+interface Props { headings: ReadingHeading[]; }
+const chapters = majorReadingHeadings(Astro.props.headings);
+---
+{chapters.length > 1 && (
+  <div class="article-reading__chapters">
+    <nav class="reading-contents" aria-label="文章目录" data-reading-chapters style={`--chapter-count: ${chapters.length}`}>
+      <ol data-lenis-prevent>
+        {chapters.map((heading) => (
+          <li>
+            <a href={`#${heading.slug}`} data-reading-link={heading.slug} data-astro-reload aria-label={heading.text}>
+              <span class="reading-contents__tick" aria-hidden="true"></span>
+              <span class="reading-contents__label" aria-hidden="true">{heading.text}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </div>
+)}

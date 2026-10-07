@@ -1,7 +1,8 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import BaseLayout from "./BaseLayout.astro";
-import BookSpread from "./BookSpread.astro";
+import { servedUrl } from "@/lib/site/paths";
+import { render, type CollectionEntry } from "astro:content";
+import ShellLayout from "@/components/layout/ShellLayout.astro";
+import "@/components/editorial/editorial.css";
 import { type SectionMeta, type EntrySchemaCollectionKey } from "@/lib/sections";
 
 interface Props {
@@ -10,15 +11,43 @@ interface Props {
 }
 
 const { section, entry } = Astro.props;
-
-// 左栏导航变体：相册目录 / 关于无导航 / 其余标签导航
-const navVariant =
-  section.key === "photos" ? "album-index" : section.key === "about" ? "none" : "tags";
-
+const { Content } = await render(entry);
 const pageTitle = `${entry.data.title} · ${section.title} · baozi.space`;
 const pageDesc = entry.data.description || section.desc;
+const date = entry.data.updated ?? entry.data.date;
 ---
 
-<BaseLayout title={pageTitle} description={pageDesc} bodyClass="section-body">
-  <BookSpread section={section} entry={entry} navVariant={navVariant} />
-</BaseLayout>
+<ShellLayout title={pageTitle} description={pageDesc}>
+  <article class="editorial-page article-page">
+    <a class="article-page__back" href={servedUrl(section.href)} data-turn="back">← 返回{section.zh}</a>
+    <header class="article-page__header">
+      <p class="editorial-hero__kicker">{section.title}</p>
+      <h1>{entry.data.title}</h1>
+      {entry.data.description && <p class="article-page__description">{entry.data.description}</p>}
+      <div class="editorial-meta article-page__meta">
+        <time datetime={date.toISOString()}>
+          {entry.data.updated && "更新于 "}{date.toLocaleDateString("zh-CN")}
+        </time>
+        {entry.data.tags.map((tag) => <span class="editorial-tag">#{tag}</span>)}
+        {entry.data.status && <span>{entry.data.status}</span>}
+      </div>
+    </header>
+    {entry.data.cover && (
+      <figure class="article-page__cover">
+        <img src={servedUrl(entry.data.cover)} alt={entry.data.coverAlt ?? entry.data.title} decoding="async" />
+        {entry.data.coverCredit && <figcaption>{entry.data.coverCredit}</figcaption>}
+      </figure>
+    )}
+    <div class="editorial-prose">
+      <Content />
+      {entry.data.link && (
+        <p>
+          <a href={servedUrl(entry.data.link)} target="_blank" rel="noopener noreferrer">在新标签阅读原文 ↗</a>
+        </p>
+      )}
+    </div>
+    <nav class="article-page__nav" aria-label="记录导航">
+      <a href={servedUrl(section.href)} data-turn="back">返回{section.zh}</a>
+    </nav>
+  </article>
+</ShellLayout>

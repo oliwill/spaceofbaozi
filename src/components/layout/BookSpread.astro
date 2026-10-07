@@ -1,4 +1,5 @@
 ---
+import { servedUrl } from "@/lib/site/paths";
 import type { CollectionEntry } from "astro:content";
 import type { SectionMeta, EntrySchemaCollectionKey } from "@/lib/sections";
 import { isPublishable } from "@/lib/content/gates";
@@ -46,8 +47,8 @@ const tagLinkBase = section.key === "blog" ? "/blog/tag" : null;
 <div class="spread-wrap">
   <div class="spread">
     <aside class="spread-left">
-      <a class="back-home" href="/" data-turn="back">← 回手账首页</a>
-      <a class="back-list" href={listHref} data-turn="back">全部{section.zh} →</a>
+      <a class="back-home" href={servedUrl('/')} data-turn="back">← 回手账首页</a>
+      <a class="back-list" href={servedUrl(listHref)} data-turn="back">全部{section.zh} →</a>
 
       {
         navVariant === "tags" && tags.length > 0 && (
@@ -56,7 +57,7 @@ const tagLinkBase = section.key === "blog" ? "/blog/tag" : null;
               tagLinkBase ? (
                 <a
                   class:list={["spread-tag", { active: t.active }]}
-                  href={`${tagLinkBase}/${encodeURIComponent(t.name)}`}
+                  href={servedUrl(`${tagLinkBase}/${encodeURIComponent(t.name)}`)}
                 >
                   #{t.name} <i>{t.count}</i>
                 </a>
@@ -79,7 +80,7 @@ const tagLinkBase = section.key === "blog" ? "/blog/tag" : null;
                   {a.title}
                 </span>
               ) : (
-                <a class="spread-album" href={`/${section.collection}/${a.id}`}>
+                <a class="spread-album" href={servedUrl(`/${section.collection}/${a.id}`)}>
                   {a.title}
                 </a>
               )
@@ -106,7 +107,7 @@ const tagLinkBase = section.key === "blog" ? "/blog/tag" : null;
         {
           entry.data.link && (
             <p class="link-out">
-              <a href={entry.data.link} target="_blank" rel="noopener noreferrer">
+              <a href={servedUrl(entry.data.link)} target="_blank" rel="noopener noreferrer">
                 在新标签阅读原文 ↗
               </a>
             </p>

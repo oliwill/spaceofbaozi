@@ -1,0 +1,10 @@
+---
+import ShellLayout from '@/components/layout/ShellLayout.astro';
+import MediaArchive from '@/components/media/MediaArchive.astro';
+import { readPublicSnapshot } from '@/lib/media/publicSnapshot.server';
+import { buildArchiveView } from '@/lib/media/model';
+import { shanghaiDay } from '@/lib/media/dates';
+const now=new Date();const snapshot=readPublicSnapshot();
+const view=buildArchiveView(snapshot,{year:Number(shanghaiDay(now).slice(0,4)),type:'all',day:null,page:1},now);
+---
+<ShellLayout title="书影音 · baozi.space" noindex={!view.hasPublicEntries}><MediaArchive view={view}/></ShellLayout>

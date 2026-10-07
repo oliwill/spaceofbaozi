@@ -1,4 +1,5 @@
 ---
+import { servedUrl } from "@/lib/site/paths";
 import "@/components/home-v2/home-v2-preview.css";
 
 const navItems = [
@@ -16,7 +17,7 @@ const navItems = [
       <p class="home-v2__weather"><span aria-hidden="true">○</span> 下午好 · 8月19日</p>
       <nav class="home-v2__nav" aria-label="主要栏目">
         {navItems.map((item, index) => (
-          <a class:list={["home-v2__tab", { "home-v2__tab--active": index === 0 }]} href={item.href}>
+          <a class:list={["home-v2__tab", { "home-v2__tab--active": index === 0 }]} href={servedUrl(item.href)}>
             {item.label}
           </a>
         ))}
@@ -32,7 +33,7 @@ const navItems = [
         </h1>
         <p class="home-v2__city"><span>居住地</span><strong>上海</strong></p>
         <p class="home-v2__intro">这里记录写作、照片、书影音，<br class="home-v2__desktop-break" />还有一些正在做的事。</p>
-        <a class="home-v2__start" href="/blog">
+        <a class="home-v2__start" href={servedUrl('/blog')}>
           <span>从文章开始</span><span aria-hidden="true">↗</span>
         </a>
       </section>

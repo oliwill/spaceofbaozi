@@ -1,25 +1,26 @@
 ---
 import { getCollection } from "astro:content";
+import AlbumCharacters from "@/components/photos/AlbumCharacters.astro";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
 import EditorialHero from "@/components/editorial/EditorialHero.astro";
-import PhotoStack from "@/components/photos/PhotoStack.astro";
 import AlbumList from "@/components/photos/AlbumList.astro";
-import Lightbox from "@/components/photos/Lightbox";
 import "@/components/editorial/editorial.css";
 import "@/components/photos/photos.css";
-import { albumLightboxItems, latestAlbumDate, publishableAlbums, splitAlbums } from "@/lib/photos/albums";
+import { latestAlbumDate, publishableAlbums } from "@/lib/photos/albums";
+import { auditPublicPhotoAssets } from "@/lib/photos/assetAudit.server";
 import { getSection } from "@/lib/sections";
 
 const section = getSection("photos")!;
 const entries = await getCollection("photos");
 const albums = publishableAlbums(entries);
-const { featured, recent } = splitAlbums(entries);
+await auditPublicPhotoAssets(albums, "./public");
 const latest = latestAlbumDate(entries);
 const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
 ---
 
-<ShellLayout title="照片 · baozi.space" description={section.desc} noindex={albums.length === 0}>
+<ShellLayout photos="list" title="照片 · baozi.space" description={section.desc} noindex={albums.length === 0}>
   <div class="editorial-page photos-page">
+    <AlbumCharacters role="person" phase="invite" placement="mobile"/>
     <EditorialHero
       kicker={`${section.number} · ${section.title}`}
       title={section.zh}
@@ -27,24 +28,15 @@ const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
       meta={latest ? `最近更新 ${formatDate(latest)}` : undefined}
     />
 
-    {featured ? (
-      <>
-        <PhotoStack album={featured} />
-        {recent.length > 0 ? (
-          <AlbumList albums={recent} />
-        ) : (
-          <p class="editorial-empty">
-            <strong>更多相册正在整理。</strong>
-            下一组照片通过内容批准后，会出现在这里。
-          </p>
-        )}
-      </>
+    {albums.length ? (
+      <AlbumCharacters role="jiale" phase="invite"/>
+      <AlbumList albums={albums} />
     ) : (
       <div class="editorial-empty photos-empty">
         <strong>摄影正在整理。</strong>
-        第一组真实照片通过内容批准后，会以最新相册的形式出现在这里。当前不展示占位照片，也不把布局样本计入发布门禁。
+        这里会陆续收录摄影、生活记录与主题相册。
       </div>
     )}
   </div>
-  <Lightbox client:load items={albumLightboxItems(entries)} />
+  
 </ShellLayout>

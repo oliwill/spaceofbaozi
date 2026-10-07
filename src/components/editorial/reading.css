@@ -1,0 +1,47 @@
+/* D-150：文章阅读辅助仅在桌面纸面内呈现，手机保留纯正文。 */
+.article-page__reading-body { position: relative; }
+.article-reading { display: contents; font-family: var(--font-ui); }
+.article-reading__progress {
+  position: static; top: 12px; z-index: 20;
+  max-width: 720px; margin: 1.75rem auto 0; padding: 0.75rem 0 0;
+  border-bottom: 1px solid var(--rule-line); background: var(--paper);
+  color: var(--ink-light); font-size: 0.8rem; line-height: 1.6;
+}
+.article-reading__progress:has([data-reading-progress]:not([hidden])) { position: sticky; }
+.article-reading__chapters { position: absolute; top: 0; bottom: 0; left: -32px; width: 32px; }
+.reading-contents { position: sticky; top: max(12px, calc(50svh - var(--chapter-count) * 16px)); z-index: 21; }
+.reading-contents ol { max-height: calc(100svh - 24px); margin: 0; padding: 0; overflow-y: auto; scrollbar-width: none; list-style: none; }
+.reading-contents ol::-webkit-scrollbar { display: none; }
+.reading-contents a { display: flex; align-items: center; width: 32px; min-height: 32px; text-decoration: none; }
+.reading-contents__tick { display: block; width: 16px; height: 1px; background: var(--ink-lighter); transition: width 180ms ease, background-color 180ms ease; }
+.reading-contents a[aria-current="location"] .reading-contents__tick { width: 24px; background: var(--ink); }
+.reading-contents__label { position: absolute; left: 30px; top: var(--reading-label-top, 50%); transform: translateY(-50%); width: max-content; max-width: min(18rem, 42vw); padding: 4px 10px; border-radius: 16px; background: var(--ink); color: var(--paper); font: 12px/1.5 var(--font-ui); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 180ms ease, visibility 180ms; }
+.reading-contents a:hover .reading-contents__label,
+.reading-contents a:focus-visible .reading-contents__label { opacity: 1; visibility: visible; }
+.reading-contents a:focus-visible { outline: 1px solid var(--ink); outline-offset: 1px; }
+.reading-progress[hidden] { display: none; }
+.reading-progress__caption { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.68rem; }
+.reading-progress__number { min-width: 3.2em; text-align: right; font-variant-numeric: tabular-nums; }
+.reading-chase { position: relative; height: 62px; overflow: hidden; pointer-events: none; }
+.reading-chase__ground { position: absolute; left: 0; right: 0; bottom: 3px; border-bottom: 1px dashed var(--rule-line); }
+.reading-chase__dog { position: absolute; left: 0; bottom: 3px; width: 70px; height: 50.458333px; transform: translateX(var(--reading-dog-x, 0px)); }
+.reading-chase__sprite {
+  display: block; width: 100%; height: 100%;
+  background-image: url('/assets/home/runtime/dog-orbit-run-8dir-4f.webp');
+  background-size: 298.666667px 448px;
+  background-position: calc(-2.333333px - var(--reading-dog-frame, 0) * 74.666667px) -4.375px;
+  background-repeat: no-repeat;
+}
+.reading-chase__ball {
+  position: absolute; right: 0; bottom: 3px; width: 18.731707px; height: 17.170732px;
+  background: url('/assets/intro/runtime/ball-bounce-8f.webp') -1.040650px -1.951220px / 83.252033px 41.626016px no-repeat;
+}
+[data-reading-prose] :where(h2, h3) { scroll-margin-top: var(--reading-offset, 9rem); }
+[data-reading-prose] :where(h2, h3):focus-visible { outline: 1px solid var(--ink-light); outline-offset: 0.4rem; }
+@media (max-width: 767px) {
+  .article-reading { display: none; }
+  [data-reading-prose] :where(h2, h3) { scroll-margin-top: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-contents__tick, .reading-contents__label, .reading-chase__dog, .reading-chase__sprite { transition: none; animation: none; }
+}

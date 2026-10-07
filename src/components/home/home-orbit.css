@@ -144,3 +144,25 @@
     will-change: auto;
   }
 }
+
+/* A failed Home atlas uses the v2 composite still, never the same failed sprite. */
+.site-characters[data-home-art-state] > .site-characters__still,
+.site-characters[data-home-art-state] > .home-orbit {
+  visibility: hidden;
+  pointer-events: none;
+}
+.home-asset-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+}
+.home-asset-fallback[hidden] { display: none; }
+
+#home[data-intro-pose-owner] .site-characters__still,
+#home[data-intro-pose-owner] .home-orbit__person,
+#home[data-intro-pose-owner] .home-orbit__anchor { visibility: hidden; }
+.home-intro-handoff { position: absolute; inset: 0; z-index: 7; pointer-events: none; }

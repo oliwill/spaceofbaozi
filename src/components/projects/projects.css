@@ -1,0 +1,159 @@
+.projects-page__title,
+.project-header h1 {
+  margin: 0;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: clamp(2rem, 4.1vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.project-list {
+  padding: 0;
+  margin: clamp(1.75rem, 4vw, 3rem) 0 0;
+  list-style: none;
+}
+
+.project-item {
+  min-width: 0;
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--line, #dedcd5);
+}
+
+.project-item--illustrated {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+.project-item__text,
+.project-item__image {
+  min-width: 0;
+}
+
+.project-item__image {
+  padding-top: 0.4rem;
+  justify-self: end;
+  width: min(100%, 240px);
+}
+
+.project-item h2 {
+  margin: 0;
+  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.project-item h2 a,
+.project-return,
+.project-footer__external {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  max-width: 100%;
+  color: var(--ink, #292825);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.project-item h2 a:hover,
+.project-return:hover,
+.project-footer__external:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.project-item h2 a:focus-visible,
+.project-return:focus-visible,
+.project-footer__external:focus-visible,
+.projects-page__title:focus-visible {
+  outline: 2px solid var(--ink, #292825);
+  outline-offset: 4px;
+}
+
+.project-item__intro,
+.project-header__intro {
+  margin: 0.75rem 0 0;
+  color: var(--ink-light, #686660);
+  line-height: 1.8;
+}
+
+.project-item__role,
+.project-header__role {
+  margin: 0.75rem 0 0;
+  line-height: 1.8;
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  margin: 1rem 0 0;
+  color: var(--ink-light, #686660);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.project-item .project-meta {
+  font-size: inherit;
+}
+
+.projects-empty {
+  margin: 2rem 0 0;
+  color: var(--ink-light, #686660);
+  line-height: 1.8;
+}
+
+.projects-detail {
+  max-width: 720px;
+}
+
+/* Keep screenshot materials aligned with the Projects prose, without changing articles. */
+.projects-detail .editorial-prose figure {
+  margin-inline: 0;
+}
+
+/* The existing table block remains the scroll container; only its cells keep readable widths. */
+.projects-detail .editorial-prose :is(th, td) {
+  min-width: 10rem;
+}
+
+.project-header {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--line, #dedcd5);
+}
+
+.project-header > .project-return {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.project-header__intro {
+  margin-top: 1.25rem;
+  font-size: 1.05rem;
+}
+
+.project-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line, #dedcd5);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 767px) {
+  .project-item--illustrated {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .project-item__image {
+    justify-self: start;
+    padding-top: 0;
+  }
+}

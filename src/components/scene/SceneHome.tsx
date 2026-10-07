@@ -1,3 +1,4 @@
+import { servedUrl } from "@/lib/site/paths";
 import { motion, useReducedMotion, type Variants } from "motion/react";
 import { greetingByHour } from "@/lib/sections";
 import "@/components/home-v2/home-v2-preview.css";
@@ -45,7 +46,7 @@ export default function SceneHome() {
               <motion.a
                 key={item.href}
                 className="home-v2__tab"
-                href={item.href}
+                href={servedUrl(item.href)}
                 data-astro-prefetch="viewport"
                 whileTap={reduced ? undefined : { opacity: 0.6 }}
                 transition={reduced ? undefined : PRESS_TRANSITION}
@@ -82,7 +83,7 @@ export default function SceneHome() {
             </motion.p>
             <motion.a
               className="home-v2__start"
-              href="/blog"
+              href={servedUrl('/blog')}
               variants={focus}
               whileTap={reduced ? undefined : { opacity: 0.6 }}
               transition={reduced ? undefined : PRESS_TRANSITION}

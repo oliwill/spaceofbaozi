@@ -1,0 +1,11 @@
+import { expect, it } from "vitest";
+import { mkdtemp, mkdir, writeFile, rm, symlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import sharp from "sharp";
+import { auditPublicPhotoAssets } from "@/lib/photos/assetAudit.server";
+import type { PublicAlbum } from "@/lib/photos/albums";
+const image={id:"a",src:"/assets/photos/a.png",width:12,height:8,alt:"合成图"};
+const album={id:"x",title:"x",introduction:"",order:0,cover:image,photos:[image]} as PublicAlbum;
+it("allows only declared, dimension-matching files and .gitkeep",async()=>{const root=await mkdtemp(join(tmpdir(),"album-audit-"));try{await mkdir(join(root,"assets/photos"),{recursive:true});await writeFile(join(root,"assets/photos/.gitkeep"),"");await sharp({create:{width:12,height:8,channels:3,background:"red"}}).png().toFile(join(root,"assets/photos/a.png"));await expect(auditPublicPhotoAssets([album],root)).resolves.toBeUndefined();await writeFile(join(root,"assets/photos/private-sentinel.webp"),"private");await expect(auditPublicPhotoAssets([album],root)).rejects.toThrow(/private-sentinel/);await rm(join(root,"assets/photos/private-sentinel.webp"));await expect(auditPublicPhotoAssets([{...album,cover:{...image,width:24}}],root)).rejects.toThrow(/尺寸|dimension/);await rm(join(root,"assets/photos/a.png"));await expect(auditPublicPhotoAssets([album],root)).rejects.toThrow();}finally{await rm(root,{recursive:true,force:true});}});
+it("rejects symlinks even when the public URL is allowlisted",async()=>{const root=await mkdtemp(join(tmpdir(),"album-symlink-"));try{await mkdir(join(root,"assets/photos"),{recursive:true});await writeFile(join(root,"private"),"secret");await symlink(join(root,"private"),join(root,"assets/photos/a.png"));await expect(auditPublicPhotoAssets([album],root)).rejects.toThrow();}finally{await rm(root,{recursive:true,force:true});}});

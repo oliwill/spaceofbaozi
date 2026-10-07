@@ -1,0 +1,11 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import {existsSync,readFileSync} from 'node:fs';
+import {approvedCharacterAssets,characterPose,type AlbumCharacterPhase} from '@/lib/photos/characters';
+import '@/components/photos/album-characters.css';
+interface Props {role:'person'|'jiale';phase:AlbumCharacterPhase;placement?:'rail'|'mobile'|'edge';}
+const {role,phase,placement='edge'}=Astro.props;
+let manifest;try{const path='public/manifest/album-characters.v1.json';manifest=existsSync(path)?approvedCharacterAssets(JSON.parse(readFileSync(path,'utf8'))):undefined;}catch{}
+const pose=characterPose(phase,true)[role];const asset=manifest?.poses[pose];
+---
+{asset&&<div class:list={['album-character',`album-character--${placement}`]} data-album-character={role} data-character-poses={JSON.stringify(manifest?.poses)} data-pose={pose} aria-hidden="true"><img src={servedUrl(asset.src)} width={asset.width} height={asset.height} alt="" decoding="async" onerror="this.parentElement.hidden=true" /></div>}

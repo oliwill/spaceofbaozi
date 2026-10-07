@@ -1,37 +1,25 @@
 ---
-import type { PhotoAlbum } from "@/lib/photos/albums";
-
-interface Props {
-  albums: PhotoAlbum[];
-}
-
-const { albums } = Astro.props;
-const formatDate = (date: Date) => date.toLocaleDateString("zh-CN");
+import { servedUrl } from "@/lib/site/paths";
+import type {PublicAlbum} from "@/lib/photos/albums";
+import {albumHref} from "@/lib/photos/routes";
+interface Props {albums:PublicAlbum[];}
+const {albums}=Astro.props;
 ---
-
-<section class="photo-albums" aria-labelledby="photo-albums-title">
-  <p class="editorial-section__label" id="photo-albums-title">相册列表</p>
-  <ul>
-    {albums.map((album) => (
-      <li>
-        <article>
-          {album.data.cover && (
-            <a class="photo-albums__thumb entry-link" href={`/photos/${album.id}`} aria-label={`预览《${album.data.title}》封面`}>
-              <img src={album.data.cover} alt={album.data.coverAlt ?? album.data.title} loading="lazy" decoding="async" />
-            </a>
-          )}
-          <div class="photo-albums__copy">
-            <div class="editorial-meta">
-              <time datetime={album.data.date.toISOString()}>{formatDate(album.data.date)}</time>
-              {album.data.tags.slice(0, 2).map((tag) => <span>#{tag}</span>)}
-            </div>
-            <h3>
-              <a href={`/photos/${album.id}`}>{album.data.title}</a>
-            </h3>
-            {album.data.description && <p>{album.data.description}</p>}
-          </div>
-        </article>
-      </li>
-    ))}
-  </ul>
+<section class="album-list album-list--directory" data-album-list aria-labelledby="album-list-title">
+  <h2 class="album-directory__sr-only" id="album-list-title" tabindex="-1">影集</h2>
+  <div class="album-directory">
+    <button class="album-directory__toggle" type="button" data-album-directory-toggle aria-expanded="false" aria-controls="album-directory-options" hidden>
+      <span data-album-current-name>{albums[0]?.title}</span><span class="album-directory__chevron" aria-hidden="true"></span>
+    </button>
+    <nav class="album-segments" id="album-directory-options" data-album-segments aria-label="影集目录">{albums.map((album,index)=><button type="button" data-album-segment={album.id} aria-current={index===0?"true":undefined} aria-controls={`album-cover-${encodeURIComponent(album.id)}`}><span class="album-directory__tick" aria-hidden="true"></span><span>{album.title}</span></button>)}</nav>
+  </div>
+  <div class="album-gallery">
+   <ul class="album-strip" data-album-strip data-lenis-prevent-wheel>
+    {albums.map(album=><li><a id={`album-cover-${encodeURIComponent(album.id)}`} class="album-cover" data-album-id={album.id} href={albumHref(album.id)} aria-label={album.title}>
+      <div class="album-cover__image"><img src={servedUrl(album.cover.src)} width={album.cover.width} height={album.cover.height} alt={album.cover.alt} style={`object-position: ${album.coverPosition?.x ?? 50}% ${album.coverPosition?.y ?? 50}%`} loading="lazy" decoding="async" draggable="false" /><span class="album-cover__error" data-album-cover-error hidden>封面暂不可用</span></div>
+      <p class="album-cover__meta">{album.periodLabel??album.date?.getFullYear()}<span>{album.photos.length} 张照片</span></p>
+    </a></li>)}
+   </ul>
+   <div class="album-list__controls" data-album-controls hidden><button type="button" data-album-prev aria-label="向前浏览影集">←</button><button type="button" data-album-next aria-label="向后浏览影集">→</button></div>
+  </div>
 </section>

@@ -1,0 +1,7 @@
+.album-character { pointer-events: none; user-select: none; }
+.album-character[hidden] { display: none; }
+.album-character img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
+.album-character--rail { width: 180px; height: 240px; margin-top: 28px; }
+.album-character--edge { width: 100px; height: 64px; margin-left: auto; margin-top: 8px; }
+.album-character--mobile { display: none; }
+@media(max-width:767px){.album-character--rail{display:none}.album-character--mobile{display:block;float:right;width:68px;height:88px;margin:0 0 12px 12px}.album-character--edge{width:72px;height:48px}.album-detail .album-character--mobile{display:none}.shell-nav--photos{min-height:160px;grid-template-columns:minmax(0,1fr)}.shell-nav--photos .shell-links{grid-column:1 / -1}}

@@ -10,7 +10,6 @@ export type SectionKey =
 /** 共享 entrySchema 的集合（projects 使用独立 schema，不在其列） */
 export type EntrySchemaCollectionKey =
   | "blog"
-  | "photos"
   | "drinks"
   | "books"
   | "music"

@@ -1,0 +1,3 @@
+export interface Swipe {dx:number;dy:number;durationMs:number;pointers:number;startX:number;viewportWidth:number;cancelled?:boolean;}
+export function swipeDirection(g:Swipe):-1|0|1{if(g.cancelled||g.pointers!==1||g.durationMs>800||g.durationMs<0||Math.abs(g.dx)<48||Math.abs(g.dx)<Math.abs(g.dy)*1.5||g.startX<24||g.startX>g.viewportWidth-24)return 0;return g.dx<0?1:-1;}
+export function acceptReaderKey(event:{key:string;repeat?:boolean;ctrlKey?:boolean;metaKey?:boolean;altKey?:boolean;shiftKey?:boolean;editable?:boolean}):-1|0|1{if(event.repeat||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey||event.editable)return 0;return event.key==='ArrowRight'?1:event.key==='ArrowLeft'?-1:0;}

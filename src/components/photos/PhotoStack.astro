@@ -1,8 +1,9 @@
 ---
-import type { PhotoAlbum } from "@/lib/photos/albums";
+import { servedUrl } from "@/lib/site/paths";
+import type { PublicAlbum } from "@/lib/photos/albums";
 
 interface Props {
-  album: PhotoAlbum;
+  album: PublicAlbum;
 }
 
 const { album } = Astro.props;
@@ -14,29 +15,29 @@ const titleId = `photo-feature-${album.id}`;
   <div class="photo-feature__copy">
     <p class="editorial-feature__label">最新相册</p>
     <div class="editorial-meta">
-      <time datetime={album.data.date.toISOString()}>{formatDate(album.data.date)}</time>
-      {album.data.tags.slice(0, 3).map((tag) => <span>#{tag}</span>)}
+      <time datetime={album.date?.toISOString()}>{album.date ? formatDate(album.date) : ""}</time>
+      {[].map((tag) => <span>#{tag}</span>)}
     </div>
     <h2 id={titleId}>
-      <a href={`/photos/${album.id}`}>{album.data.title}</a>
+      <a href={servedUrl(`/photos/${album.id}`)}>{album.title}</a>
     </h2>
-    {album.data.description && <p class="editorial-feature__summary">{album.data.description}</p>}
-    <a class="editorial-text-link" href={`/photos/${album.id}`}>进入相册 →</a>
+    {album.introduction && <p class="editorial-feature__summary">{album.introduction}</p>}
+    <a class="editorial-text-link" href={servedUrl(`/photos/${album.id}`)}>进入相册 →</a>
   </div>
 
-  {album.data.cover && (
+  {album.cover.src && (
     <a
       class="photo-feature__cover entry-link"
-      href={`/photos/${album.id}`}
-      aria-label={`预览《${album.data.title}》封面`}
+      href={servedUrl(`/photos/${album.id}`)}
+      aria-label={`预览《${album.title}》封面`}
     >
       <img
-        src={album.data.cover}
-        alt={album.data.coverAlt ?? album.data.title}
+        src={servedUrl(album.cover.src)}
+        alt={album.cover.alt}
         loading="eager"
         decoding="async"
       />
-      {album.data.coverCredit && <span>{album.data.coverCredit}</span>}
+      {album.cover.credit && <span>{album.cover.credit}</span>}
     </a>
   )}
 </section>

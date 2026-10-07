@@ -1,0 +1,49 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import type { ProjectImage } from "@/lib/projects/projects";
+
+interface Props {
+  image: ProjectImage;
+  loading?: "eager" | "lazy";
+}
+const { image, loading = "lazy" } = Astro.props;
+const candidates = [...new Map([...(image.variants ?? []), image].map((asset) => [asset.width, asset])).values()]
+  .sort((a, b) => a.width - b.width);
+const srcset = image.variants?.length ? candidates.map((asset) => `${servedUrl(asset.src)} ${asset.width}w`).join(", ") : undefined;
+---
+
+<figure class="project-image">
+  <img
+    src={servedUrl(image.src)}
+    width={image.width}
+    height={image.height}
+    alt={image.alt}
+    srcset={srcset}
+    sizes={srcset ? "(max-width: 767px) min(240px, calc(100vw - 64px)), 240px" : undefined}
+    loading={loading}
+    decoding="async"
+  />
+  {image.credit && <figcaption>{image.credit}</figcaption>}
+</figure>
+
+<style>
+  .project-image {
+    width: min(100%, 240px);
+    margin: 0;
+  }
+  .project-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  .project-image figcaption {
+    margin-top: 6px;
+    color: var(--ink-light, #686660);
+    font-size: 0.75rem;
+    overflow-wrap: anywhere;
+  }
+  :global(.project-item) .project-image figcaption {
+    font-size: inherit;
+  }
+</style>

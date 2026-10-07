@@ -1,4 +1,6 @@
 import { gsap } from "gsap";
+import { isIntroPoseHeld, releaseHeldIntroPose } from "@/lib/home-orbit/introPoseHandoff";
+import { watchHomeAssets } from "@/lib/home-orbit/assetFallback";
 
 import {
   HOME_ORBIT_CONTRACT,
@@ -68,15 +70,6 @@ function renderSpriteLayer(
 
 const toRadians = (degrees: number) => degrees * Math.PI / 180;
 
-function loadImage(src: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve();
-    image.onerror = () => reject(new Error(`Unable to load orbit asset: ${src}`));
-    image.src = src;
-  });
-}
-
 export function createHomeOrbit(
   root: HTMLElement,
   initial: Partial<OrbitState> = {},
@@ -97,6 +90,7 @@ export function createHomeOrbit(
   const startAngle = toRadians(HOME_ORBIT_CONTRACT.orbit.startAngleDeg);
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const reducedAngles = HOME_ORBIT_CONTRACT.reducedMotion.positionsDeg.map(toRadians);
+  const home = root.closest<HTMLElement>("#home");
   let state: OrbitState = {
     angle: normalizeAngle(initial.angle ?? startAngle),
     angularVelocity: initial.angularVelocity ?? 0,
@@ -104,6 +98,7 @@ export function createHomeOrbit(
   };
   let layer: OrbitLayer = "front";
   let enabled = false;
+  let assetFailed = false;
   let destroyed = false;
   let tickerActive = false;
   let measurements: OrbitMeasurements | null = null;
@@ -135,13 +130,14 @@ export function createHomeOrbit(
   const readMeasurements = (): OrbitMeasurements => {
     const rootRect = root.getBoundingClientRect();
     const footRect = personFoot.getBoundingClientRect();
+    const scale = rootRect.width / root.offsetWidth || 1;
     const radiusX = Math.min(
       orbit.radiusXMaxPx,
-      Math.max(orbit.radiusXMinPx, rootRect.width * orbit.radiusXRatio),
+      Math.max(orbit.radiusXMinPx, root.offsetWidth * orbit.radiusXRatio),
     );
     return {
-      footX: footRect.left - rootRect.left,
-      footY: footRect.top - rootRect.top,
+      footX: (footRect.left - rootRect.left) / scale,
+      footY: (footRect.top - rootRect.top) / scale,
       radiusX,
       radiusY: radiusX * orbit.radiusYRatio,
     };
@@ -219,7 +215,7 @@ export function createHomeOrbit(
   };
 
   const handoff = (next: Pick<OrbitState, "angle" | "angularVelocity">) => {
-    if (!Number.isFinite(next.angle) || !Number.isFinite(next.angularVelocity)) return;
+    if (assetFailed || !Number.isFinite(next.angle) || !Number.isFinite(next.angularVelocity)) return;
     state = {
       angle: normalizeAngle(next.angle),
       angularVelocity: next.angularVelocity,
@@ -237,12 +233,13 @@ export function createHomeOrbit(
   };
 
   const startTicker = () => {
-    if (destroyed || reduced || tickerActive) return;
+    if (destroyed || !enabled || assetFailed || reduced || tickerActive) return;
     tickerActive = true;
     gsap.ticker.add(tick);
   };
 
   const enable = () => {
+    if (assetFailed || destroyed) return;
     enabled = true;
     root.dataset.controlsEnabled = "true";
   };
@@ -272,17 +269,26 @@ export function createHomeOrbit(
   const updateTargetFromPointer = (event: PointerEvent) => {
     const layout = getMeasurements();
     const rootRect = root.getBoundingClientRect();
+    const scale = rootRect.width / root.offsetWidth || 1;
     state.targetAngle = targetAngleFromPointer({
-      pointerX: event.clientX - rootRect.left,
-      pointerY: event.clientY - rootRect.top,
+      pointerX: (event.clientX - rootRect.left) / scale,
+      pointerY: (event.clientY - rootRect.top) / scale,
       footX: layout.footX,
       footY: layout.footY,
       previousTarget: state.targetAngle,
     });
   };
 
+  const claimHeldPose = (event: Event): boolean => {
+    if (!isIntroPoseHeld(home)) return true;
+    if (!event.isTrusted || root.dataset.orbitReady !== "true" || assetFailed) return false;
+    releaseHeldIntroPose(home);
+    return !isIntroPoseHeld(home);
+  };
+
   const onPointerMove = (event: PointerEvent) => {
     if (!enabled || reduced) return;
+    if (isIntroPoseHeld(home) && event.pointerType === "mouse" && !event.movementX && !event.movementY) return;
     if (event.pointerType === "touch" || event.pointerType === "pen") {
       if (event.pointerId !== activePointerId || !pointerStart) return;
       const deltaX = event.clientX - pointerStart.x;
@@ -298,12 +304,21 @@ export function createHomeOrbit(
       if (!pointerCaptured) return;
       event.preventDefault();
     }
+    if (!claimHeldPose(event)) return;
     updateTargetFromPointer(event);
     startTicker();
   };
 
   const onPointerDown = (event: PointerEvent) => {
-    if (!enabled || reduced || (event.pointerType !== "touch" && event.pointerType !== "pen")) return;
+    if (!enabled || reduced) return;
+    if (event.pointerType === "mouse") {
+      if (isIntroPoseHeld(home) && event.button === 0 && claimHeldPose(event)) {
+        updateTargetFromPointer(event);
+        startTicker();
+      }
+      return;
+    }
+    if (event.pointerType !== "touch" && event.pointerType !== "pen") return;
     activePointerId = event.pointerId;
     pointerStart = { x: event.clientX, y: event.clientY };
   };
@@ -319,7 +334,7 @@ export function createHomeOrbit(
   };
 
   const onPointerLeave = (event: PointerEvent) => {
-    if (!enabled || reduced || event.pointerType !== "mouse") return;
+    if (!enabled || reduced || isIntroPoseHeld(home) || event.pointerType !== "mouse") return;
     window.clearTimeout(pointerLeaveTimer);
     pointerLeaveTimer = window.setTimeout(() => {
       state.targetAngle = toRadians(orbit.restAngleDeg);
@@ -336,7 +351,9 @@ export function createHomeOrbit(
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
+    if (!enabled) return;
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    if (!claimHeldPose(event)) return;
     event.preventDefault();
     if (reduced) {
       stepReduced(event.key === "ArrowRight" ? 1 : -1);
@@ -360,13 +377,18 @@ export function createHomeOrbit(
     if (detail) handoff(detail);
   };
   const onPersonStood = () => {
+    if (assetFailed || destroyed) return;
     window.clearTimeout(enableTimer);
-    enableTimer = window.setTimeout(enable, HOME_ORBIT_CONTRACT.transition.controlEnableDelayMs);
+    const deadline = Number(home?.dataset.introControlsReadyAt);
+    const delay = Number.isFinite(deadline)
+      ? Math.max(0, deadline - performance.now())
+      : HOME_ORBIT_CONTRACT.transition.controlEnableDelayMs;
+    enableTimer = window.setTimeout(enable, delay);
   };
   const onOrbitReset = () => {
     window.clearTimeout(enableTimer);
     disable();
-    root.dataset.orbitActive = "false";
+    if (!root.hasAttribute("data-rail-orbit") && !assetFailed) root.dataset.orbitActive = "false";
   };
   const onDebugSet = (event: Event) => {
     if (!import.meta.env.DEV) return;
@@ -396,19 +418,19 @@ export function createHomeOrbit(
   observer.observe(root);
   observer.observe(personFoot);
 
-  const personSrc = root.dataset.personOrbitSrc ?? "";
-  const dogSrc = root.dataset.dogOrbitSrc ?? "";
-  Promise.allSettled([loadImage(personSrc), loadImage(dogSrc)]).then(([personResult, dogResult]) => {
-    if (destroyed) return;
-    if (personResult.status === "rejected") root.dataset.personOrbitError = "true";
-    if (dogResult.status === "rejected") {
-      root.dataset.assetError = "true";
-      fallback.hidden = false;
-    }
-    root.dataset.orbitReady = "true";
+  const stopAssetWatch = watchHomeAssets(root, () => {
+    assetFailed = true;
+    window.clearTimeout(enableTimer);
+    window.clearTimeout(pointerLeaveTimer);
+    if (activePointerId !== null) releasePointer({ pointerId: activePointerId } as PointerEvent);
+    disable();
+    root.tabIndex = -1;
+    if (root.hasAttribute("data-rail-orbit")) root.dataset.orbitActive = "false";
+    else { root.dataset.orbitActive = "true"; fallback.hidden = false; }
   });
 
   render(0);
+  if (home?.dataset.introControlsReadyAt !== undefined) onPersonStood();
 
   return {
     handoff,
@@ -416,6 +438,7 @@ export function createHomeOrbit(
     disable,
     destroy() {
       destroyed = true;
+      stopAssetWatch();
       disable();
       window.clearTimeout(pointerLeaveTimer);
       window.clearTimeout(enableTimer);

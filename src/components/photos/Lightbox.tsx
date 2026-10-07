@@ -1,3 +1,4 @@
+import { servedUrl } from "@/lib/site/paths";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { adjacentIndices } from "@/lib/photos/lightboxPreload";
@@ -35,7 +36,7 @@ export default function Lightbox({ items }: Props) {
     if (index < 0) return;
     for (const adjacentIndex of adjacentIndices(index, items.length)) {
       const image = new Image();
-      image.src = items[adjacentIndex].src;
+      image.src = servedUrl(items[adjacentIndex].src);
     }
   }, [index, items]);
 
@@ -130,7 +131,7 @@ export default function Lightbox({ items }: Props) {
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.28, ease: [0.6, 0, 0, 0.6] }}
             >
-              <img src={current.src} alt={current.alt} />
+              <img src={servedUrl(current.src)} alt={current.alt} />
               <figcaption>
                 <strong>{current.title}</strong>
                 {current.description && <span>{current.description}</span>}

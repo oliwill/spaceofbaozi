@@ -1,4 +1,6 @@
 ---
+import { canonicalUrl } from "@/lib/site/paths";
+import { servedUrl } from "@/lib/site/paths";
 import "@/styles/global.css";
 import { ClientRouter } from "astro:transitions";
 
@@ -9,6 +11,7 @@ interface Props {
   noindex?: boolean;
 }
 
+const canonical = canonicalUrl(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 const {
   title = "baozi.space — 中华一番包子铺",
   description = "一本会不断变厚的数字手账：文章、想法、摄影、酒、书、音乐与 AI 创作。",
@@ -28,14 +31,15 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.href} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:url" content={canonical} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={servedUrl('/favicon.svg')} type="image/svg+xml" />
     <title>{title}</title>
     <ClientRouter fallback="none" />
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main">跳到正文</a>
     <slot />
-    <script type="module" src="/scripts/site-experience.js"></script>
+    <script type="module" src={servedUrl('/scripts/site-experience.js')}></script>
   </body>
 </html>

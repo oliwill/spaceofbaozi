@@ -1,14 +1,17 @@
 ---
+import { servedUrl } from "@/lib/site/paths";
 import { getCollection } from "astro:content";
 import { isPublishable } from "@/lib/content/gates";
 import type { GetStaticPaths } from "astro";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
-import EntryList from "@/components/layout/EntryList.astro";
+import EditorialHero from "@/components/editorial/EditorialHero.astro";
+import "@/components/editorial/editorial.css";
 import { getSection } from "@/lib/sections";
 
 // 构建期按标签生成静态筛选页（无 JS 也工作，静态托管适配 /blog?tag= 的替代）
 export const getStaticPaths = (async () => {
-  const entries = await getCollection("blog", ({ data }) => isPublishable(data));
+  const entries = (await getCollection("blog", ({ data }) => isPublishable(data)))
+    .sort((a, b) => +b.data.date - +a.data.date);
   const tags = new Set(entries.flatMap((e) => e.data.tags));
   return [...tags].map((tag) => ({
     params: { tag },
@@ -24,19 +27,17 @@ const section = getSection("blog")!;
 ---
 
 <ShellLayout title={`#${tag} · 文章 · baozi.space`} description={`标签 #${tag} 下的文章。`}>
-  <div class="section-shell paper-page">
-    <header class="section-header">
-      <span class="section-kicker">{section.number} · {section.zh}</span>
-      <h1>#{tag}</h1>
-      <p>标签 #{tag} 下的文章。</p>
-    </header>
-    <p class="tag-filter">
-      <a class="tag-clear" href="/blog">#{tag} ✕ 清除</a>
-    </p>
-    <EntryList
-      entries={entries}
-      tagBaseHref="/blog/tag"
-      emptyHint="这一页还没有这个标签的文章。"
-    />
+  <div class="editorial-page">
+    <a class="article-page__back" href={servedUrl('/blog')}>← 返回文章</a>
+    <EditorialHero kicker={`${section.number} · ${section.zh}`} title={`#${tag}`} description={`标签 #${tag} 下的文章。`} />
+    <ul class="editorial-list">
+      {entries.map((entry) => (
+        <li>
+          <time class="editorial-meta" datetime={entry.data.date.toISOString()}>{entry.data.date.toLocaleDateString("zh-CN")}</time>
+          <h2><a href={servedUrl(`/blog/${entry.id}`)}>{entry.data.title}</a></h2>
+          <p>{entry.data.description}</p>
+        </li>
+      ))}
+    </ul>
   </div>
 </ShellLayout>

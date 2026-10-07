@@ -1,0 +1,28 @@
+---
+import type {ArchiveView} from '@/lib/media/schema';
+import {dayLevel,monthToExpand} from '@/lib/media/calendar';
+import {listHref} from '@/lib/media/routes';
+interface Props {view:ArchiveView}
+const {view}=Astro.props;const {state,calendar}=view;
+const expanded=state.day?Number(state.day.slice(5,7)):monthToExpand(Number(state.year),view.currentYear,view.currentMonth,calendar);
+const label=(day:typeof calendar[number])=>`${day.date}：${day.future?'未来日期':day.count?`${day.count} 条已收录标记`:'目前未收录'}`;
+const href=(day:typeof calendar[number])=>listHref({...state,day:state.day===day.date?null:day.date,page:1});
+const firstWeekday=calendar.length?new Date(calendar[0].date+'T00:00:00Z').getUTCDay():0;
+---
+{state.year!=='undated'&&<section class="media-calendar" aria-label={`${state.year} 年标记日历`} data-media-calendar>
+ <div class="media-calendar-caption"><span>按标记日期</span><span aria-label="灰度图例">少 <i data-level="0"></i><i data-level="1"></i><i data-level="2"></i><i data-level="3"></i><i data-level="4"></i> 多</span></div>
+ <div class="media-calendar-desktop" data-desktop-calendar data-calendar-grid>
+ {calendar.map((day,index)=>day.future||!day.count?<span data-level={day.future?undefined:0} data-calendar-cell data-date={day.date} data-future={day.future||undefined} aria-label={label(day)} style={index===0?`grid-row-start:${firstWeekday+1}`:undefined}></span>:<a href={href(day)} data-calendar-cell data-date={day.date} data-level={dayLevel(day.count)} aria-label={label(day)} aria-current={state.day===day.date?'date':undefined} title={label(day)} style={index===0?`grid-row-start:${firstWeekday+1}`:undefined}></a>)}
+ </div>
+ <div class="media-calendar-mobile">{Array.from({length:12},(_,i)=>i+1).map(month=>{
+ const days=calendar.filter(day=>Number(day.date.slice(5,7))===month);const total=days.reduce((sum,day)=>sum+day.count,0);
+ return <details data-month={month} open={month===expanded}><summary>{month} 月 <span class="media-month-overview" aria-hidden="true">{days.map(day=><i data-level={day.future?undefined:dayLevel(day.count)} data-future={day.future||undefined}></i>)}</span><span>{total?`${total} 条已收录`:'目前未收录'}</span></summary><div class="media-month-grid" data-calendar-grid>{days.map((day,index)=>day.future||!day.count?<span data-level={day.future?undefined:0} data-date={day.date} data-future={day.future||undefined} aria-label={label(day)} style={index===0?`grid-column-start:${new Date(day.date+'T00:00:00Z').getUTCDay()+1}`:undefined}>{Number(day.date.slice(8))}</span>:<a href={href(day)} data-date={day.date} data-level={dayLevel(day.count)} aria-label={label(day)} aria-current={state.day===day.date?'date':undefined} style={index===0?`grid-column-start:${new Date(day.date+'T00:00:00Z').getUTCDay()+1}`:undefined}>{Number(day.date.slice(8))}</a>)}</div></details>;
+ })}</div>
+ {view.partialDates>0&&<p class="media-calendar-note">{view.partialDates} 条日期不完整，保留在列表中，未计入每日格子。</p>}
+</section>}
+<script>
+ import {mountMediaCalendar} from '@/lib/media/calendar';
+ let cleanup=()=>{};
+ function mount(){cleanup();const root=document.querySelector<HTMLElement>('[data-media-calendar]');cleanup=root?mountMediaCalendar(root):()=>{};}
+ mount();document.addEventListener('astro:page-load',mount);document.addEventListener('astro:before-swap',()=>cleanup());
+</script>

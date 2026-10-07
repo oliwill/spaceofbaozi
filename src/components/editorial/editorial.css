@@ -1,20 +1,8 @@
-/* Editorial pages：场景式 IA 下的传统文档页（2026-09-15 设计） */
-
-.shell-body {
-  background-color: #eef0ea;
-  background-image: radial-gradient(circle, rgba(63, 78, 82, 0.14) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.shell-body > main {
-  padding: clamp(2rem, 5vw, 5rem);
-}
-
 .editorial-page {
   width: min(860px, 100%);
-  margin: 0 auto 0 clamp(2rem, 8vw, 8rem);
-  padding: clamp(2rem, 5vw, 4rem) 0;
-  color: #25231f;
+  margin: 0 auto;
+  padding: 0;
+  color: var(--ink, #292825);
 }
 
 .editorial-hero {
@@ -24,7 +12,7 @@
 
 .editorial-hero__kicker {
   margin: 0 0 1rem;
-  color: #b8513d;
+  color: var(--ink-light, #686660);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -40,7 +28,7 @@
 .editorial-hero h1 {
   margin: 0;
   font-family: "Songti SC", "STSong", "SimSun", serif;
-  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-size: clamp(2.125rem, 4.3vw, 3.625rem);
   font-weight: 500;
   line-height: 1.12;
 }
@@ -48,14 +36,14 @@
 .editorial-hero__desc {
   max-width: 38rem;
   margin: 1rem 0 0;
-  color: #67635b;
+  color: var(--ink-light, #686660);
   line-height: 1.8;
 }
 
 .editorial-hero__meta {
   flex: none;
   margin: 0;
-  color: #8b857b;
+  color: var(--ink-light, #686660);
   font-size: 0.85rem;
 }
 
@@ -64,7 +52,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 0.75rem;
-  color: #8b857b;
+  color: var(--ink-light, #686660);
   font-size: 0.82rem;
 }
 
@@ -78,13 +66,13 @@
   padding: 0.18rem 0.42rem;
   border: 1px solid rgba(37, 35, 31, 0.14);
   border-radius: 4px;
-  color: #67635b;
+  color: var(--ink-light, #686660);
   text-decoration: none;
 }
 
 .editorial-tag:hover {
-  color: #284d5b;
-  border-color: rgba(40, 77, 91, 0.35);
+  color: var(--ink, #292825);
+  border-color: #aaa69b;
 }
 
 .editorial-feature {
@@ -95,7 +83,7 @@
 .editorial-feature__label,
 .editorial-section__label {
   margin: 0 0 1rem;
-  color: #284d5b;
+  color: var(--ink, #292825);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -111,7 +99,7 @@
 .editorial-section h2 {
   margin: 0;
   font-family: "Songti SC", "STSong", "SimSun", serif;
-  font-size: clamp(1.9rem, 4vw, 3.4rem);
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
   font-weight: 500;
   line-height: 1.22;
 }
@@ -124,23 +112,23 @@
 
 .editorial-feature h2 a:hover,
 .editorial-section h2 a:hover {
-  color: #284d5b;
+  color: var(--ink, #292825);
 }
 
 .editorial-feature__summary {
   max-width: 42rem;
   margin: 0;
-  color: #67635b;
+  color: var(--ink-light, #686660);
   font-size: 1.05rem;
   line-height: 1.8;
 }
 
 .editorial-text-link {
   width: fit-content;
-  color: #284d5b;
+  color: var(--ink, #292825);
   font-size: 0.95rem;
   text-decoration: none;
-  border-bottom: 1px solid rgba(40, 77, 91, 0.35);
+  border-bottom: 1px solid #aaa69b;
 }
 
 .editorial-text-link:hover {
@@ -154,8 +142,8 @@
   padding: 0.65rem 0.85rem;
   border: 1px solid rgba(37, 35, 31, 0.14);
   border-radius: 5px;
-  color: #284d5b;
-  background: rgba(255, 253, 247, 0.94);
+  color: var(--ink, #292825);
+  background: var(--paper, #faf9f6);
   box-shadow: 0 8px 30px rgba(46, 48, 42, 0.1);
   font-size: 0.85rem;
   text-decoration: none;
@@ -173,7 +161,7 @@
 }
 
 .editorial-back-button:hover {
-  border-color: rgba(40, 77, 91, 0.35);
+  border-color: #aaa69b;
 }
 
 .editorial-section {
@@ -212,20 +200,20 @@
 
 .editorial-section__grid p {
   margin: 0;
-  color: #67635b;
+  color: var(--ink-light, #686660);
   line-height: 1.7;
 }
 
 .editorial-empty {
   padding: 2rem 0 0.5rem;
-  color: #67635b;
+  color: var(--ink-light, #686660);
   border-top: 1px dashed rgba(37, 35, 31, 0.18);
 }
 
 .editorial-empty strong {
   display: block;
   margin-bottom: 0.4rem;
-  color: #25231f;
+  color: var(--ink, #292825);
   font-family: "Songti SC", "STSong", "SimSun", serif;
   font-size: 1.4rem;
   font-weight: 500;
@@ -234,7 +222,7 @@
 .article-page__back {
   display: inline-flex;
   margin-bottom: 2.5rem;
-  color: #284d5b;
+  color: var(--ink, #292825);
   font-size: 0.9rem;
   text-decoration: none;
 }
@@ -248,7 +236,7 @@
 .article-page__header h1 {
   margin: 0;
   font-family: "Songti SC", "STSong", "SimSun", serif;
-  font-size: clamp(2.4rem, 5.5vw, 4.6rem);
+  font-size: clamp(2rem, 4.1vw, 3.5rem);
   font-weight: 500;
   line-height: 1.15;
 }
@@ -256,7 +244,7 @@
 .article-page__description {
   max-width: 42rem;
   margin: 1.25rem 0 0;
-  color: #67635b;
+  color: var(--ink-light, #686660);
   font-size: 1.05rem;
   line-height: 1.8;
 }
@@ -274,7 +262,7 @@
 
 .article-page__cover figcaption {
   margin-top: 0.5rem;
-  color: #8b857b;
+  color: var(--ink-light, #686660);
   font-size: 0.8rem;
 }
 
@@ -284,6 +272,7 @@
   padding-top: 2.5rem;
   font-size: 1.02rem;
   line-height: 1.85;
+  overflow-wrap: anywhere;
 }
 
 .editorial-prose > *:first-child {
@@ -298,7 +287,7 @@
 .editorial-prose h3,
 .editorial-prose h4 {
   margin: 2.5rem 0 0.75rem;
-  color: #25231f;
+  color: var(--ink, #292825);
   font-family: "Songti SC", "STSong", "SimSun", serif;
   font-weight: 500;
   line-height: 1.35;
@@ -321,9 +310,9 @@
 }
 
 .editorial-prose a {
-  color: #284d5b;
+  color: var(--ink, #292825);
   text-decoration: underline;
-  text-decoration-color: rgba(40, 77, 91, 0.35);
+  text-decoration-color: #aaa69b;
   text-underline-offset: 0.18em;
 }
 
@@ -333,9 +322,9 @@
 
 .editorial-prose blockquote {
   padding: 1rem 1.25rem;
-  color: #67635b;
-  background: #f2eee3;
-  border-left: 3px solid #b8513d;
+  color: var(--ink-light, #686660);
+  background: var(--ground, #f0efea);
+  border-left: 3px solid var(--ink-light, #686660);
 }
 
 .editorial-prose blockquote p:last-child {
@@ -372,15 +361,15 @@
 
 .article-comments > p {
   margin: 0 0 1.5rem;
-  color: #67635b;
+  color: var(--ink-light, #686660);
   font-size: 0.9rem;
 }
 
 .article-comments .waline {
-  --waline-theme-color: #284d5b;
-  --waline-active-color: #b8513d;
-  --waline-bg-color: #fffdf7;
-  --waline-bg-color-light: #f8f6ef;
+  --waline-theme-color: var(--ink, #292825);
+  --waline-active-color: var(--ink-light, #686660);
+  --waline-bg-color: var(--paper, #faf9f6);
+  --waline-bg-color-light: var(--ground, #f0efea);
   --waline-border-color: rgba(37, 35, 31, 0.14);
   font-family: inherit;
 }
@@ -415,7 +404,7 @@
 }
 
 .article-page__nav a {
-  color: #284d5b;
+  color: var(--ink, #292825);
   text-decoration: none;
 }
 
@@ -425,17 +414,9 @@
 }
 
 @media (max-width: 767px) {
-  .shell-body {
-    background-size: 18px 18px;
-  }
-
-  .shell-body > main {
-    padding: 1rem;
-  }
-
   .editorial-page {
     margin-left: 0;
-    padding: 2rem 1.25rem;
+    padding: 0;
   }
 
   .editorial-hero__row {
@@ -461,3 +442,10 @@
     transition: none;
   }
 }
+
+.editorial-prose table { display: block; max-width: 100%; overflow-x: auto; }
+.article-page__back { min-height: 44px; align-items: center; }
+.editorial-list { list-style: none; padding: 0; margin: 0; }
+.editorial-list > li { padding: 2rem 0; border-bottom: 1px solid var(--line, #dedcd5); }
+.editorial-list h2 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 500; margin: .75rem 0; }
+.editorial-list p { color: var(--ink-light, #686660); line-height: 1.8; }

@@ -1,16 +1,16 @@
 /* 启动页舞台（D-132 / 素材接口 v2）：点阵纸 + 全宽草地 + v2 序列 sprite */
 .intro-oil-stage {
-  --oil-grid-paper: #eef0ea;
-  --oil-dot: rgba(63, 78, 82, 0.14);
-  --oil-dot-gap: 24px;
+  --oil-grid-paper: var(--ground, #f0efea);
+  --oil-dot: #a5a29966;
+  --oil-dot-gap: 20px;
 
   position: relative;
   width: 100%;
   height: 100svh;
   overflow: hidden;
   background-color: var(--oil-grid-paper);
-  background-image: radial-gradient(circle, var(--oil-dot) 1px, transparent 1px);
-  background-position: 0 0;
+  background-image: radial-gradient(circle, var(--oil-dot) .8px, transparent .95px);
+  background-position: 10px 10px;
   background-size: var(--oil-dot-gap) var(--oil-dot-gap);
 }
 
@@ -33,6 +33,22 @@
 .io-scroll {
   height: 400vh;
   position: relative;
+}
+
+.io-scroll[hidden] {
+  display: none;
+}
+
+.io-scroll[data-io-production] {
+  z-index: 1;
+}
+
+.site-shell[data-intro-home-active="true"] {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 0;
+  width: 100%;
+  pointer-events: none;
 }
 
 .io-scroll .intro-oil-stage {
@@ -105,17 +121,21 @@
   right: 24px;
   bottom: 24px;
   z-index: 5;
-  padding: 8px 16px;
-  border: 1px solid rgba(63, 78, 82, 0.25);
+  padding: 10px 16px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  border: 1px solid #dedcd5;
   border-radius: 999px;
-  background: rgba(246, 243, 234, 0.9);
-  color: #3f4e52;
+  background: #faf9f6;
+  color: #292825;
   font-size: 14px;
   cursor: pointer;
 }
 
 .io-skip:hover {
-  background: #f6f3ea;
+  background: #faf9f6;
 }
 
 .io-debug {
@@ -142,8 +162,22 @@
   }
 }
 
-@media (max-aspect-ratio: 3/4) {
-  .intro-oil-stage {
-    --oil-dot-gap: 18px;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .io-scroll:not(:has(.io-plate)) { display: none; }
 }
+
+/* The page reveal must not blend two incompatible character silhouettes. */
+.io-scroll[data-io-production] .intro-oil-stage { background: none; isolation: isolate; }
+.io-scroll[data-io-production] .intro-oil-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--oil-grid-paper);
+  background-image: radial-gradient(circle, var(--oil-dot) .8px, transparent .95px);
+  background-position: 10px 10px;
+  background-size: var(--oil-dot-gap) var(--oil-dot-gap);
+  opacity: var(--intro-paper-opacity, 1);
+  pointer-events: none;
+}
+.io-scroll[data-io-production] .io-skip { opacity: var(--intro-paper-opacity, 1); }

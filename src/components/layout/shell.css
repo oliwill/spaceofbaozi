@@ -1,105 +1,86 @@
-/* ShellLayout：传统文档页外壳（D-123/D-136）——左侧导航栏 + 右侧内容 */
-
+/* D-148：导航与角色共处左侧点阵，首页与文档共用纸面。 */
+:root { --site-rail-width: 300px; }
 .shell-body {
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
-  min-height: 100vh;
-  background-color: #eef0ea;
-  background-image: radial-gradient(circle, rgba(63, 78, 82, 0.14) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-color: var(--ground);
+  background-image: radial-gradient(circle, #a5a29966 .8px, transparent .95px);
+  background-size: 20px 20px;
+  background-position: 10px 10px;
+  background-attachment: fixed;
 }
-
+.shell-body::before, .shell-body::after { display: none; }
+.site-shell {
+  display: grid;
+  grid-template-columns: var(--site-rail-width) minmax(0, 1fr);
+  align-items: start;
+  max-width: 1600px;
+  margin-inline: auto;
+  padding: 44px 36px 48px 0;
+}
 .shell-nav {
   position: sticky;
-  top: 0;
+  top: 32px;
   z-index: 40;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  height: 100vh;
-  min-height: 100svh;
-  padding: 2rem clamp(1.25rem, 2.5vw, 2rem);
-  color: var(--ink);
-  border-right: 1px solid rgba(43, 38, 32, 0.12);
-  transition: transform 0.35s cubic-bezier(0.6, 0, 0.6, 1);
-}
-
-.shell-brand {
+  min-width: 0;
+  max-height: calc(100svh - 64px);
+  padding: 32px 38px 20px 48px;
   color: var(--ink);
   font-family: var(--font-ui);
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  text-decoration: none;
 }
-
-.shell-links {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.1rem;
-  margin-top: 5rem;
+.shell-brand { display: inline-block; min-height: 44px; font: 500 19px/1.5 var(--font-display); letter-spacing: .02em; }
+.shell-brand-meta { display: block; margin: 0 0 25px; color: var(--ink-light); font-size: 10px; line-height: 1.6; }
+.shell-links { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.shell-links a, .shell-links__inactive { display: flex; align-items: center; gap: 13px; min-width: 44px; min-height: 44px; border-bottom: 1px solid transparent; color: var(--ink-light); font-size: 16px; white-space: nowrap; }
+.shell-links a span, .shell-links__inactive span { color: var(--ink-lighter); font: 12px/1.6 var(--font-ui); }
+.shell-links a:hover, .shell-links a[aria-current="page"] { color: var(--ink); border-color: #aaa69b; }
+.site-characters { position: relative; height: 260px; margin: 42px -25px 0 -38px; pointer-events: none; }
+.site-characters__still { position: absolute; inset: 0; }
+.site-characters__person { position: absolute; width: 308px; aspect-ratio: 384 / 342; bottom: 4px; left: -53px; background: url('/assets/home/runtime/person-look-around-12dir.webp') 0 0 / 400% 300% no-repeat; }
+.site-characters__dog { position: absolute; width: 139px; aspect-ratio: 4 / 3; bottom: 0; left: 119px; background: url('/assets/home/runtime/dog-orbit-run-8dir-4f.webp') 0 28.571% / 400% 800% no-repeat; }
+.site-characters--reading { width: 200px; height: 210px; margin: 26px 0 0; }
+.site-characters__crouching-person { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
+.site-shell > main {
+  min-width: 0;
+  min-height: calc(100svh - 92px);
+  padding: 56px clamp(36px, 5.5vw, 88px);
+  background: var(--paper);
+  border: 1px solid #d7d4cc;
+  box-shadow: 6px 7px 0 -1px var(--ground), 6px 7px 0 #dad7ce;
+  overflow-wrap: anywhere;
 }
-
-.shell-links a {
-  color: var(--ink-light);
-  font-family: var(--font-ui);
-  font-size: var(--fs-small);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
+@media (min-width: 768px) and (max-width: 1050px) {
+  :root { --site-rail-width: 242px; }
+  .site-shell { padding-right: 26px; }
+  .shell-nav { padding-left: 34px; padding-right: 26px; }
+  .site-characters { margin-left: -33px; }
+  .site-characters--reading { margin-left: 0; }
+  .site-shell > main { padding: 44px 36px; }
 }
-
-.shell-links a:hover {
-  color: var(--ink);
-  border-bottom-color: rgba(43, 38, 32, 0.35);
-}
-
-
-/* D-144 补：纸面内嵌于点阵环境，卡片边缘可见，换页动效才读得出（同 lab 评审形态） */
-.shell-body > main {
-  min-height: calc(100svh - clamp(20px, 4vh, 48px) - clamp(24px, 5vh, 56px));
-  margin: clamp(20px, 4vh, 48px) clamp(20px, 4vw, 48px) clamp(24px, 5vh, 56px) 0;
-  background: #fffdf7;
-  border: 1px solid rgba(43, 38, 32, 0.1);
-  box-shadow: 0 1px 2px rgba(43, 38, 32, 0.05), 0 24px 48px -24px rgba(43, 38, 32, 0.16);
-}
-
 @media (max-width: 767px) {
-  .shell-body > main {
-    min-height: calc(100svh - 52px);
-    margin: 0;
-    border: 0;
-    box-shadow: none;
-  }
-
-  .shell-body {
-    display: block;
-    background-size: 18px 18px;
-  }
-
-  .shell-nav {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+  .site-shell { display: block; padding: 0 14px 30px; }
+  .shell-nav, .shell-nav--reading {
+    position: relative;
+    top: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px;
+    grid-template-rows: auto auto;
+    align-items: start;
+    min-height: 242px;
+    max-height: none;
     height: auto;
-    min-height: 52px;
-    padding: 0 1rem;
-    background: rgba(247, 244, 237, 0.92);
-    border-right: 0;
-    border-bottom: 1px solid rgba(43, 38, 32, 0.1);
-    backdrop-filter: blur(6px);
+    padding: 28px 16px 21px;
+    overflow: visible;
   }
-
-  .shell-links {
-    flex-direction: row;
-    gap: 1rem;
-    margin-top: 0;
-  }
-
-
-  .shell-nav[data-hidden="true"] {
-    transform: translateY(-100%);
-  }
+  .shell-identity { grid-column: 1 / -1; grid-row: 1; }
+  .shell-brand { font-size: 18px; }
+  .shell-brand-meta { margin: 0 0 16px; font-size: 9px; }
+  .shell-links { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; width: 100%; min-width: 0; }
+  .shell-links a, .shell-links__inactive { min-width: 44px; min-height: 44px; gap: 3px; font-size: 12px; }
+  .shell-links a span, .shell-links__inactive span { font-size: 9px; }
+  .site-characters { grid-column: 2; grid-row: 1; width: 124px; height: 177px; margin: 25px -14px 0 0; justify-self: end; align-self: end; }
+  .site-characters__person { width: 169px; left: -59px; bottom: 4px; }
+  .site-characters__dog { width: 81px; left: 51px; bottom: 0; }
+  .site-characters--reading { width: 100px; height: 100px; margin: 30px 0 0; }
+  .site-shell > main { padding: 29px 23px 36px; min-height: 600px; box-shadow: 4px 5px 0 -1px var(--ground), 4px 5px 0 #dad7ce; }
 }
 
 /* D-143 方向性卡片切换：复刻 suepark.xyz paper-entrance（D-141/D-142 逆向参数） */
@@ -175,14 +156,14 @@ html[data-astro-transition="forward"]::view-transition-new(page-card) {
 
 .turn-exit {
   position: fixed;
-  top: clamp(20px, 4vh, 48px);
-  right: clamp(20px, 4vw, 48px);
-  bottom: clamp(24px, 5vh, 56px);
-  left: 280px;
+  top: 44px;
+  right: max(36px, calc((100vw - 1600px) / 2 + 36px));
+  bottom: 48px;
+  left: max(var(--site-rail-width), calc((100vw - 1600px) / 2 + var(--site-rail-width)));
   z-index: 54;
   visibility: hidden;
   pointer-events: none;
-  background: #fffdf7;
+  background: var(--paper);
   border: 1px solid rgba(43, 38, 32, 0.1);
   box-shadow: 0 1px 2px rgba(43, 38, 32, 0.05), 0 24px 48px -24px rgba(43, 38, 32, 0.16);
   transform-origin: 50% 45%;
@@ -197,7 +178,7 @@ html[data-nav-direction="back"] .turn-exit {
 
 @media (max-width: 767px) {
   .turn-exit {
-    top: 52px;
+    top: 242px;
     right: 0;
     bottom: 0;
     left: 0;
@@ -249,20 +230,20 @@ html[data-nav-direction="forward"] .editorial-page > * {
   width: calc(100% + 48px);
   visibility: hidden;
   pointer-events: none;
-  background: #fffdf7;
+  background: var(--paper);
   contain: paint;
   transition: none;
 }
 
 .turn-mask[data-direction="next"] {
   left: -48px;
-  background: linear-gradient(to right, transparent 0, #fffdf7 48px);
+  background: linear-gradient(to right, transparent 0, var(--paper) 48px);
   transform: translate(100%);
 }
 
 .turn-mask[data-direction="previous"] {
   right: -48px;
-  background: linear-gradient(to left, transparent 0, #fffdf7 48px);
+  background: linear-gradient(to left, transparent 0, var(--paper) 48px);
   transform: translate(-100%);
 }
 
@@ -284,7 +265,8 @@ html[data-nav-direction="forward"] .editorial-page > * {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-new(page-card) {
+  html[data-astro-transition]::view-transition-new(page-card),
+  html[data-nav-direction="back"] .turn-exit {
     animation: none;
   }
 
@@ -295,4 +277,15 @@ html[data-nav-direction="forward"] .editorial-page > * {
   .turn-mask[data-phase="covering"] {
     transition: none;
   }
+}
+
+/* D-148：保留原 orbit 物理空间，以等比缩放装入左栏。 */
+@media (min-width: 768px) {
+  .site-characters .home-orbit { width: 800px; height: 742.857px; inset: 0 auto auto 0; transform: scale(.35); transform-origin: top left; }
+  .site-characters .home-orbit__person { width: 880px; left: -151.429px; bottom: 11.429px; transform: none; }
+  .site-characters .home-orbit__anchor { width: 397.143px; }
+  .site-characters:has(.home-orbit[data-orbit-active="true"]):not(:has([data-person-orbit-error="true"])) .site-characters__still { opacity: 0; }
+}
+@media (max-width: 767px) {
+  .site-characters .home-orbit { display: none; }
 }

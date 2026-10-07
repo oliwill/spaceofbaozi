@@ -1,0 +1,22 @@
+---
+import ArticleContents from "@/components/editorial/ArticleContents.astro";
+import ReadingProgress from "@/components/editorial/ReadingProgress.astro";
+import type { ReadingHeading } from "@/lib/reading/model";
+import "@/components/editorial/reading.css";
+
+interface Props {
+  title: string;
+  headings: ReadingHeading[];
+}
+const { title, headings } = Astro.props;
+---
+
+<section class="article-reading" aria-label={`${title}的阅读辅助`} data-article-reading data-article-rail>
+  <div class="article-reading__progress" data-reading-obstruction><ReadingProgress /></div>
+  <ArticleContents headings={headings} />
+</section>
+
+<script>
+  import { initArticleReading } from "@/lib/reading/articleReading";
+  initArticleReading();
+</script>

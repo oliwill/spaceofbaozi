@@ -1,0 +1,8 @@
+import { expect,it } from "vitest";
+import { modeForWidth,visiblePhotoIds,stepPhoto,progressLabel } from "@/lib/photos/readerModel";
+import type {PublicAlbum} from "@/lib/photos/albums";
+export const album=(count:number):PublicAlbum=>({id:"trip/day-one",title:"测试",introduction:"",order:0,cover:{src:"/assets/photos/a.png",width:2,height:1,alt:"图"},photos:Array.from({length:count},(_,i)=>({id:String.fromCharCode(97+i),src:`/assets/photos/${i}.png`,width:2,height:1,alt:`图${i}`}))});
+it("pairs author order and stops at final real photo",()=>{const a=album(3),s={photoId:"a",mode:"spread" as const};expect(visiblePhotoIds(a,s)).toEqual(["a","b"]);expect(progressLabel(a,s)).toBe("1–2 / 3");const end=stepPhoto(a,s,1);expect(end.photoId).toBe("c");expect(stepPhoto(a,end,1)).toEqual(end);expect(progressLabel(a,end)).toBe("3 / 3");});
+it("retains photo anchor through width changes",()=>{const a=album(3);const anchor="b";expect(visiblePhotoIds(a,{photoId:anchor,mode:"spread"})).toEqual(["a","b"]);expect(visiblePhotoIds(a,{photoId:anchor,mode:"single"})).toEqual(["b"]);expect(modeForWidth(759)).toBe("single");expect(modeForWidth(760)).toBe("spread");});
+it.each([1,2,3,12])("navigates %i photos without wrapping",count=>{const a=album(count);for(const mode of ["single","spread"] as const){let s={photoId:"a",mode};expect(stepPhoto(a,s,-1)).toEqual(s);for(let n=0;n<20;n++)s=stepPhoto(a,s,1);expect(visiblePhotoIds(a,s)).toContain(a.photos.at(-1)!.id);expect(stepPhoto(a,s,1)).toEqual(s);}});
+it("handles long photo IDs without index assumptions",()=>{const a=album(1);a.photos[0].id="a-"+"x".repeat(200);expect(visiblePhotoIds(a,{photoId:a.photos[0].id,mode:"spread"})).toEqual([a.photos[0].id]);});

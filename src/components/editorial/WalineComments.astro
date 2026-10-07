@@ -1,9 +1,10 @@
 ---
+import { logicalPath } from "@/lib/site/paths";
 interface Props {
   path?: string;
 }
 
-const { path = Astro.url.pathname } = Astro.props;
+const { path = logicalPath(Astro.url.pathname) ?? Astro.url.pathname } = Astro.props;
 const serverURL = import.meta.env.PUBLIC_WALINE_SERVER_URL;
 ---
 
@@ -20,9 +21,16 @@ const serverURL = import.meta.env.PUBLIC_WALINE_SERVER_URL;
     import { init } from "@waline/client";
     import "@waline/client/style";
 
-    const el = document.querySelector<HTMLElement>("[data-waline-comments]");
-    if (el?.dataset.serverUrl) {
-      init({
+    let comments: ReturnType<typeof init>;
+    const cleanup = () => {
+      comments?.destroy();
+      comments = null;
+    };
+    const setup = () => {
+      cleanup();
+      const el = document.querySelector<HTMLElement>("[data-waline-comments]");
+      if (!el?.dataset.serverUrl) return;
+      comments = init({
         el,
         serverURL: el.dataset.serverUrl,
         path: el.dataset.path,
@@ -38,6 +46,9 @@ const serverURL = import.meta.env.PUBLIC_WALINE_SERVER_URL;
         noRss: true,
         commentSorting: "latest",
       });
-    }
+    };
+    document.addEventListener("astro:before-swap", cleanup);
+    document.addEventListener("astro:page-load", setup);
+    setup();
   </script>
 )}

@@ -1,0 +1,84 @@
+media:
+  - name: blog_images
+    input: public/assets/blog
+    output: /assets/blog
+    extensions: [jpg, jpeg, png, webp]
+content:
+  - name: blog
+    label: 文章
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: create
+    operations:
+      rename: false
+      delete: false
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: description
+        label: 摘要
+        type: text
+      - name: date
+        label: 首次发布日期
+        type: date
+        required: true
+        default: ""
+        description: 手工填写首次发布日期；修订时保留原值。
+        options:
+          format: yyyy-MM-dd
+      - name: updated
+        label: 修订日期
+        type: date
+        default: ""
+        description: 未修订时留空；实际保存后须核对未填写时该键被省略。
+        options:
+          format: yyyy-MM-dd
+      - name: tags
+        label: 标签
+        type: string
+        list: true
+      - name: draft
+        label: 草稿
+        type: boolean
+        default: true
+      - name: approved
+        label: 包子已批准公开
+        type: boolean
+        default: false
+        description: 仅在包子批准后，与草稿关闭在同一次保存中修改。
+      - name: cover
+        label: 封面
+        type: image
+        options:
+          media: blog_images
+      - name: coverAlt
+        label: 封面描述
+        type: string
+      - name: coverCredit
+        label: 封面来源
+        type: string
+      - name: featured
+        label: 精选
+        type: boolean
+        default: false
+      - name: status
+        label: 状态
+        type: string
+      - name: link
+        label: 关联链接
+        type: string
+      - name: body
+        label: 正文
+        type: rich-text
+        options:
+          format: markdown
+          switcher: true
+          media: blog_images
+settings:
+  content:
+    merge: false

@@ -1,0 +1,31 @@
+---
+import { logicalPath } from "@/lib/site/paths";
+import { servedUrl } from "@/lib/site/paths";
+import SiteCharacters from "@/components/layout/SiteCharacters.astro";
+
+interface Props { reading?: boolean; home?: boolean; photos?: "list"|"reader"; }
+const { reading = false, home = false, photos } = Astro.props;
+const path = (logicalPath(Astro.url.pathname) ?? "").replace(/\/$/, "");
+const links = [
+  { label: "文章", href: "/blog", number: "01" },
+  { label: "照片", href: "/photos", number: "02" },
+  { label: "简历", number: "03" },
+  { label: "项目", href: "/projects", number: "04" },
+  { label: "书影音", href: "/media", number: "05" },
+];
+---
+
+<header class:list={["shell-nav", { "shell-nav--reading": reading, "shell-nav--photos": !!photos }]}>
+  <div class="shell-identity">
+    <a class="shell-brand" href={servedUrl('/#home')}>中华一番包子铺</a>
+    <span class="shell-brand-meta">baozi.space · 包子的个人空间</span>
+  </div>
+  <nav class="shell-links" aria-label="主要栏目">
+    {links.map(({ label, href, number }) => (
+      href ? <a href={servedUrl(href)} aria-current={path === href || path.startsWith(`${href}/`) ? "page" : undefined} data-astro-prefetch="viewport">
+        <span aria-hidden="true">{number}</span>{label}
+      </a> : <span class="shell-links__inactive" aria-disabled="true"><span aria-hidden="true">{number}</span>{label}</span>
+    ))}
+  </nav>
+  <SiteCharacters interactive={home} reading={reading} photos={photos} />
+</header>

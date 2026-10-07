@@ -1,0 +1,44 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import type { CollectionEntry } from "astro:content";
+import type { PublicProject } from "@/lib/projects/projects";
+import "@/components/home/home-content.css";
+
+interface Props {
+  posts: CollectionEntry<"blog">[];
+  projects: PublicProject[];
+}
+const { posts, projects } = Astro.props;
+const dateLabel = (date: Date) => date.toISOString().slice(0, 10).replaceAll("-", " / ");
+---
+
+<div class="home-content">
+  <header class="home-content__top"><span>中华一番包子铺</span><span>个人档案 · 001</span></header>
+  <section class="home-content__identity home-v2__identity" aria-labelledby="home-title">
+    <p class="home-content__eyebrow">写作 / 摄影 / 生活</p>
+    <h1 id="home-title">你好，<br />我是包子。</h1>
+    <p class="home-content__intro">这里记录写作、照片、书影音，<br />还有一些正在做的事。</p>
+    <p class="home-content__about">居住在上海，把值得的事，慢慢记录下来。</p>
+    <a class="home-content__link" href={servedUrl('/blog')}>从文章开始 <span aria-hidden="true">↗</span></a>
+  </section>
+
+  <section class="home-content__section" aria-labelledby="home-blog-title">
+    <header class="home-content__section-head"><h2 id="home-blog-title">最近写下</h2><a href={servedUrl('/blog')}>全部文章 ↗</a></header>
+    {posts.length ? posts.map((post) => (
+      <article class="home-content__entry">
+        <div class="home-content__entry-title"><h3><a href={servedUrl(`/blog/${post.id}`)}>{post.data.title}</a></h3><time datetime={post.data.date.toISOString()}>{dateLabel(post.data.date)}</time></div>
+        <p>{post.data.description}</p>
+      </article>
+    )) : <p class="home-content__empty">文章正在整理。</p>}
+  </section>
+
+  <section class="home-content__section" aria-labelledby="home-projects-title">
+    <header class="home-content__section-head"><h2 id="home-projects-title">正在做的事</h2><a href={servedUrl('/projects')}>全部项目 ↗</a></header>
+    {projects.length ? projects.map((project) => (
+      <article class="home-content__entry">
+        <h3><a href={servedUrl(project.href)}>{project.title}</a></h3>
+        <p>{project.intro}</p>
+      </article>
+    )) : <p class="home-content__empty">第一批项目整理好后会出现在这里。</p>}
+  </section>
+</div>

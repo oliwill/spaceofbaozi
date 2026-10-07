@@ -14,7 +14,7 @@ export function smoothDampStep(state: DampState, target: number, smoothTime: num
   const velocity = (state.velocity - omega * temp) * exp;
   const current = target + (change + temp) * exp;
   // 过冲钳制：到位后速度清零，不回摆穿过目标
-  if (change > 0 === current > target) return { current: target, velocity: 0 };
+  if ((change < 0) === (current > target)) return { current: target, velocity: 0 };
   return { current, velocity };
 }
 

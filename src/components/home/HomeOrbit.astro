@@ -1,13 +1,17 @@
 ---
+import { servedUrl } from "@/lib/site/paths";
 import "@/components/home/home-orbit.css";
+import manifest from "../../../public/manifest/asset-manifest.v2.json";
 
-const personSprite = "/assets/home/runtime/person-look-around-12dir.webp";
-const dogSprite = "/assets/home/runtime/dog-orbit-run-8dir-4f.webp";
+const personSprite = servedUrl("/assets/home/runtime/person-look-around-12dir.webp");
+const dogSprite = servedUrl("/assets/home/runtime/dog-orbit-run-8dir-4f.webp");
+const { rail = false } = Astro.props;
 ---
 
 <div
   class="home-orbit"
   data-home-orbit-root
+  data-rail-orbit={rail || undefined}
   data-orbit-ready="false"
   data-orbit-active="false"
   data-controls-enabled="false"
@@ -52,15 +56,51 @@ const dogSprite = "/assets/home/runtime/dog-orbit-run-8dir-4f.webp";
   <p class="home-orbit__fallback" data-orbit-fallback hidden>嘉乐暂时跑去玩了。</p>
 </div>
 
+{rail && <img class="home-asset-fallback" data-home-asset-fallback data-src={servedUrl(manifest.fallback.src)} alt="" aria-hidden="true" hidden />}
+
 <script>
+  import { watchHomeAssets } from "@/lib/home-orbit/assetFallback";
   import {
     createHomeOrbit,
     type HomeOrbitController,
   } from "@/lib/home-orbit/createHomeOrbit";
 
   type OrbitRoot = HTMLElement & { __homeOrbit?: HomeOrbitController };
-  const orbitRoot = document.querySelector<OrbitRoot>("[data-home-orbit-root]");
-  if (orbitRoot && !orbitRoot.__homeOrbit) {
-    orbitRoot.__homeOrbit = createHomeOrbit(orbitRoot);
-  }
+  const desktop = window.matchMedia("(min-width: 768px)");
+  const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const roots = new Set<OrbitRoot>();
+  const assetWatches = new Set<() => void>();
+  const cleanup = () => {
+    assetWatches.forEach(stop => stop());
+    assetWatches.clear();
+    roots.forEach((root) => {
+      root.__homeOrbit?.destroy();
+      delete root.__homeOrbit;
+      root.dataset.orbitActive = "false";
+    });
+    roots.clear();
+  };
+  const mount = () => {
+    cleanup();
+    document.querySelectorAll<OrbitRoot>("[data-home-orbit-root]").forEach((root) => {
+      if (root.hasAttribute("data-rail-orbit") && (!desktop.matches || root.dataset.homeAssetFailure === "true")) {
+        root.tabIndex = -1;
+        assetWatches.add(watchHomeAssets(root));
+        return;
+      }
+      root.tabIndex = 0;
+      root.__homeOrbit = createHomeOrbit(root);
+      roots.add(root);
+      if (root.hasAttribute("data-rail-orbit")) {
+        root.__homeOrbit.handoff({ angle: 35 * Math.PI / 180, angularVelocity: 0 });
+        const home = root.closest<HTMLElement>("#home");
+        if (!home?.inert && home?.dataset.introControlsReadyAt === undefined) root.__homeOrbit.enable();
+      }
+    });
+  };
+  desktop.addEventListener("change", mount);
+  motion.addEventListener("change", mount);
+  document.addEventListener("astro:before-swap", cleanup);
+  document.addEventListener("astro:page-load", mount);
+  mount();
 </script>

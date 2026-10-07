@@ -1,0 +1,17 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import {photoSrcset} from "@/lib/photos/imageCandidates";
+import type {PublicPhoto} from "@/lib/photos/albums";
+interface Props {photo:PublicPhoto;index:number;}
+const {photo,index}=Astro.props;
+const srcset=photoSrcset(photo);
+---
+<figure class="album-photo" id={`photo-${photo.id}`} data-photo-id={photo.id} data-load="idle">
+  <div class="album-photo__media" style={`aspect-ratio:${photo.width}/${photo.height}`}>
+    <template data-photo-image><img data-src={servedUrl(photo.src)} data-srcset={srcset} width={photo.width} height={photo.height} alt={photo.alt} decoding="async" /></template>
+    <a class="album-photo__fallback" href={servedUrl(photo.src)}>查看照片 {index+1}：{photo.alt}</a>
+    <noscript><img src={servedUrl(photo.src)} srcset={srcset} sizes="(max-width: 767px) calc(100vw - 76px), 50vw" width={photo.width} height={photo.height} alt={photo.alt} loading="lazy" decoding="async" /></noscript>
+    <div class="album-photo__status" data-photo-status hidden><span data-load-message>照片加载中</span><button type="button" data-retry hidden>重试</button></div>
+  </div>
+  <figcaption><span class="album-photo__number">{index+1}</span>{photo.caption&&<span>{photo.caption}</span>}{photo.credit&&<small>{photo.credit}</small>}</figcaption>
+</figure>

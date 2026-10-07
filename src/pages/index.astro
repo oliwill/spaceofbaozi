@@ -1,43 +1,18 @@
 ---
-import "@/styles/global.css";
-import SceneRoot from "@/components/scene/SceneRoot.astro";
+import ShellLayout from "@/components/layout/ShellLayout.astro";
+import IntroOilStage from "@/components/intro-oil/IntroOilStage.astro";
+import HomeContent from "@/components/home/HomeContent.astro";
 import { getCollection } from "astro:content";
 import { isPublishable } from "@/lib/content/gates";
+import { selectPublicProjects } from "@/lib/projects/projects";
 
-// 场景 3 数据（D-124：Astro 构建期注入，React 不取数）
-const projects = (await getCollection("projects", ({ data }) => isPublishable(data)))
-  .sort((a, b) => +b.data.date - +a.data.date)
-  .map((entry) => ({
-    slug: entry.id,
-    title: entry.data.title,
-    intro: entry.data.intro,
-    link: entry.data.link,
-  }));
+const posts = (await getCollection("blog", ({ data }) => isPublishable(data)))
+  .sort((a, b) => +b.data.date - +a.data.date).slice(0, 3);
+const projects = selectPublicProjects(await getCollection("projects"))
+  .slice(0, 3).map(({ project }) => project);
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#eef0ea" />
-    <meta
-      name="description"
-      content="中华一番包子铺：包子的个人网站。启动页、首页与项目矩阵在一屏滚动序列内串联，还有文章、相册、简历与项目。"
-    />
-    <meta property="og:title" content="baozi.space — 中华一番包子铺" />
-    <meta
-      property="og:description"
-      content="包子的个人空间：写作、照片、书影音与正在做的事。"
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://baozi.space/" />
-    <link rel="preload" as="fetch" href="/manifest/asset-manifest.v2.json" crossorigin />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <title>baozi.space — 中华一番包子铺</title>
-  </head>
-  <body class="scene-body">
-    <a class="skip-link" href="#main">跳到正文</a>
-    <SceneRoot projects={projects} />
-  </body>
-</html>
+<ShellLayout home>
+  <IntroOilStage slot="intro" />
+  <HomeContent posts={posts} projects={projects} />
+</ShellLayout>

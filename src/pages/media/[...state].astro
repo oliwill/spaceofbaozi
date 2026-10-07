@@ -1,0 +1,10 @@
+---
+import ShellLayout from '@/components/layout/ShellLayout.astro';
+import MediaArchive from '@/components/media/MediaArchive.astro';
+import { readPublicSnapshot } from '@/lib/media/publicSnapshot.server';
+import { buildArchiveView } from '@/lib/media/model';
+import { enumerateArchiveStates,listPath } from '@/lib/media/routes';
+export function getStaticPaths(){const snapshot=readPublicSnapshot();const now=new Date();return enumerateArchiveStates(snapshot,now).map(state=>({params:{state:listPath(state).slice('/media/'.length)},props:{view:buildArchiveView(snapshot,state,now)}}));}
+const {view}=Astro.props;
+---
+<ShellLayout title="书影音 · baozi.space" noindex={!view.hasPublicEntries}><MediaArchive view={view}/></ShellLayout>

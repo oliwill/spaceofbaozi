@@ -1,4 +1,5 @@
 ---
+import { servedUrl } from "@/lib/site/paths";
 import "@/components/intro-oil/intro-oil.css";
 
 /** plate=true 仅在 /lab/intro-oil 使用：交接评审用 iframe；生产场景 1 由后续场景 2 自然衔接 */
@@ -6,17 +7,17 @@ const { plate = false } = Astro.props;
 const grassSrc = "/assets/intro/runtime/intro-grass.webp";
 ---
 
-<div class="io-scroll" data-io-scroll>
+<div class="io-scroll" data-io-scroll data-io-production={!plate || undefined} hidden={!plate}>
   <section class="intro-oil-stage" data-intro-oil-stage aria-label="启动页舞台">
     <img
       class="intro-oil-stage__grass"
       data-io="grass"
-      src={grassSrc}
+      src={servedUrl(grassSrc)}
       alt=""
       aria-hidden="true"
       draggable="false"
     />
-    <!-- 角色层默认隐藏，运行时就绪后逐层点亮；无 JS 时保留静态点阵 + 草地 -->
+    <!-- 角色层默认隐藏，运行时就绪后逐层点亮；无 JS 时直接进入完整首页 -->
     <div class="io-sprite io-ball" data-io="ball" aria-hidden="true"></div>
     <div class="io-sprite io-dog" data-io="dog" aria-hidden="true"></div>
     <svg class="io-leash" data-io="leash" aria-hidden="true">
@@ -28,13 +29,13 @@ const grassSrc = "/assets/intro/runtime/intro-grass.webp";
       <iframe
         class="io-plate"
         data-io="plate"
-        src="/lab/home-v2?capture=video-plate"
+        src={servedUrl('/lab/home-v2?capture=video-plate')}
         title="Home v2 定帧交接层"
         loading="lazy"
         tabindex="-1"
       ></iframe>
     )}
-    <button class="io-skip" data-io="skip" type="button">跳过开场 →</button>
+    <a class="io-skip" data-io="skip" href={plate ? servedUrl("/#home") : "#home"}>跳过开场 →</a>
     <pre class="io-debug" data-io="debug" hidden></pre>
   </section>
 </div>
@@ -42,10 +43,20 @@ const grassSrc = "/assets/intro/runtime/intro-grass.webp";
 <script>
   import { initIntroOilRuntime } from "@/components/intro-oil/runtime";
 
-  const stage = document.querySelector<HTMLElement>("[data-intro-oil-stage]");
-  if (stage) {
+  let cleanup: (() => void) | undefined;
+  let currentStage: HTMLElement | null = null;
+  function initialize() {
+    const stage = document.querySelector<HTMLElement>("[data-intro-oil-stage]");
+    if (stage === currentStage && stage?.dataset.introState !== "disposed") return;
+    cleanup?.();
+    currentStage = stage;
+    if (!stage) return;
     const debug = stage.querySelector<HTMLElement>('[data-io="debug"]');
     if (debug && new URLSearchParams(location.search).has("debug")) debug.hidden = false;
-    initIntroOilRuntime(stage);
+    cleanup = initIntroOilRuntime(stage);
   }
+  document.addEventListener("astro:page-load", initialize);
+  window.addEventListener("pageshow", (event) => { if (event.persisted) initialize(); });
+  document.addEventListener("astro:before-swap", () => { cleanup?.(); cleanup = undefined; currentStage = null; });
+  initialize();
 </script>

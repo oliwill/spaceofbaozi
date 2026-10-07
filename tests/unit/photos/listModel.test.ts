@@ -1,0 +1,12 @@
+import {expect,it} from 'vitest';
+import {coverWidth,activeAlbumIndex,clampAlbumScroll,restoreAlbumScroll} from '@/lib/photos/listModel';
+it.each([[282,18,1.4],[312,18,1.4],[701.25,18,1.4],[280.25,26,1.6],[640.390625,26,1.6]])('shows the requested visible ratio at %ipx', (width,gap,ratio)=>{const cover=coverWidth(width,gap,ratio);expect((width-gap)/cover).toBeCloseTo(ratio,6);});
+it.each([640.4,640.390625])('keeps the desktop 4:5 cover within 480px at fractional content width %f',width=>{const cover=coverWidth(width,26,1.6);expect(cover/.8).toBeLessThanOrEqual(480);expect(cover).toBeCloseTo(384,1);});
+it('segments follow actual leading cover and reachable final edge',()=>{expect(activeAlbumIndex([0,170,340,510],0,420)).toBe(0);expect(activeAlbumIndex([0,170,340,510],175,420)).toBe(1);expect(activeAlbumIndex([0,170,340,510],420,420)).toBe(3);expect(activeAlbumIndex([0],0,0)).toBe(0);});
+it('only scrolls inside the strip and clamps the final segment',()=>{expect(clampAlbumScroll(510,420)).toBe(420);expect(clampAlbumScroll(-20,420)).toBe(0);});
+it('keeps the selected cover visible after returning across viewport sizes',()=>{expect(restoreAlbumScroll(900,510,147,282,740)).toBe(510);expect(restoreAlbumScroll(200,1100,460,860,2066)).toBe(1100);expect(restoreAlbumScroll(100,170,147,282,740)).toBe(100);});
+it('restores the whole selected cover when resizing would clip either edge',()=>{expect(restoreAlbumScroll(100,80,147,282,740)).toBe(80);expect(restoreAlbumScroll(100,250,147,282,740)).toBe(250);});
+it('keeps the last cover reachable and complete when restoring a narrower viewport',()=>{const viewport=312,cover=coverWidth(viewport,18,1.4),last=5*(cover+18),max=last+cover-viewport;const scroll=restoreAlbumScroll(1800,last,cover,viewport,max);expect(scroll).toBe(max);expect(last).toBeGreaterThanOrEqual(scroll);expect(last+cover).toBeLessThanOrEqual(scroll+viewport);});
+it('preserves a saved cover position that is fully visible within the scrollport padding',()=>{expect(restoreAlbumScroll(970,1233.953125,383.984375,648.390625,1794,4)).toBe(970);});
+it('realigns a cover clipped by the scrollport while retaining the left padding',()=>{expect(restoreAlbumScroll(966,1233.953125,383.984375,648.390625,1794,4)).toBe(1229.953125);});
+it('preserves a fully visible left edge even when it occupies the padding area',()=>{expect(restoreAlbumScroll(1233.953125,1233.953125,383.984375,648.390625,1794,4)).toBe(1233.953125);});

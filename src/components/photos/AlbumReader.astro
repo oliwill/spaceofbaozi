@@ -1,0 +1,16 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import type {PublicAlbum} from "@/lib/photos/albums";
+import AlbumPhoto from "@/components/photos/AlbumPhoto.astro";
+import "@/components/photos/album-reader.css";
+interface Props {album:PublicAlbum;}
+const {album}=Astro.props;
+const safeData=JSON.stringify(album).replace(/</g,'\\u003c');
+---
+<section class="album-reader" data-album-reader data-album-id={album.id} aria-label={`${album.title}照片阅读区`} tabindex="-1">
+  <script is:inline type="application/json" data-album-data set:html={safeData} />
+  <nav class="album-reader__sequence" data-static-sequence aria-label="照片顺序"><ol>{album.photos.map((photo,index)=><li><a href={`#photo-${photo.id}`}>照片 {index+1}：{photo.alt}</a></li>)}</ol></nav>
+  <div class="album-reader__pages" data-album-pages>{album.photos.map((photo,index)=><AlbumPhoto photo={photo} index={index}/>)}<div class="album-reader__blank" data-blank-page aria-hidden="true" hidden></div></div>
+  <div class="album-reader__controls" data-reader-controls hidden><button type="button" data-prev aria-label="上一页">← 上一页</button><span data-progress aria-live="polite" aria-atomic="true"></span><button type="button" data-next aria-label="下一页">下一页 →</button></div>
+  <p class="album-reader__end" data-end hidden>已到最后 · <a href={servedUrl('/photos')} data-album-return>返回影集</a></p>
+</section>

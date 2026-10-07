@@ -1,0 +1,22 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import type { PublicMedia } from '@/lib/media/schema';
+import { detailHref } from '@/lib/media/routes';
+import { ratingLabel,dateLabel,typeLabel } from '@/lib/media/presentation';
+interface Props { entries:PublicMedia[]; from?:string }
+const {entries,from}=Astro.props;
+---
+<ol class="media-list">
+ {entries.map((entry,index)=><li id={`media-${entry.id}`} data-media-entry>
+  {!entry.markDate.calendarDate&&(index===0||entries[index-1].markDate.calendarDate)&&<p class="media-partial">日期待补</p>}
+  <article class:list={['media-record',{'media-record--cover':!!entry.cover}]}>
+   {entry.cover&&<a class="media-cover" href={detailHref(entry.id,from?`${from}#media-${entry.id}`:undefined)} aria-label={entry.title} data-media-id={entry.id}><img src={servedUrl(entry.cover.src)} width={entry.cover.width} height={entry.cover.height} alt={entry.cover.alt} loading={index<3?'eager':'lazy'}/></a>}
+   <div class="media-record__text">
+    <p class="media-meta"><span>{typeLabel(entry.type)}</span><span>{dateLabel(entry.markDate)}</span></p>
+    <h2><a href={detailHref(entry.id,from?`${from}#media-${entry.id}`:undefined)} data-media-id={entry.id}>{entry.title}</a></h2>
+    <p class="media-rating">{ratingLabel(entry.myRating)}</p>
+    {entry.comment&&<p class="media-short-comment">{entry.comment}</p>}
+   </div>
+  </article>
+ </li>)}
+</ol>

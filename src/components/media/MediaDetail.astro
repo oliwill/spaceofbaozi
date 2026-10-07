@@ -1,0 +1,20 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import type {PublicMedia} from '@/lib/media/schema';
+import {ratingLabel,dateLabel,typeLabel} from '@/lib/media/presentation';
+import '@/components/editorial/editorial.css';
+import '@/components/media/media.css';
+interface Props {entry:PublicMedia;defaultReturnHref:string;returnHrefs:string[];synthetic:boolean}
+const {entry,defaultReturnHref,returnHrefs,synthetic}=Astro.props;
+---
+<article class="editorial-page media-page media-detail" data-media-detail data-media-id={entry.id} data-media-returns={JSON.stringify(returnHrefs)}>
+ <a class="media-return" href={servedUrl(defaultReturnHref)} data-media-return>← 返回书影音</a>
+ {synthetic&&<p class="media-fixture">合成测试记录 · 仅用于私下验证，不是真实阅读史。</p>}
+ <header><p class="media-meta">{typeLabel(entry.type)} · {dateLabel(entry.markDate)}</p><h1>{entry.title}</h1><p class="media-rating">{ratingLabel(entry.myRating)}</p></header>
+ {entry.cover&&<figure class="media-detail-cover"><img src={servedUrl(entry.cover.src)} width={entry.cover.width} height={entry.cover.height} alt={entry.cover.alt}/>{entry.cover.credit&&<figcaption>{entry.cover.credit}</figcaption>}</figure>}
+ {entry.comment&&<div class="media-full-comment">{entry.comment}</div>}
+ {entry.tags.length>0&&<ul class="media-tags" aria-label="标签">{entry.tags.map(tag=><li>{tag}</li>)}</ul>}
+ {entry.credits.length>0&&<dl class="media-credits">{entry.credits.map(credit=><><dt>{credit.label}</dt><dd>{credit.value}</dd></>)}</dl>}
+ {(entry.blogHref||entry.doubanUrl)&&<nav class="media-detail-links" aria-label="相关链接">{entry.blogHref&&<a href={servedUrl(entry.blogHref)}>阅读完整长文</a>}{entry.doubanUrl&&<a href={servedUrl(entry.doubanUrl)} target="_blank" rel="noopener noreferrer">豆瓣条目 ↗</a>}</nav>}
+</article>
+<script>import {initMediaLifecycle} from '@/lib/media/lifecycle';initMediaLifecycle();</script>

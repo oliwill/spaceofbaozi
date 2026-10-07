@@ -1,0 +1,21 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import AlbumCharacters from "@/components/photos/AlbumCharacters.astro";
+import HomeOrbit from "@/components/home/HomeOrbit.astro";
+interface Props { interactive?: boolean; reading?: boolean; photos?: "list"|"reader"; }
+const { interactive = false, reading = false, photos } = Astro.props;
+---
+
+{photos ? <AlbumCharacters role="person" phase={photos==="reader"?"reading":"invite"} placement="rail"/> : <div class:list={["site-characters", { "site-characters--reading": reading }]}>
+  {reading ? (
+    <img class="site-characters__crouching-person" src={servedUrl('/assets/reading/person-crouch-watch-right.png')} width="180" height="160" alt="" aria-hidden="true" decoding="async" />
+  ) : (
+    <>
+      <div class="site-characters__still home-v2__portrait" aria-hidden="true">
+        <span class="site-characters__person" data-home-person></span>
+        <span class="site-characters__dog" data-home-dog></span>
+      </div>
+      {interactive && <HomeOrbit rail />}
+    </>
+  )}
+</div>}

@@ -1,3 +1,129 @@
+## D-162 · 开场完整展示后，下一次有效下滚直接进入首页（2026-10-05）
+
+用户06:50Z明确“触发机制是按往下滚动带来的…启动页展示完了以后下拉就应该直接进入首页”。此前压缩末段进度候选未被保存为权威源码；本轮从实际权威source24/report25及已接受三拍T出发，没有混入压缩映射。本轮视频已交用户，实际触控板手感与新视觉验收仍待用户；不重复要求确认已明确的设计。
+
+采用Mac实际已测源码libfile_6a0fd392d9348191bf58183b3d193f02。315文件hash逐项匹配外层清单及最终验证记录。相对312项T只修改runtime和3份授权E2E，其余308项保持；新增desktopWheelGate、37项门控单元和9项E2E。整合后src/tests/public/scripts与最终Mac源码逐字节一致。原三拍helper、raw .972之前动作和位移、400vh轨道、布局、Home控制器、手机/lab、素材/Manifest、配置锁保持。runtime SHA6810b630e38c397015bc3cdd2c28d6d00d52aeb9efcff87b41cbfae1814b3be2；gate SHAf26956fe3b7c680f715f8d8eaf62d0e249e22a61f7ee1c10dc6d27e8edc79d5d。
+
+桌面正式页由可信、无修饰、竖向主导的向下wheel到达.972，实际滚动位置pin到原完整末帧点，清理Lenis内部平滑余量，保留不透明点阵纸和人物/狗7/7。完整末帧绘制后再经下一RAF才armed。后续可取消的有效下滚与上一可信wheel观察间隔≥300ms时，同一事件内preventDefault/stopPropagation并执行原节点hold与enterHome；没有再走一段淡入滚距，经过时间本身不自动进入。Home仍在实际交接后保留原300ms控制就绪门禁。
+
+连续wheel刷新间隔基准并保持等待；未修饰零delta保持等待。不可取消事件不能提交交接，观察到位移漂移后repin重画；不承诺其所有平台均无瞬时位移。向上wheel同次释放并回看；键盘滚动键、touchstart、pointerdown和非零横向/修饰wheel回到原T scrub。手机/lab仍走旧流程，所以不是所有输入设备都已采用新门控。resize/Home几何observer取消旧arm并重画后重arm；pinning guard防止同步onUpdate递归；skip/failure/abort原退出清理保留。
+
+独立核验Mac原日志/JSON：815/815单元、48文件；最终53/53浏览器、7spec、2workers/0retry、0失败/跳过/flaky，原JSON开始07:17:43.894Z、耗时82.381617秒。Maccheck203/0错误/0警告/2旧hints、19页构建。首次53项的48通过/5失败因新测试误把奔跑atlas帧7当末帧，随后加强为正确atlas＋7/7；原1px和timeout未放宽，失败trace保留。首轮单元63通过/13RED、物理pin补测34/1、不可取消及零delta补测35/2均保留后转绿。原类型检查、预览端口、@编码404等过程失败未删除。
+
+新云端相同源码815/815单元、源码check203文件/0错误/0警告/2hints、19页build均exit0。完整历史归档默认check233文件仍有3个D155旧错误，exit1 NON-GREEN，未改配置遮蔽。新门控与原保护79/79是其中定向口径，不与815叠加。未运行云浏览器或绕过预览限制。226份证据清单hash全部核验。
+
+原事件记录显示：完整原纸7/7后6次连续4px事件（139.4–183.4ms间隔）及500ms暂停均保持等待；fresh可取消4px事件实际gap649.4ms，同eventId晚注册capture已见held和prevented，通知距输入0.7ms、首次Home观察2.3ms。首controls=true距输入301.6ms；首次8×2鼠标移动才释放held。人物/狗同节点、atlas、7/7帧保持，按Manifest锚点＋BCR的交接前后viewport ground差0。该数据是DOM/输入观察，不是屏幕呈现延迟、透明轮廓像素等价或额外测试PASS。
+
+已实际查看原视频末帧、连续等待、进入Home及首次互动关键像素：完整站/坐姿与点阵纸保持，再出现Home，之后才响应首次互动。抽帧不等于逐帧视觉批准。录制为Mac已有独立Chromium及Playwright可信wheel，不是人手物理触控板；MP4保留1440×900/25fps及原PTS，无插帧/变速，兼容编码验证不等于真实手机播放验收。
+
+300ms是保守启发式，不是物理手势ID：快速第二拨可能被合并，迟到惯性包可能被判为新拨。实体Mac触控板惯性、原生滚动条是否派发pointerdown、非整数像素/缩放pin量化仍未实测；没有这些问题的当前复现。交接事件后OS后续wheel仍沿原Home滚动，没有新增全局尾流锁。Safari、实体iPhone/触摸、实际BFCache persisted、原生200%、Home旧900ms leave/键盘竞态、其他栏目历史失败及3个归档check错误仍未关闭。没有commit/push/合并/部署、域名或原checkout改动，无真实内容/新素材发布授权。
+
+本轮证据libfile_1e9dc0f9b97c8191a69446c75b507fbb，详细报告libfile_4a964a544f2881919a9bce569a60e2af，完整MP4 libfile_b812d31684248191b7b13c71b7d754a7，尾段libfile_032a5ef965e08191a84ef62af19f0918。原ZIP/清单/报告、新云验证及保护记录保存在_handoff/startup-next-scroll-final/；被替代的压缩候选证据另标superseded保留，仅作历史，不采用其产品代码。旧QA v4不替换为当前已测身份。保存版本只认Library回执；以下完整历史原文保留对应阶段事实。
+
+
+## D-161 · 桌面三拍整体收尾：已测代码整合，视觉选择待用户（2026-10-05）
+
+用户于03:41Z批准“人物起身整理＋嘉乐小步靠近；人物站稳＋嘉乐停步抬头；嘉乐坐下、共同停稳后进入首页”，04:57Z允许限额恢复后继续。此为实施授权，不是对最终视频的视觉验收。新完整视频与不变速高质量尾段已交用户，尚待看片意见。本节取代前文D-160右跑版本作为当前实现；历史验证与失败记录全部保留。
+
+来源为本机独立候选libfile_76d48d8f31dc8191844697f4a84a87f3。312个源码文件逐项匹配外层清单及最终验证hash。以权威源码v23为基线，只同步runtime.ts、两份专属返程测试，并新增17行desktopEnding.ts。其余308项本机输入保持；整合后src/tests/public/scripts逐字节等于实际Mac测试源码。没有新的layout/CSS/锚点修改；Home首次互动、手机/lab、共享timeline、图集/Manifest、配置锁保持。旧QA v4仍是未在Mac下载成功的历史候选，不将其替换或记作当前已测包。
+
+当前桌面production共同编排仍由滚动进度决定：.91–.932人物原跪起4；.932–.944扶帽5、嘉乐原settle小步0出现；.944–.95整理6＋小步1；.95–.956整理6＋刹车2；.956–.963人物站姿7＋狗抬头3；.963–.972狗坐下6；.972–.98双方末帧7共同停稳；.98–1沿原纸面显现、原节点持姿交接。嘉乐从落点左0.10狗宽向右靠近，.932–.938渐显，.956后位置固定。省略settle的4/5姿态，不再使用chase奔跑循环；不新增转身帧、计时器或固定倍速。
+
+独立核验：Mac原全单元日志与exit0记录SHA一致，778/778、47文件；原始浏览器JSON 44/44，0失败/跳过/flaky，2workers、0retry、30秒test，05:05:40.681Z开始。原41项浏览器测试未改，新3项覆盖三拍与手机保护。Mac源码check200/0错误/0警告/2旧hints，19页/68产物。单元RED21失败/5保护通过及浏览器RED2失败/1手机保护通过原件保留。
+
+云端对相同最终代码新跑778/778单元，源码check200文件/0错误/0警告/2hints、19页build均exit0。完整历史归档默认check230文件仍有3个D155旧错误，exit1 NON-GREEN，未改配置遮蔽。没有云浏览器运行或绕过预览限制。独立代码review未发现阻断，但这不等于动作自然度获批。
+
+已实际查看最终matched原片抽帧：蹲姿旁嘉乐头部可辨，身体局部受腿遮挡；整理/靠近后共同站稳抬头，再后躯落座并保持末帧。所看帧未见明显逆向翻转、坐姿横移或双影；3→6仍是原图集离散轮廓切换，未新增过渡画帧。抽帧与约12Hz DOM记录不能冒充完整逐帧或固定秒数的视觉验收。最终自然度由用户判断。
+
+主片是Mac已有Chromium独立headless会话的Playwright真实wheel/mouse输入，不是手动操作。首份有窗口视频混入计划外指针/额外滚轮，第二份隔离视频滚轮比例不同，均原样保留，仅最终matched片用于当前演示。主片仅校准录制wheel命令，产品代码未因录制改变。初次低质量尾段编码不采用，其原件保留；交付HQ版不变速、无插帧，属于高质量重编码而非无损。另两次工具参数/路径错误记录也保留，不混称产品失败。
+
+本轮没有新增手机完整录屏。Safari、真实iPhone/触摸、实际BFCache persisted命中、原生200%、Home旧900ms leave/后续键盘竞态、其他栏目历史失败及3个归档check错误仍未关闭。没有commit/push/合并/部署、域名或原checkout改动，无新素材或真实内容发布授权。
+
+原证据libfile_77ee8aebd33881919c886626ba2b38b2；本机详细报告libfile_a49503402fb48191adbb4d4285edc058；完整主片libfile_df6f05c20668819185dd94e5258ac64e；HQ尾段libfile_4c8b100ca4c48191abeffb12eea89291。原证据ZIP、源清单、报告、新云端验证及保护核验保存于_handoff/startup-three-beat-final/。保存版本仅认Library实际回执；以下完整历史原文保留各阶段事实。
+
+
+## D-160 · 桌面嘉乐同向短跑归位：最终本机源码选择性整合（2026-10-05）
+
+当前采用用户于2026-10-05 01:51Z明确回复“可以”的方案：嘉乐从原落点左侧短距离向右跑到位，再原地抬头坐下，始终同向。此为实施授权，不是对最终视频的视觉认可；02:22Z尾段视频已交用户，最终视觉意见尚待回复。此前D-159左向奔跑再切回右向坐姿的方案及未下载成功的云QA v4均属历史，不是本次实测代码。
+
+实际采用本机独立实现，来自已验证candidate3分支，最终源码libfile_35f9da24cd008191852e32c3c2fd535d；311个源文件与外层LOCAL_SOURCE_MANIFEST及最终验证hash记录逐项一致，runtime SHA256为2358fa12cd6c75cd98518784c8bbec6670a5674a4a0faa8f864a7f167160aade。本大归档以v22为底，只选择性同步6个代码/测试文件：runtime.ts、恢复原timeline.ts及其runtime/timeline原单元、新desktopDogReturn.test.ts、intro-dog-return.spec.ts；未整包覆盖旧证据。产品src、全部tests、public、scripts与实际Mac最终源码逐字节一致，配置/锁未改。历史说明保留并由本节覆盖其当前状态含义。
+
+桌面生产路径：.94–.955隐藏嘉乐，.955–.97从落点左侧0.10狗宽向右ease-out，.955–.958渐显；原奔跑8帧依行进比例0–7播放，不倒播、不循环回0、不镜像。.97后固定原尺寸/地面锚点播放原settle，再以原节点末帧进入held。精细采样可见路程14.007538px，地面X无倒退，最后跑帧至首settle地面差0.002190px；这些是DOM采样，不是逐帧像素等价。Home首次互动、手机/lab旧路径、版式、图集/Manifest均不改。
+
+独立核验原始Mac JSON：最终769/769单元、47文件；正式44/44 Chromium用例，0失败/跳过/flaky、每项一次、2workers/0retry、30秒test预算，首轮始于02:08:27.579Z。原Intro/Home/交接/held/故障覆盖保留，新增3项返程测试包括390px默认路径。Mac源码check199文件/0错误/0警告/2既有hints，生产19页；测试期间311源文件不变。首次RED、实现中失败、原左返程失败与下载阻断不改判或删除。
+
+云端对最终相同代码新跑769/769单元，源码check199/0错误/0警告/2hints，19页build通过。完整历史归档默认check229文件仍有3个D155旧错误，exit1 NON-GREEN：两个旧fixture导入缺失、一个photo隐式any；未改tsconfig遮蔽。云端首次telemetry目录缺失，以及依赖软链接造成Astro缓存路径失败、复制依赖后的.bin入口失败均保留；改用本地依赖的原Astro CLI构建成功。未在云端运行浏览器或绕过本地预览限制。
+
+已实际查看最终视频抽帧的返场、奔跑、settle和held像素：所查看帧中狗保持向右，未见此前明显镜像反转/坐姿横滑/双狗；奔跑到抬头坐下有小幅原素材姿态变化。此抽帧审阅不等于完整视频逐帧批准。末段至首held原人物/狗节点、图集、帧、尺寸不变；残余wheel期间held相对Home目标保持，视口Y仍随页面移动12px，不应称全程固定视口坐标。一次真实pointermove才释放原Home互动。
+
+本轮未新录移动端视频；390px是桌面Chromium窄屏模拟，不是实体iPhone/真实触摸。Safari、真实BFCache persisted命中、原生200%、历史健康Home900ms leave/键盘竞态、其他栏目失败及3个旧归档check错误仍未关闭。最终视觉确认尚待用户，未commit/push/合并/部署、域名变更或批准发布真实内容/新素材。
+
+最终证据包libfile_b5241c6ce6288191acd37ed84c9bcce3；完整录屏libfile_1aefe2eb3acc8191ac4ab63f2efd1126；尾段libfile_3faea5d3edcc81918eb53e3d2014d902；跑步图libfile_9050701a938881919e442b43c868eb01；停步图libfile_f43426a0e09881919c5e8b5fdfd5a665。原证据ZIP和本机清单、云端新验证及选择性文件hash保存在_handoff/startup-right-return-final/。保存版本只以Library实际回执为准；下方完整历史原文只代表对应阶段。
+
+
+## D-159 · 桌面嘉乐先跑到落点，再原地坐下（2026-10-05）
+
+用户在桌面原录屏中指出嘉乐“从右侧平移至左侧”，并明确所指是约18–21秒“坐着滑过来”的开场返回段。原v21的工程检查通过记录保留，但该段视觉未获用户认可，不能以41项旧通过替代此次修正。用户反馈为Sentinel_69ba12a3647c8191bb4624e9642a10a1，澄清为Sentinel_dea00426fbc8819195152dff0f6815f0。
+
+根因已结合原始视频像素、采样与代码核实：94–97%横移期间提前播放朝右慢步/抬头/坐下图集，实际却向左移动。此次只修桌面生产开场：94–97%镜像复用原Intro奔跑8帧朝左行进，以增加的实际路程换步；97%抵达原锚点后固定位置，再播放原抬头站定坐下序列。返回与坐下使用相同尺寸及接地点，末帧与原节点持姿交接保留。手机及旧演示默认路径、Home鼠标/点击/键盘互动均不改；没有新图集、素材重绘或新的转身动画。
+
+现有素材没有转身帧，因此97%从左向奔跑切回原右向坐下姿态是否自然，必须看新录屏确认；几何连续不等于轮廓连续。原.995准备事件现在发生于sit-down，完整sit-still从.99625出现，原Intro节点仍保留至进度1后交接。
+
+云端验证：756/756单元（46文件）；源码check200文件、0错误、0警告、2既有hints；19页生产构建。完整归档默认check228文件仍有3个原D155错误（旧fixture的两个模块缺失和photo隐式any），exit1 NON-GREEN，未通过配置隐藏。新增测试先实际3失败/27通过，修正后30/30；首次实现仅浮点字符串精确比较失败，改为10位几何容差后通过，原日志均保留。独立代码审查无P0–P3，定向40/40，另30003个默认路径差分组合一致，不计入单元数。
+
+精确改动：2个Intro产品文件、2个既有单元文件、新增intro-dog-return.spec.ts；其余256项代码/资产/测试不变，Home与全部原public素材保持。正式浏览器清单44项/6文件，尚未运行新Mac验收；旧41通过只属上版。需要实际真实滚轮记录跑到位、停步、原地坐下及完整进入首页，再交用户视觉复核。
+
+下一Mac：从最新同身份精简QA候选核验清单，使用原2workers、0retry、30秒test/5秒expect；运行原41项加3项intro-dog-return。保持失败原件，不现场改源/阈值。桌面1440×900连续真实wheel录屏，增加.94/.945/.952/.96/.968/.969/.9705/.975/.98/.99/.997/1观察；重点.97附近透明轮廓、尺寸/接地点及帧方向。保持原手机模拟、资源失败、返回/跳过和首次互动覆盖；新视频不要用旧视频改名替代。
+
+Safari、实体iPhone/触摸、实际BFCache、原生200%、健康Home旧900ms leave竞态、其他栏目历史失败仍未由本轮关闭。没有commit/push/合并/部署、内容或素材发布批准。下方历史原文保留当时结果，当前候选状态以上文为准。
+
+
+## D-158 · 启动页与启动到首页专项实测完成（2026-10-04）
+
+已完成用户优先要求的启动页与启动到首页实现，并在用户Mac独立Chromium按已批准的末帧保留方案完成本轮工程验收。当前仅补充实测原证据与说明，产品及测试与已测源码v20/精简QA v2逐字节相同。完整演示和关键截图已保存，用户最终视觉确认及是否上线仍另行，不将本专项通过扩大为全站发布批准。
+
+正式首轮41/41（Intro16、Home3、交接6、持姿6、故障10），0失败/跳过/flaky、每项一次、2workers/0retry、原30秒/5秒预算，2026-10-04T16:39:46Z启动。752/752单元（46文件），生产19页，Mac精简check197文件/0错误/0警告/2既有hints；309输入文件执行前后不变。云端完整源码check199/0/0/2及完整归档默认check227/3原D155错误/0/3hints保留为不同口径，后者仍NON-GREEN；精简检查不能抹掉旧错误。41项含必要合成负例与直接focus，不能全部称为纯真实输入。另3个真实Tab/点击/断点观察不额外计PASS。
+
+云端独立核对：证据ZIP125成员、123份SHA全部匹配，包内QA清单与保存候选逐字节相同，原41项JSON也与单独Library原件相同。实际查看两端完成图、尾段99%、首次鼠标/方向键及两端完整回退/回退失败截图，未见前版明显双轮廓、残缺或复制角色。已核记录显示：原person/dog节点转交前后x/y/width/height差全0、原Intro atlas与末帧保持，纸面淡入时角色opacity保持1；静止指针及额外滚轮保留末帧，同一次真实鼠标移动/点击或方向键再进入原互动。首次ArrowRight目标35°→50°恰一次。位置/opacity为DOM记录，不能冒充透明像素逐帧等价或绝无亚帧闪烁；完整视频不宣称已经逐帧人工审阅。
+
+390px为Mac Chromium窄桌面模拟（isMobile=false、hasTouch=false），不是实体手机或真实触摸。跨390/767/768/1440保持同一对原节点且横溢0；滚动后767角色在视口外属于页面正常滚动，不声称角色始终在屏内。故障回退6张图为完整一人一坐狗，回退图也失败的2张保留干净HTML和导航；导航/焦点/返回是否可用由原正式行为断言证明，不由截图推断。
+
+交付媒体：桌面完整录屏libfile_41a045e0fd188191adb39ab60fe1fc1f，窄屏完整录屏libfile_bff46804e3e481918c115d8735bdab6c；桌面完成图libfile_4799986eafd4819186f79a14ec6d2b89，窄屏滚轮后图libfile_d56f74cd018881918046732d533f0bff。原证据包libfile_6e89c54b7ca08191931d0b4cd06e3f42，SHA256 37656db413a7aee38f2005885d29aa8c2265af8522957f737f9aa2c4bcdcff1d。媒体原件另存Library，包内以原ID/字节数/SHA索引，不重复生成或更改录制内容。
+
+仍未验/未关闭：Safari、实体iPhone/触摸、真实BFCache persisted命中、原生200%、历史健康路径900ms mouseleave/键盘竞态、其他栏目历史失败及3个旧归档check错误。保留原真实内容和发布门禁；没有commit/push/部署、域名或系统权限变化。以下历史段落说明候选当时的实现和待验状态；当前实测结论以上文为准。
+
+## D-158 · 启动末帧连续交接与角色资源回退候选（2026-10-04）
+
+用户于2026-10-04 16:11:29Z明确确认：开场最后站稳、坐好的姿态直接留在首页，桌面首次互动时再接原动作。此为本轮唯一新增的收尾决策；不重绘、不混配Home图集、不改正常首页排版或内容门禁。
+
+当前候选已实现：.98–1只淡入纸面和导航，Intro角色保持全不透明，原Home角色图层暂时隐藏但保留布局/输入面。完整末帧渲染后，同两个Intro sprite原节点同步移入首页未缩放的独立交接层，继续使用原Intro atlas和Manifest末帧；轨道随后释放。移动端保留末帧，跨断点/动效偏好重建保留该层。只有资源就绪且健康后的真实鼠标移动、左键点击、有效横向触摸拖动或方向键才释放，并由原Home控制器处理同一次输入。静止指针、鼠标进入/离开、开场余下滚轮、纵向触摸、Tab/焦点、合成输入及未就绪输入不会切姿。直接hash、跳过、已完成会话仍走原稳定首页；不会为这些路径补播或新建交接层。
+
+角色资源失败独立修复：任一Home atlas第一次失败立即触发原v2允许的整张intro-final-still回退，不再重复或丢一只角色；手机也监测。失败锁存跨断点，不等待另一资源结束，不继续输入/计时器/指针捕获。定帧也失败则保留可用HTML与导航。Intro加载中、尾段或已交接后发生故障均解除相应所有权；仅当隐藏的互动区域正持焦点时转到main，不抢其他焦点。导航离开清理监听/观察/节点；BFCache持久pagehide保留其有效交接状态，仍待真实浏览器确认。
+
+静态最终候选：752/752单元（46文件），源码check199文件/0错误/0警告/2既有hints；19页生产构建通过。完整归档默认check227文件/3个原D155证据错误/0警告/3hints，仍exit1 NON-GREEN，未修改配置掩盖。相关Playwright为41项/5文件，仅加载，不记通过。原Intro16与正式Home3不改；原6项交接测试的叠化/失败断言已按批准的独立角色层加强，新增10故障与6保留姿态用例。需要新候选的实际Mac测试和完整桌面/模拟手机演示，不能以静态或前版绿色证明视觉完成。
+
+前一候选v19/精简QA v1已在用户Mac完成真实25/25（2workers、0retry）、722/722单元、19页构建、精简check191/0/0/2hints；303/303输入哈希保持。真实桌面及390px窄桌面模拟均确认双轮廓，Home人物失败出现双狗、狗失败缺失；因此该版视觉验收失败。112份原证据及2清单ZIP全部哈希核验保留，视频以原Library媒体ID和SHA引用，不伪造为新候选演示。四张关键原图已实际查看。
+
+本次相对v19只改5个既有产品文件、加2个所有权/故障helper，另2个既有测试与4个新增测试；public、原素材/Manifest、真实内容、scripts、配置/锁、其余247项产品/测试保持。独立代码复审的故障计时器/非rail提示/反向测试断言问题均已关闭；最终审查结论与精确哈希见本轮证据。原健康路径900ms leave/后续键盘问题、其他栏目旧失败、Safari/真实iOS/真200%等不由本轮关闭。没有commit/push/部署或公开新素材/真实内容。
+
+继续先读_handoff/STARTUP_MAC_ACCEPTANCE.md。源码/报告保持原Library身份，下一保存版本以实际Library回执为准。以下历史段落仅记当时事实，不替代本候选状态。
+
+## D-157 · 启动页和启动到首页：既有设计修复候选（2026-10-04）
+
+用户已将启动页和启动到首页设为第一优先级，其他栏目及其专项验收暂停。本轮继续D-132/D-133/D-148与现规范§7，不引入新构图、动作、素材或发布决定。源码基线为Library v18；保存后身份/版本以实际Library回执为准。
+
+已完成代码修复：生产开场直接消费Lenis/ScrollTrigger实际进度，不叠加第二层平滑；保留渲染后的.995交接事件与<.98重置，完整尾帧之后再移除舞台。真实首页保持同一个DOM，在原.98–1区间显现；开场期间首页inert，所有退出解除状态。末段对齐实际桌面互动/手机静态角色，各角色独立接地点；暂停时晚挂载/尺寸或资源状态改变可重新对齐。草地退出中resize不污染反向地面。两条跳过入口、Astro接管的#main点击与焦点恢复已覆盖；站稳300ms输入期限跟随当前Home而非可重建控制器。原smoothDamp数学过冲判断另已修正。
+
+最终云端验证：722/722单元（44文件），源码check193文件/0错误/0警告/2旧hints，生产19页构建通过。完整归档默认check221文件/3个既有D155证据错误/0警告/3hints，exit1，仍NON-GREEN；未改tsconfig掩盖。独立代码复审PASS_CODE_AND_MODELED_TESTS_ONLY，两个P2已关闭，无新增P0–P3；独立定向23/23。新增6项真实输入/交接浏览器测试仅--list，原Intro16与Home3原件不变；合计25项待Mac实际运行，不能记通过。
+
+已实际查看v17产品等价基线的桌面1440×900和模拟手机390×844截图；原Mac真实wheel录屏确认旧尾帧提前结束与突然换层，矩形差异不可冒充透明轮廓位移。Mac于14:57Z离线，修复后的完整录屏、真实浏览器验收和用户视觉确认尚未完成。云浏览器本地预览被阻断，没有改路由绕过限制。不能称启动两部分最终完成。
+
+六个产品文件以外，public/原素材Manifest/真实内容/原Home排版/共享Shell/Photos/Projects/D-150阅读/配置锁均保持。原Home900ms鼠标离开与后续键盘目标竞争、旧v15 native首错、Projects/文章后续验收、原生200%、Safari/真实iOS/慢网络等不由本轮宣布解决。没有commit、push、合并、部署、内容或新角色公开批准。
+
+继续时读`_handoff/STARTUP_MAC_ACCEPTANCE.md`，取最新同身份源码或精简QA候选，验证清单后按原预算运行25项并给出真实桌面/手机完整演示。先报告有用结果与任何失败，不自行修改测试/超时/阈值洗成通过。
+
+以下历史章节保留当时的范围和结果；当前启动页优先级及待验状态以上文为准。
+
 # baozi.space V2 · 决策记录
 
 **最后更新：** 2026-09-17
@@ -1405,8 +1531,210 @@
 - **受影响文档 / 代码：** `docs/project/decision-log.md`（本条）、`docs/research/claude-dev-article-rail-teardown.md`（新建）。本轮无生产代码改动。
 - **验证：** 拆解结论以浏览器运行时测量复核（Chromium 1440×900）：左栏 `sticky / top 36px / min-height 828px`；点击目录第 6 项后目标标题 `rect.top = 36px`；26 个标题对 26 个目录项、6 个 `.subs`，中段 1 个展开且 `aria-expanded="true"`；正文可滚动 11215px 对整页 12877px，进度在正文结束处已达 100%。
 
+### D-148 · 已确认点阵纸 Demo 进入正式开发
+
+- **状态：** Accepted（2026-10-02）。用户依次要求柔白/炭黑配色、Sue Park式点阵纸环境与主体左侧导航/人物动物、手机四项导航单行；在第二版与手机修正后明确说「OK 确认 我们进入进一步开发」（主会话消息 `Sentinel_a3ff3cd75a74819181287e1ca590dd87`）。
+- **决定：** 更新设计规范为v2.2；首页、栏目、详情共用左侧点阵导航/角色与右侧内容纸面。手机四项不换行。保留原色角色与现有素材、内容批准门禁、可跳过开场与降级；不恢复旧式手账或右侧人物构图。
+- **覆盖范围：** 覆盖D-137的左右构图和顶部索引约束，以及D-147只研究不实施的阶段边界；用户现已授权正式完善正文进度、章节导航及适当动效。细进度线与百分比以确认Demo为基线，不扩大为新的字符进度样式。
+- **执行顺序：** 先修复移动Blog双交换白屏和导航/滚动生命周期；再统一页面；完善阅读辅助并用真实界面验收。旧D-143关于before-swap preventDefault能延迟交换的结论不适用于当前Astro5.18.2，不作为实现依据。
+- **授权边界：** 独立checkout与分支，保留原目录用户改动；允许代码、文档、测试，不push、合并、部署或改域名。已批准方向不重复请求批准，重大新设计选择另行确认。
+- **受影响文件：** `docs/design/baozi-space-design-spec.md`、`docs/plans/2026-10-02-confirmed-demo-implementation.md`、共享Shell/Home、页面转场/滚动、Blog阅读模块、Editorial栏目和回归测试。
+
+### D-149 · 文章内嘉乐追球进度与左导航蹲看人物
+
+- **状态：** Accepted（2026-10-02，用户消息`Sentinel_9cadd28d712081919d5054a4108e6f2f`）。用户明确目录/段落与进度属于文章主体，嘉乐从左向右侧球跑，距离表示阅读进度，左导航中的包子改为蹲着观看。
+- **决定：** 阅读控件从全站左栏移入article纸面，桌面与手机共用一个工具区；嘉乐随正文连续进度前进/回退，球固定右端，正文末尾到球旁。目录保持语义层级、键盘激活、hash、历史与滚动恢复；手机站点四项导航仍单行。
+- **动作：** 位移映射实际正文与轨道尺寸，评论/页尾不计入；跑步帧由位移驱动，静止无循环。reduced motion与终点固定接触帧，保留位置表达；动物不获取焦点、不遮文字。
+- **素材核验：** 现有东向嘉乐四帧与球可复用；现有人物只有半蹲扶帽/跪地/站姿，缺安静深蹲观看。按本条明确授权以原夏季人物设定生成独立透明蹲姿PNG，不覆盖原件、不改既有Manifest。
+- **覆盖范围：** 替代D-148左栏文章辅助和细线进度的具体形式；其暖白/炭黑点阵纸、内容门禁、开场与导航稳定性继续有效。先恢复未完成实现并验证，再提供实际0/中段/末尾与手机截图；不提交、push、部署或公开草稿。
+
+### D-150 · 桌面章节短线与移动纯正文
+
+- **状态：** Accepted（2026-10-02）。用户要求进一步研究 `https://www.anthropic.com/claude-opus-5-5`，并明确「Web端展示进度条和分段。移动端不展示。」随后在消息 `Sentinel_e091103c722c81919b0a584041238ef7` 确认「可以 在云电脑修改」。
+- **决定：** 沿用本站768px桌面起点；≤767px隐藏全部文章专属目录、进度、嘉乐追球，包括首屏目录。正文H2/H3与原有链接不删；全站四入口仍单行。≥768px在文章内保留真实正文追球与独立主要章节轨道，普通16px/当前24px短线、hover/focus黑色标题提示，180ms过渡。主要H2优先，纯H3文回退；少于两章不显示目录。
+- **边界：** 覆盖D-149手机/桌面共用可见工具区和折叠目录；其素材、正文口径、hash/历史/输入中断、减少动效、内容批准门禁继续有效。参考页是章节指示，没有观察到连续百分比；不冒称追球来自参考站。原站精确断点未知，本站断点由现有布局决定。
+- **实现：** 追球和章节轨道共同受正文区域约束，不跟随评论/页尾。长目录居中并受视口高度限制；移动hash避让16px，桌面按实际可见进度区高度避让。原图集、Manifest、内容、锁文件和部署配置不改。
+- **受影响文件：** `ArticleRail.astro`、`ArticleContents.astro`、`reading.css`、`articleReading.ts`、`model.ts`、Blog详情包装、测试和设计规范v2.4。
+- **验证状态（2026-10-03更新）：** 云端此前仅完成静态/单元/构建，浏览器受环境限制。现已恢复最新D-150快照，在用户Mac的独立Chromium完成99文件检查（0错误0警告、2个既有hints）、63/63单元、18页构建及最终80/80生产E2E。修复被输入打断时的章节焦点交接、提示对应短线错位；新截图覆盖桌面、手机和767/768边界，存于`_handoff/mac-d150-evidence/`。中间两轮79/80及原因保留在日志和报告中；旧D-149的77/77只作历史。61项内容/资产/配置哈希不变。未提交、push、部署或改域名。
+
+### D-151 · 主人邀请与实体影集阅读
+
+- **状态：** Accepted design/implementation direction（2026-10-03）；Mac浏览器功能关卡已验，新姿态视觉关卡待用户确认。用户批准完整相册设计，并于 Sentinel_fbbd56853d1c81918f5f9a4cef312836 确认连续云端实施；素材姿态单独确认。
+- **决定：** 复用Astro路由与Shell，横向挑选完整比例封面；每张照片一个逻辑页、作者数组顺序，内容宽度760px起自动配双页，窄屏单页。单双页变化保留当前照片锚点；奇数右页留白、末页停止。
+- **首页补充（05:41 UTC）：** 用户要求每屏约1.8本封面，影集名称作为分段导航。按实际内容宽度计算；名称按钮只横向定位封面，随手动滚动更新当前段，不打开相册、不带动页面纵滚。
+- **导航：** 一次开册新增一条浏览历史，翻页replace当前hash；列表快照存本次访问的横/纵位置与焦点。同册列表重开续看，无hash直访从第一张开始。仅可验证相邻历史来源时back，否则返回本站/photos。
+- **安全：** 相册、照片、独立封面分别draft:false且approved:true；静态资源只容纳公开投影白名单，未批准资源不随public复制。原占位仍未批准，生产相册仍为0。仅隔离临时副本使用明显几何测试图，不修改生产内容。
+- **角色：** 人物站在导航附近邀请访客，嘉乐卧在册边、开册抬头后安静陪伴。生成六个透明候选供人工确认，尚未进入public。照片不等待角色或动画，角色失败安全隐藏。
+- **实现边界：** 不加运行时依赖或新路由器；不改D-150文章行为、原素材或Manifest、锁文件、部署配置、重定向；不提交、push、合并或部署。
+- **当前验证（Mac更新）：** 云端先前浏览器受socket EPERM阻断；2026-10-03已在用户Mac独立Chromium完成本次新D151生产80/80、隔离相册32/32（原30+2取消拖动回归，其中1项HTTP）、128/128单元及139文件检查，生产19页/夹具25页构建。实测多屏宽和真实200%页面缩放；修复空白右页零高度与取消拖动吞点击。新截图明确为合成夹具，旧v5结果仅作历史。角色候选未公开，照片审批与部署关卡不变。
+
+### D-152 · 相册首页改为约1.2本封面视窗
+
+- **状态：** Accepted（2026-10-03 06:28 UTC）；用户当次消息要求“1.2本可能更好，第二本露出书脊和一小部分封面”。
+- **覆盖：** 取代D-151中的1.8本比例。电脑/手机按容器可用宽度显示约1.2本；当前封面更大，下一本约20%提示继续横向浏览。
+- **表现：** 书脊用书册容器左侧12px克制灰阶边缘，不通过裁切照片制造提示；照片仍完整比例contain。名称分段、手动同步、末册完整可达、返回位置/焦点与resize恢复不变。
+- **范围：** listModel几何、Photos容器CSS、几何及末端浏览器断言、设计/实施说明与实测截图。角色候选、真实照片、部署仍待各自批准；不push或部署。
+
+### D-153 · 手机 1.4 本与桌面受限高度的 1.6 本封面轨道
+
+- **状态：** Accepted（2026-10-03）。用户最新正式确认手机1.4本、桌面1.6本、封面高上限480px、4:5、26px桌面间距及rail同步收窄；允许按此继续正式实现，无需重复设计批准。
+- **覆盖：** 取代D-152全端约1.2本，并继续覆盖更早D-151的1.8本；保留两条旧记录作为历史，不作为当前比例依据。
+- **响应式：** 视口≤767px采用约1.4本、18px间距；≥768px采用约1.6本、26px间距。封面框固定4:5，桌面高≤480px、宽≤384px；封面轨道总宽上限为`480 × 0.8 × 1.6 + 26 + 8 = 648.4px`，包含左右共8px轨道内边距。
+- **几何：** 轨道总宽W包含8px内边距，封面宽=`(W−8−gap)/可见本数`，高=宽/0.8。桌面W取纸面实际可用宽度与648.4px较小者；480px是上限而非固定高度。窄纸面必须同比缩小宽高，不能只压高度、拉伸或未经批准裁切照片。
+- **布局：** Photos封面rail、影集名称导航及列表控制范围同步收窄；全站左栏沿用原响应式：>1050px为300px，768–1050px为242px。内页单双页仍由实际reader内容宽度759/760px决定，不能混用封面768px断点。名称只横向定位、手动同步、末册完整可达、返回位置/焦点、稳定hash和减少动效规则不变。
+- **批准边界：** 新相册角色候选尚未批准；真实照片只获准私有试排，没有授权迁入生产内容或public。相册、逐张照片及独立封面仍须网站公开批准，生产继续零公开相册和noindex空态。不提交、push、合并、部署或切域名。
+- **验证状态（2026-10-03更新）：** 用户 Mac 独立 Chromium 完成 136/136 单元（23 个文件）；Astro 检查 147 个文件，0 错误、0 警告、2 个既有 hints；生产 19 页构建、80/80 回归（1.3 分钟）；隔离夹具 25 页构建、47/47 检查（46 项浏览器 + 1 项 HTTP，19.4 秒）。20 项几何/无 JS 检查通过（errors=[]），覆盖 360/390/767/768/1024/1280/1440/1920/2560px；原生浏览器 200% 缩放通过，含 1440→720 CSS px 跨断点。返回保留原位与真实裁边露全两项回归均通过，新增 3 条可视边界单元；合成/私有试排副本各 34 条运行及关键文件与最终源码哈希一致，共 68 条。本轮证据见 `_handoff/d153-evidence/`，含最终日志、几何/缩放 JSON 与中间失败 trace；旧128/80/32仍属历史。最终 `protection-final.json` 的 36 项静态保护检查全部通过：public 28 项、content 27 项、私有角色 17 项及 D-150 保护集 61 项均与 v7 一致；原两个 checkout 共 799 个已记录文件（181+618）逐文件及 Git HEAD/分支/状态一致。新生产输出 67 个文件、19 个 HTML 已核验，无私有试排照片、真实照片或未批准角色泄入，零公开相册/noindex 保持。归档清单及交付标识按 `_handoff/RESTORE.md` 引用包内 manifest/checksums 与同 ID 实施报告，不将归档自身哈希嵌入归档。
+- **受影响范围：** 相册封面几何模型与列表CSS、相应单元和浏览器断言；`AGENTS.md`、`README.md`、相册设计v1.1、全站设计v2.6、相册实施计划与`_handoff/RESTORE.md`。不改变D-150文章行为、原素材Manifest或既有内容批准状态。
+
+### D-154 · 直接展示照片，比例只用于排布空间
+
+- **状态：** Accepted（2026-10-03）。用户正式确认“直接照片，比例用于空间，不画书壳”；按此实施，无需重复批准。
+- **覆盖：** 覆盖 D-153 及更早的相册首页书壳视觉，保留 D-153 的响应式空间节奏。去除灰底、边框、硬阴影、所有书脊（含伪元素）及封面书壳内衬 padding；旧决策与验收保留为历史。
+- **照片与占位：** 4:5 只定义不可见布局槽（slot），不绘制外框，也不把原图裁成4:5。照片完整 `object-fit: contain`，`object-position: center bottom`，以照片实际下缘对齐，名称在下；横/竖图实际像素占用不同，不为凑可见比例而裁切或拉伸。
+- **保留几何：** ≤767px为约1.4个位置、18px间距；≥768px为约1.6个位置、26px间距。桌面slot高≤480px、宽≤384px，rail总宽≤648.4px（`480 × 0.8 × 1.6 + 26 + 8`）；轨道左右共8px留白保留，不属于封面书壳内衬。窄纸面同比缩小slot，名称导航随rail收窄；全站左栏>1050px为300px、768–1050px为242px。
+- **动效与范围：** 已有轻淡入足够，不增加硬壳翻页或开合表演；reader的单双页、759/760实际内容断点、顺序、翻页、hash、返回/焦点和现有动效不改。键盘焦点指示继续可见，不与移除装饰边框混淆。
+- **内容与资产：** 真实照片仍只获准私有试排，没有生产迁移授权；角色候选未批准或接入生产。生产继续0公开相册/noindex；原素材、Manifest、锁文件、部署及其他栏目不扩展修改。不提交、push、合并、部署或修改旧checkout。
+- **输入与验证：** 新独立快照从源码Library v8 / 报告v10恢复，623项manifest已核验。D-154 本轮在用户 Mac 的独立 Chromium 完成 136/136 单元（23 个文件）；Astro 检查 150 个文件，0 错误、0 警告、2 个既有 hints；生产 19 页构建、80/80 回归（1.3 分钟）；隔离夹具 25 页构建、47/47 检查（46 项浏览器 + 1 项 HTTP，19.9 秒）。20 项几何/无 JS 检查通过（errors=[]），原生浏览器 200% 缩放通过，含 1440→720 CSS px 跨断点；合成及私有试排副本共 68 条运行/关键文件与最终源码哈希一致（各 34 条）。四张先行真实照片私有预览与最终正式 CSS 截图逐字节相同，`preview-final-match.json` 已核实，因此已有 Library 预览图片就是本轮最终视觉效果；这不构成照片公开批准。 新证据入口 `_handoff/d154-evidence/`；本轮最终 `protection-final.json` 为42/42通过：public28、content27、私有角色17、门禁5、锁文件/部署7及D-150保护61项均与v8一致；D-153历史证据68项内外均未改，原两个checkout共799文件（181+618）及Git HEAD/分支/状态一致。新生产67文件/19 HTML通过扫描，无真实照片、私有试排、候选角色或合成夹具泄露；`previous-source-unchanged.json`另核对318项旧正式src/public、旧私有预览及旧归档/报告指纹，全部不变。输出Library版本及归档SHA256沿实际交付报告记录，不预填或自嵌归档哈希。
+- **文档：** 全站规范v2.7、相册设计v1.2、相册计划D-154阶段、AGENTS、README和RESTORE同步；旧记录保留供追溯。
+
+### D-155 · 3:2封面取景与纸内影集目录
+
+- **状态：** Accepted（2026-10-03）。用户在 `Sentinel_f10a03bbe0f88191a464a86f4ce34193` 回复“OK 可以的”，确认此前目录三张预览及具体四组3:2取景一起进入开发；不需要重新批准同一方向。
+- **覆盖：** 覆盖D-154列表4:5/contain占位、顶部横排名称与照片下重复名；继续无灰底、硬阴影、边框、书脊或书壳内衬。列表统一3:2 `object-fit:cover`，默认中心；可选`album.coverPosition:{x,y}`是百分比取景，仅作用于列表，不改原图或reader。
+- **目录：** 桌面≥768px在纸内左侧显示纵向影集名称和当前项短线；按视口>1050px使用148px/28px间距，768–1050px使用116px/20px。手机≤767px以当前名toggle展开完整名称列表，选择后关闭，保留键盘焦点/Escape/resize行为。名字只横scroll定位，不开册或页面导航；手动滚动同步active。删“挑一本”和图片下重复名，但保留语义名称。
+- **几何：** rail桌面1.6张/26px间距、总宽≤648.4px（`384 × 1.6 + 26 + 8`）；封面宽≤384px，高由3:2得≤256px。手机1.4张/18px；窄纸面扣除目录宽/间距后同比缩小。全站左nav仍300px（>1050）/242px（768–1050），不与纸内目录混用。
+- **具体取景：** upintheair使用同组云海`AbPhjv4n5`，x50/y100靠底；streetphotograph保留原`EfSRCA4Bo`中心；fukei使用同组摩天轮`qO6lKLrnY`中心；homestyle保留原`zJhpksjx_`中心。中心为50/50。私有记录：`design-assets/photos/d155-approved-cover-selections.json`。
+- **范围隔离：** reader保留原图比例、759/760实际宽度单双页、顺序、hash、返回位置/焦点及已有轻淡入；不新增硬壳翻页。D-150手机文章全部阅读辅助隐藏继续有效；Photos展开目录属于独立列表模块。
+- **批准边界：** 本次批准设计、开发集成与指定取景，不是线上发布。真实照片仍仅私有试排，不把真实资产迁入public，不改content批准字段/发布门禁；角色候选未批准、不接入，生产0公开相册/noindex。不提交、push、合并、部署、改域名或修改旧checkout。
+- **验证与文档：** 新独立源从Library源码v9/报告v11恢复，输入53,008,629bytes、685项manifest。159/159单元（23文件）；Astro检查156文件、0错误0警告及2个既有hints；生产19页、零公开相册，最终全站80/80（第三轮，2.0分钟）；隔离相册55/55（保留原47项、新增8项，54浏览器+1HTTP，1.7分钟），夹具25页、私有预览20页。20项几何/无JS检查（九档宽度×两数据源及2项无JS）errors=[]、无整页横溢；原生200%缩放通过，含1440→720目录焦点/第四本保持及reader photo-b单双页、键盘回退。两副本199条源码哈希匹配，夹具另有150项src/测试一致性核对。三张已批准目录预览与最终截图逐字节一致，复用既有Library图片ID，不另造新预览。本轮静态与生产产物审计55/55通过：新生产67文件/19HTML无真实照片、私有资源或合成夹具泄露。public28、真实content25和其他模板1、角色17、锁文件/部署7、D-150保护61及历史handoff389（含D153证据68/D154证据57）均在规定保护范围内不变；两个原checkout799文件及Git状态一致，另326项旧正式源码/public、私有预览及归档/报告指纹不变。新证据`_handoff/d155-evidence/`；旧D154/D153结果只属历史。输出版本/归档SHA256由实际交付回执与同ID实施报告记录，不自嵌。全站规范v2.8、相册设计v1.3、计划D155及AGENTS/README/RESTORE同步。
+- **QA最小修复与证据：** 首轮全站78/80、第二轮79/80及相册两轮53/55的日志/trace全部保留，最终无自动重试。导航trace确认旧v9已有普通native.ready取消未被观察；最小修复仅观察DOMException AbortError，其他异常仍暴露，不更改导航设计、时长或D-150文章规则。两个既有导航测试分别改为真实后发点击gate和预先MutationObserver记录，修正定时/观察时序，不放宽完整页面断言。相册修复只恢复因断点隐藏而丢失的目录焦点；主动Tab、外部/空白点击会清除恢复意图，新增负例证明不抢焦点。第二轮相册失败是负例点击了可聚焦main，改成真实不可聚焦纸外目标后保留严格body焦点断言。
+
+### D-156 · Projects 文本优先、列表两档字级与独立QA
+
+<!-- dispatch-timing-candidate:start -->
+### 当前：v17文章首跑失败与最小调度候选冻结，Mac复验暂停（2026-10-04）
+
+D-156的已授权测试调度修正补充；只记录当前诊断和验收边界，不新增产品或视觉决策。
+
+v17首次唯一文章用例实际为0通过/1失败/0跳过，0 retry，完整套件未启动。初始fragment见证及两次前进RAF gate已取得，gate时349.1ms；到773.9ms标题top=298.796875，原窗口规则判FAILED。真实wheel命令与事件均为0；1500ms、fresh final和下一章节未执行。两JSON、trace ZIP和实际注入collector/源身份已核验；原始FAILED不改判。
+
+client trace的mouse.move为284.935ms，后续read为16.610ms；server trace对应267.894ms与4.872ms，属于不同测量层，不混算。read仅采到seq35/top306.796875，回到Node前窗口已失效。长move与358.7ms RAF间隙的根因未证实，不能据此宣称产品缺陷或新调度必然成功。
+
+本次实现限定Node调度：在已接纳的原真实click见证到达后，只启动一次原正文mouse.move(1000,500)；原两次前进RAF gate和同一个move成功join之后，才单次真实wheel(0,-500)，移除关键链路中的陈旧post-move read。目录ol的data-lenis-prevent必须保留，不能省略正文move而在目录上滚轮。browser rules、collector及记录/发送频率、原createOneShotInput、旧单元/e2e、Home观察、产品/配置/锁、阈值与预算均保持；仅允许本次调度与必要新增wire单元。
+
+设计与代码/模型审查已通过上述范围；仍未证明Mac通过或长move根因。v17原39条记录继续原样FAILED，任何wire/mock序列明确标为合成验证，不补写原始输入。
+
+用户于2026-10-04 14:19:55Z要求先完成启动页及启动页到首页衔接。本快照静态/代码候选完成，Mac文章/Projects复验暂停；后续由主任务完成启动页及开场→首页演示，恢复本栏目验收需主任务安排。现有Mac命令仅保留为恢复参考，不是立刻启动指令。 当前候选已冻结。独立代码审查PASS_CODE_AND_MODELED_WIRE_ONLY及保护增量PASS，无未关闭P0–P3。新增41项wire模型单元，加原154项共195/195；全单元702/702（42文件），严格TypeScript exit0。独立审查另195/195、TS0和28项额外探针，探针单列不加入Vitest数量；模型不执行浏览器collector，不是真实输入。源码check190文件/0错误/0警告/2旧hints；最终默认check218文件/3个历史错误/0警告/3hints，exit1，仍NON-GREEN。初跑217文件/5hints含两个新证据脚本未用项，清理后重跑，原日志保留。新生产19页/67文件逐字节等于v17，HTTP/产物5/5；新mixed24页、source/seed不变，5详情/5资产/2正文图和8个非法HTML负例通过，147项/9spec仅--list。源259项（含3草稿）、256非合成项哈希匹配。正式保护为780不变基线项、3原spec原件/替换件精确哈希及9测试pin；8项runtime负例与2缺pin/1缺review声明负例分层通过。新Mac仍未验；旧候选154/661与历史check/build不作本候选结果。
+
+主任务安排恢复本栏目验收后，Mac仍先只跑原唯一文章用例：使用下方同一未加首尾锚点的精确中文grep，并以--list核为1；配置2 workers、0 retries、一次一个suite、原30秒test/5秒expect及专项预算不变。实际fragment见证、原gate、唯一真实wheel、完整1500ms、fresh final与下一章节全部通过后，才跑完整Projects315、生产85、一次性QA源Photos55及实际全单元702；优先用例不重复计入全套，失败则保留证据回报，不现场改源。
+
+输入为实际Library源码/报告同为v17，下一回存以guard 17开始；新保存版本只认未来Library实际元数据和回执，不预称v18或已保存。
+
+v16完整实测Projects307/0/8（315项）、生产84/1（85项）、Photos55/55、unit581/581仅属v16；v15原native首错仍UNRESOLVED，Home旧900ms leave与新键盘交错仍未验，原生UI 200%因Accessibility受阻仍未验。禁止改权限、借v13 partial或以API/缩viewport替代；Cloudflare实际301、Safari、真实iOS及真实慢网仍未验。
+
+已认可v14视觉保持：桌面导航16/12px、手机12/9px、默认角色margin-top42px及实测46.146px留白；手机角色25px、reading桌面26px与原素材保持。三份真实草稿、0公开Projects、标题“项目”、空态“项目正在整理。”、noindex、D-155 Photos与D-150阅读规则不变。没有真实内容、新角色或部署批准，不提交、push、合并、部署或切域名。
+
+本节证据相对`_handoff/projects-evidence/`：`mac-v17-runtime/controller-v17-first-run-verification.json`、`execution/v17-window-diagnostic.json`、`execution/v17-dispatch-fix-design.json`、`execution/v17-dispatch-design-review.json`、`fragment-observer-library-receipt.json`。实现与精确范围证据为`execution/v17-dispatch-implementation-report.json`、`execution/v17-dispatch-range-audit.json`；独立审查为`execution/dispatch-timing-code-review.json`与`execution/dispatch-timing-protection-addendum.json`；新产物为`execution/dispatch-candidate-code-output-identity.json`、`execution/dispatch-candidate-mixed-output-audit.json`，正式保护为`execution/task-6-protection-audit.json`。
+
+本节覆盖下方历史段落中的“当前/本候选/下一Mac”称谓与旧执行顺序。下方原文逐字节保留，只代表各自当时的版本和验证范围，不追改历史FAILED，也不把历史通过数当作本候选结果。
+
+<!-- dispatch-timing-candidate:end -->
+
+### 当前：v16已完成实测，文章fragment观察修正候选待Mac复验（2026-10-04）
+
+本记录补充D-156已授权的最小文章观察修正与新冻结，不新增产品/设计范围。Library v16实际Mac全套已结束：优先24项23/1/0；Projects315项307/0/8，其中mixed146/0/1、empty15/0/4、one37/0/1、work-only61/0/1、personal-only48/0/1；生产85项84/1/0、Photos55/55、unit581/581。14次浏览器suite无重叠、2 workers配置、0 retry、30秒测试/5秒expect保持；v16/v15/v14输入1468/1357/1311及Photos历史63项均不变。首次mixed缓存边界失败为0浏览器用例，476别名仅修在新的缓存副本，原失败保留且不计测试重试。
+
+文章原trace顺序为真实click seq10→可信且hash正确的native pop seq11（旧raw仅falsy-state布尔值）→native H2 focus seq12→源逻辑恢复原trigger/y0 seq13→Lenis平滑。原观察器seq11报unexpected history interrupt；仅去掉trusted条件仍在seq12失败。优先与完整生产两次原FAILED保留；没有实际gate、wheel、1500ms、final或下一章节通过。附件testStatus为截图时状态，不是最终结果；旧stack映射不构成Home失败。
+
+候选仅改两个测试文件，增加只读精确null-state/live原click dispatch/完整非fragment URL/节点identity见证；在初始fragment准备阶段验证有序、唯一的native pop及可选native标题focus/原trigger恢复，恢复可在await后发生。准备完成或任一其他后续观察即永久关闭特例，不碰原运动gate、wheel、完整1500ms及后续严格断言。旧raw缺新字段，unchanged raw/一行反事实RED与明确添加模拟见证的GREEN分开。陈旧eventAt的P2审查发现已有RED→GREEN，独立Spec PASS/Quality APPROVED，无未关闭P0–P3。
+
+本候选定向154/154、全单元661/661（41文件）、严格TypeScript通过；另16项实际Playwright转换后的collector/mock-DOM探针通过，独立计数且不代表浏览器。源码check189文件/0错误/0警告/2旧hints；主执行者最新默认check214文件/3个D-155历史错误/0警告/3旧hints、exit1，仍NON-GREEN。实现早期213文件日志保留，不能冒充最终214文件结果。 保护增量审查PASS：audit相对v16仅2个pin替换与1个review JSON引用，780基线项不变、3原spec原件/替换件、8pin保留；6个运行数据负例及2个独立pin声明完整性负例拒绝非法变化。精确v16 audit原件86425字节，SHA256 72c99e7ebc7bc088af854f53cf7663682b0edd98f573000acd3aab2dbedafaaf；当前重生成audit只属新候选证据。
+
+产品沿已认可v14保持：桌面导航16/12px、手机12/9px、角色margin-top42px及实测46.146px留白；用户“舒服多了”的认可不扩大为其他视觉、真实内容、新素材或上线批准。三真实草稿、0公开Projects、标题“项目”、空态“项目正在整理。”、noindex、D-155 Photos及D-150阅读规则不变。 下一Mac必须文章单例先行，真实新见证、一次wheel、1500ms/新鲜final/下一章节全过后才完整冻结矩阵，所有套件串行、2 workers/0 retry/原预算。v15原native首错仍UNRESOLVED，v16的16契约通过不构成对旧失败的修复；首页900ms leave/新键盘交错仍未验，无leave用例通过不关闭它。原生UI 200%受Accessibility阻断仍未验证，不改权限、不借API/缩viewport或v13 partial；Cloudflare实际301、Safari、真实iOS及真实慢网仍未验。 Blog/返回原始binding数组仍是附件缺口，不补造事件duration。新Library版本只认实际元数据/回执；不以静态通过提前关闭端到端验收。以下历史正文保留。
+
+本候选新鲜产物已实际核验：生产19页/67文件，67文件逐字节等于v16云端构建；5/5 HTTP/文件检查通过，未启动浏览器（port4373）。新mixed24页、source/seed不变；5详情/5资产/2正文图与8项非法HTML负例审计通过，147项/9spec仅--list。源258代码哈希、夹具255非合成项匹配；精确合成差异见 `execution/fragment-candidate-code-output-identity.json`，离线产物见 `execution/fragment-candidate-mixed-output-audit.json`，两者均相对 `_handoff/projects-evidence/`。
+
+证据相对 `_handoff/projects-evidence/`：`mac-v16-runtime/Projects-v16-Mac-QA-report.json`、`mac-v16-runtime/controller-v16-raw-results-verification.json`、`execution/v16-fragment-history-diagnostic.json`、`execution/fragment-observer-implementation-report.json`、`execution/fragment-observer-review.json`、`execution/fragment-observer-protection-addendum.json`。
+
+### 历史：v16测试观察候选冻结、Mac全套运行前状态（2026-10-04）
+
+本记录只补充D-156的实施证据与冻结边界，不改变已批准设计、素材或发布规则。用户已认可的v14留白继续保留；src137/public28/scripts6及配置/锁文件与v14逐字节一致。相对v15仅8个测试文件变化，分别修正Projects→Blog的持久事件记录、返回纸面真实animationstart同事件采样、文章真实click/wheel时机与首页鼠标来源键盘基线；不改产品、预算、retry或skip。
+
+原v15结果完整保留：优先20项19/1/0（16契约15/1、原四reflow4/4）；Projects315项303/4/8，其中mixed143/3/1、one36/1/1、work-only61/0/1、personal-only48/0/1、empty15/0/4；生产81/4/0，Photos55/55，单元479/479。前三数依次为通过/失败/跳过。原完整套件8错及首个native失败不因诊断或后续通过改判。最初四套各2 workers并行只是已记录条件，不能断言其造成资源竞争。三个Projects超时与archive360的累计时间、未完成/迟到步骤均按原trace记录，不放宽30秒或阈值。
+
+一次原生补采记录SINGLE_OBSERVATION_NOT_REPRODUCED：1 worker、0 retry，四poll依次见native/native/reveal/settled，1829.4ms严格新样本命中A#subject且两完成标志true；无observer错误。独立核对15条raw→summary样本、6嵌入脚本SHA、4冻结导入SHA及原首错13文件manifest。720.7/727.2/1140/1744.1ms分别为update/ready/native-finished/reveal-finished观察回调，不能当原生兑现时刻；额外观察会影响调度，未采样间隙仍可能存在。native同步继续UNRESOLVED，helper/readiness/contract不改；之前0测试加载失败保留。
+
+两组实现及保护补充审查PASS、无未关闭P0–P3。新静态证据为581/581单元（41文件）、定向28/74与严格TypeScript通过；源码check189/0错误/0警告/2旧hints；默认213/3历史错误/0警告/3hints仍NON-GREEN。新生产19页/67文件和5/5 HTTP/文件审计；新mixed24页、source/seed不变，离线5详情/5资产/2正文图及8非法HTML负例通过，147项/9spec仅加载。源258哈希、夹具255非合成项相同，合成差异逐路径登记。保护为780不变基线项+3原测试原件/替换件哈希、8候选测试精确固定；12+25负例通过。
+
+下一Mac一次一个suite、2 workers、0 retries，先原native契约/四reflow与四修正观察，再全Projects315/生产85/一次性QA源Photos55/unit581，均依新--list核实。首页旧900ms leave与新键盘目标交错仍待单独真实诊断和UX确认，无leave用例不关闭它。原生200%仍blocked/not verified，不改Accessibility、不借v13 partial。本候选基于Library v15输入；新保存版本以Library元数据和交接回执为准；不提交、push、合并、部署或公开内容。以下旧当前段落改标历史，正文原样保留。
+
+证据相对 `_handoff/projects-evidence/`：`execution/event-observation-review.json`、`execution/input-timing-code-review.json` 及各自 protection addendum；原Mac报告与失败包在 `mac-v15-runtime/`，单次native补采的独立核验为 `execution/native-v15-observation-review.json`。
+
+### 历史：v14实测留白与v15焦点同步候选形成阶段（2026-10-04）
+
+同ID源码/报告Library v14已实际回存，见test-repairs-spacing-library-receipt.json：源码132,789,175bytes、SHA256 eba3b7f788447613ce874c0bc6a8f6bd39843f68b20f111dfac1dc5997f9a452、1309清单/1311文件。v14正式Mac五case仍为299项：287 passed /4 failed /8 skipped，retries0；四个非空case均在767↔768详情顶部返回的focus.unobscured=false处失败，后续未执行步骤不计pass。全站85/85（80浏览器+5HTTP）、Photos55/55（54浏览器+1HTTP）、unit451/451和source182/0/0/2来自v14原报告。本轮原生200%为blocked/not-run，不借v13 partial；输入1311/1311保持，结果包221 SHA由主执行者核验，原件在mac-v14-runtime。
+
+v14优先组27/27已真实执行；768/1024/1440px人物非零alpha与末项导航净距均实测46.146px，四张桌面/手机截图由主执行者查看。用户于06:20:46Z在Sentinel_a9a8d9aa7d18819192c52f86d732cc03回复桌面留白截图“舒服多了”。此为留白认可，应保留当前视觉，不再主动改排版；不扩展为真实内容、新资产或部署批准。桌面导航16/12、手机12/9及默认角色margin-top42保持，CSS继续只含基线两字号+一margin三处授权变化。
+
+一次mixed只读补采的同一目标/同点/同几何在1567.9ms仍native running、hitHTML且header opacity0/blur6；ViewTransition.finished于1840.1ms兑现，1844ms hitA但header仍opacity0.994276/blur0.727124；2045.6ms有限动画结束才opacity1/filter none。三promise均兑现、无resize取消、无sleep/skip。这是该补采流程的同步证据，不把原四FAIL改判。补采measure/trace SHA已另核，见task-6-v14-runtime-read-audit.json。
+
+新候选仅改/加四个测试文件：project-test-helpers.ts、project-focus-readiness.ts、focusReadiness.test.ts、project-focus-contract.spec.ts。等待实际Astro导航进行标志及关联动画完成，忽略持久data-nav-direction/Lenis；不以hit/opacity轮询碰巧好帧判绿，完成后另取一次严格新样本。独立审查focus-readiness-review.md为Spec PASS/Quality APPROVED、无P0/P1/P2，独立28单元/tsc/自包含collector探针通过；16浏览器契约只加载，仍待真实Mac。
+
+主执行者本波实际日志已读核而未重复fullsuite/build：479/479单元（39files）、显式源码check185/0errors/0warnings/2hints、原始check209/3历史errors/0warnings/3hints、生产19页与HTTP/产物5/5。新mixed24页、source/seed unchanged，离线5详情/5资产/2正文图/8HTML拒绝证明；完整--list147项/9spec仅加载。实测源指纹254项（src137/public28/tests75/scripts6/配置锁8），mixed251非合成项一致；精确列三草稿替换、八合成Markdown、五资产添加。相对v14 checkpoint恰四测试差异，产品/public/scripts/锁/配置及原responsive spec逐字节相同，最终四review SHA匹配，见task-6-focus-sync-code-identity.json。
+
+新候选产品/测试已冻结；一般保护783项与共享CSS累计三处精确范围核对见本轮task-6-protection-audit.json。接下来优先16focus contracts和原四个各case reflow，再完整mixed147、其他四case四spec、全站85/Photos55及原生200%缺口；少量通过不能替代全套。下一归档/同ID回存由主执行者按实际回执完成，不预填版本成功。当前端到端未完成；真实内容/新角色/上线仍另批。v12五case1200比较、v13 partial及历次失败均保留为历史。
+
+### 历史：v13真实结果与角色留白新范围（2026-10-04 05:32:04Z）
+
+原ID源码与报告已回存Library v13；receipt为mac-fixes-library-receipt.json。源码归档100,164,323bytes、SHA256 d787663fd344346837c4f5fe318bbc9d60c4efb6656864c9d8f8584c69f80e07，1236清单/1238文件。该身份只代表v13已测快照，不代表下面的新测试/间距修复候选；下一候选产品/测试现已统一冻结并完成本轮静态验证，尚待主执行者归档回存与新Mac完整QA；全局最终审查另行收尾。
+
+v13观察trace已核110次调用、5次dblclick、5次列表链接focus正断言、0错误；实际桌面/手机截图已查看，导航16/12px及手机12/9px可作为v13局部运行依据。正式Projects索引仍119 passed /151 failed /8 skipped（278项、retries0）：82 locator相对作用域、66旧height度量、3identity wrapper留白。原失败不改写为pass，首个失败之后的断言没有得到运行证明；66项height不能预判都误报，修正后的Range/实际clip祖先检查及完整正式Mac复测仍待。现已取得并阅读v13完整Mac报告及机器摘要，记载全站85/85、Photos55/55、unit388/389；其原始结果包校验由主执行者汇总核对，本任务未重跑这些套件。原生200%仅partial：API/CDP与8/8功能组及3张OS窗口截图有证据，Accessibility=false，菜单/快捷键操作和菜单可见200%数值未验，不能写完整缩放验收通过。
+
+补充原始文字/导航诊断现已到本地：测量限定v13六宽×五详情30页面、66节点（30h1/30职责/6长URL）。报告指出相关样本文字Range及祖先visible未见实际裁剪；这是官方失败之后的额外诊断，不把原66项height失败或未执行后续断言洗成通过。新候选仍须正式Range/clip负例与完整套件复测。
+
+保护来源更正：task-6-protection-frozen-v12.json是v12产品代码不变、后来文档/证据增加后的重生成审核，不是v12原归档JSON的逐字节副本。精确原件已保存input-v12-original-protection-audit.json，SHA256 88d85db34c51c5ff534c043b73e69a6092a52698478d2ef9a3d0e482e3473cb5，来源见protection-audit-provenance.json。静态保护的旧handoff497项只指最初v10基线原件，不代表跨版本所有旧handoff不变；v12完整1167输入和原归档仍保存。
+
+测试修正仅包括canonical realpath完整相等、candidate-relative has、Range+真实clip祖先判定，以及完整品牌点击框/副标题逐行Range取代identity wrapper空白。专用fixture6、geometry32、clearance9单元及14个新浏览器契约的加载记录只证明其各自层级；未运行的浏览器契约不计pass；三项测试修复最终独立审查全部Spec PASS/Quality APPROVED、无P0/P1/P2，八个最终SHA匹配，角色间距独立审查另为PASS/APPROVED并核三SHA。
+
+用户Sentinel_4815171839f48191b89e92b61823e1b1在05:32:04Z反馈“装饰元素跟导航的距离太近了”，授权在保留字号的前提下拉开已有包子/嘉乐与导航留白。唯一新增产品变更为默认.site-characters margin-top18→42px（+24）；保留桌面16/12、手机12/9、手机margin-top25px、reading桌面26px、品牌/h1、角色原素材/x/尺寸/动画、栏宽与纸比例。最新shell.css保护预期是输入基线两字号加这一margin共三处唯一替换后的完整字节；不再用“只改两处字号”描述当前共享CSS。
+
+间距专用20单元+既有12为32/32，新增7个间距e2e只加载。44–56px实际alpha留白阈值尚待新Mac测量及截图，不能把源+24px或旧v13图当新间距后值/视觉批准；720px响应式检查也不代替原生200%。冻结后一般保护783/783通过，完整shell.css字节精确为基线两字号+一margin累计三处；新候选实际可见间距仍未测。下一候选的完整浏览器、200%菜单/快捷键/数值、用户视觉、真实内容/新角色/上线批准仍未完成。当前冻结结果来自主执行者真实日志，本任务已读核而未重复suite/build：451/451单元（38files）、显式源码check182/0errors/0warnings/2hints、原始check206/3历史errors/0warnings/3hints、生产19页与HTTP/产物5/5。build之后只删单元未使用type，不影响dist。新mixed24页、source/seed unchanged；5详情/5资产/2正文图/8HTML拒绝证明，完整--list131项/8spec仅加载。源指纹实测251项（src137/public28/tests72/scripts6/配置锁8），mixed248项非合成范围一致，精确列三草稿替换、八合成Markdown、五资产添加；11项独立评审SHA全部匹配，见task-6-test-repairs-code-identity.json。优先spacing7/helper-contract14/nav6共27项可先跑，但之后仍须完整mixed131和其他四case四spec、全站85/Photos55，不能用小组通过代替全套。
+
+以下先前阶段数字与范围保留为历史。
+
+- **状态（首波v13冻结历史）：** 2026-10-04设计/代码实施范围已授权；v12取得局部Mac运行证据，晚到桌面导航字号和返回双击修复的后续v13候选产品/测试已统一冻结、独立审查均PASS/APPROVED，尚待打包回存与Mac复测，不能写端到端完成或上线批准。
+- **方向：** 工作与个人项目均可收录，以名称、准确intro和个人职责为主，图片为辅；日期倒序/同日稳定id，不以进行中置顶，不预设筛选、搜索、分页。无封面不建空槽，不补虚构结果/指标/章节或未确认链接。
+- **列表字号反馈（v12阶段）：** 用户指出列表字号层级过多，收敛为名称一档、简介/职责/分类/可选时间状态/列表图注统一正文另一档；h1、全站导航、详情字级不改。仅列表meta和列表祖先下图注继承现有正文，保留字重/颜色/间距。局部代码/测试审查PASS/APPROVED，v12已取得列表字级实际后值与桌面/手机截图，用户视觉确认仍待；晚到桌面导航反馈见下一条。
+- **晚到范围变更：** 2026-10-04 04:24:57Z，用户在Sentinel_c81caa2b437481918a4f5342201e170a明确说“电脑端左侧的字体太小了看起来”。新增授权桌面≥768px主导航13→16px、编号10→12px；手机≤767px仍12/9px，品牌/h1/角色保持。当时授权两处shell.css桌面字值；本节顶部新增margin后当前共三处，其他字节需基线一致；这专门覆盖前述列表阶段不改导航的范围，不宣称导航仍完全原样。
+- **v12运行证据与缺口：** 已取得并读测量JSON、查看桌面/手机截图：列表名称1440/390px为32/22.4px，其余intro/role/category/status/图注16px；手机figure/prose314px、table client314/scroll1298到最大984。返回双击真实失败trace保留；新增16回归修正的独立复审PASS/APPROVED、定向42/42且解码trace已核；桌面字号独立复审亦PASS/APPROVED、专用12/12及六项e2e加载通过。两项真实Mac GREEN仍pending。主会话转述全站85/85和Photos55/55，完整原报告/日志未取得，不当成已核对的通过数；另两类定位器/字体度量失败缺原始记录，不能猜原因或宣称已修。Mac现离线，原生200%、全部Projects与用户视觉仍待。
+- **内容与资源：** 仅draft=false且approved=true进入列表/首页/详情/分享；公开role/kind必填，role使用确认的完整句子，kind文字可识别。status不参与门禁或排序。images登记本站允许路径、真实尺寸、准确alt与同比例变体，cover必须匹配；正文图跟随解释段落、首屏外lazy、不自动画廊。审批按正文/截图/链接分别处理，测试合成数据不是事实或批准。
+- **交互：** 两处普通返回、本次列表位置/焦点恢复；直接访问/unknown-source正常回/projects。主导航和返回无JS可用；http(s)外链另页且noopener noreferrer，不拦截为内部返回。保留既有slug与/ai-works完整迁移文件。
+- **范围与保护：** 三个真实项目草稿及全部真实content/public/角色/Manifest、Photos、D-150阅读、锁/部署和旧证据原样；共享ShellLayout只增加Projects import/init两行；共享shell.css当前另有两处桌面字号及05:32授权的默认角色margin共三处变化，其他字节保持；先前两处审计为历史。新角色未获公开批准，采用适用的已批准静态角色。没有提交、push、merge、deploy或改域名。正式生产仍0Projects/noindex，同通用404。
+- **最新冻结代码验证：** 389/389单元（35文件）、176源码check0/0/2、生产19页与正式HTTP/产物5/5均有实际日志；原始check200文件保留3历史errors/0warnings/3hints。首次新单元4个PostCSS类型错误原日志保留，Node/instanceof收窄修复后通过，不改产品逻辑。783项保护通过及shell.css完整字节两字值范围核对成立。新mixed242项非合成代码/测试/scripts/config/锁无差异，5详情/5资产/2正文图/8拒绝证明；mixed110/6files仅加载，v12五case1200比较不当成此次重做。两个独立评审共六个文件SHA与冻结源匹配；v13尚待主执行者打包/回存，真实Mac GREEN/200%/最终视觉仍待。
+- **历史v12验证与身份：** 361/361单元、174文件显式源码check0errors/0warnings/2hints、生产19页来自此前v12冻结产品/测试的实际日志，不代表后续v13字号/双击修复代码。原始check198文件仍3个旧prepare-fixture错误和3hints，未改历史或根tsconfig掩盖。v12源码QA候选归档SHA 15b274058360e51b4cd77e3d0c8753b1612137674adb1109c5abf2962b66f80e，1165清单/1167文件；Mac对该精确v12做了局部运行检查；全站/Photos通过数目前仅为主会话转述，完整原报告待核，且不能替代后续新冻结候选的最终浏览器/原生200%/Photos验收。
+- **文档与待闭环：** README、AGENTS、全站规范v2.9、RESTORE与本轮Task6报告同步。Mac验收及一次性Photos副本规范见_handoff/PROJECTS_MAC_ACCEPTANCE.md；测试后仍须用户视觉确认，真实材料/角色/上线另批。历史D-155结果保留，不替代本轮结果。最终清单/归档/原Library身份回存由主执行者按实际回执处理，不预填后续版本。
+
 ## 变更规则
 
 - 已接受决策若需改变，新增一条 Decision，不覆盖旧记录。
 - 新记录必须说明：改变原因、受影响文档、素材、设计和开发任务。
 - Phase 4 Design Freeze 后的范围变化需要单独评估返工影响。
+
+## D-163 · 书影音首版（2026-10-05，独立实施中）
+
+用户已批准完整书影音设计与12任务实施计划，并于08:44UTC授权在Mac独立副本继续开发。以 docs/design/baozi-space-media-design-v1.md 和 docs/plans/2026-10-05-baozi-space-media.md 为本次执行依据。主导航增加05书影音；手机页头全宽单行保持12px正文/9px编号和44px触控高度，桌面300/242px栏及人物留白保持。历史Shelf不评分、按首次完成统计等规则由新个人评分、按标记日统计、公开批准快照规则覆盖；其余内容门禁保持。
+
+任务1–9只用明确合成夹具验证，生产快照初始为空。10真实来源适配等待安全样本，11可选RSS等待真实主页和核验，12真实迁移与发布各须具体批准。本轮无提交、推送、合并、部署、域名变更或新自动化；原checkout与相册行为保持。完整历史归档3个D155检查错误仍属历史NON-GREEN，不以本次源码检查掩盖。
+
+## 2026-10-05 · 书影音首版（已批准规格，Mac独立实现）
+
+依据本次已批准《BaoziSpace书影音设计稿》《实施计划》，以及08:44UTC“继续在Mac独立副本按计划开发”。主导航追加05书影音；手机五项全宽单行保留12/9px和44px触控，人物位于上行；桌面原栏宽和人物间距不变。书影音统一近期/历史、标记日期灰阶日历、24条静态分页、站内详情与单正文长文链接。当前公开快照为空/noindex，合成数据只用于隔离预览。旧Shelf无评分/按完成日期/四导航历史决定在该范围被当前明确批准覆盖，其余项目/相册/Intro/Home行为继续保护。
+
+URL使用现有Astro不带末尾斜线策略，路径结构按计划；不改全站trailingSlash。独立baoziMedia history，私下导入/批准账本与公开snapshot分离。持久hidden否决及独立override保留。未执行真实Excel/RSS、公开记录/封面批准、commit/push/merge/deploy或域名变更；导航与日历新截图待用户视觉确认。维护见docs/media-maintenance.md；完整验收在本次新交付报告，D155三个历史归档check错误继续NON-GREEN。
+
+
+## D-164 · Pages CMS 本地发布候选与成功部署基线（2026-10-06）
+
+按已批准本地实施范围增加 Blog 原始字段、最后可验证 Pages 成功源码比较、两种 base 产物审计及全 job 禁用的 Actions 模板。本轮保留所有真实 content/public 字节和批准字段；生成输出仅排除旧 `_redirects`，其余资产范围与中性兼容页政策不扩大。新增 Blog 与安全命名空间图片仍须内容负责人在上传前明确批准；保存后的检查无法撤销公开 Git 写入。
+
+历史 D-130 不构成本轮 Cloudflare 或 Pages 上线权限。未批准初始化来源，未提交/推送/部署/改账户或域名；重命名、撤回和旧产物恢复继续另行审阅。详细契约、只读 API 权限、固定版本、显式夹具审计接口及待验证门槛见 [部署决定](../publishing/deployment-decision.md)。

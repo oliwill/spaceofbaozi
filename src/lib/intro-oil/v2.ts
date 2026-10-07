@@ -1,3 +1,4 @@
+import { servedUrl } from "@/lib/site/paths";
 // v2 素材清单类型与加载（HARNESS-PROMPT：运行时只读 Manifest，不复制帧数/锚点数值）
 export interface V2Anchors {
   ground: [number, number];
@@ -42,9 +43,14 @@ export interface V2Manifest {
 export const MANIFEST_V2_URL = "/manifest/asset-manifest.v2.json";
 
 export async function loadManifestV2(): Promise<V2Manifest> {
-  const res = await fetch(MANIFEST_V2_URL);
+  const res = await fetch(servedUrl(MANIFEST_V2_URL));
   if (!res.ok) throw new Error(`manifest v2 load failed: ${res.status}`);
-  return (await res.json()) as V2Manifest;
+  const manifest = (await res.json()) as V2Manifest;
+  return { ...manifest,
+    sequences: Object.fromEntries(Object.entries(manifest.sequences).map(([key, sequence]) => [key, { ...sequence, src: servedUrl(sequence.src) }])),
+    environment: { ...manifest.environment, "intro-grass": { ...manifest.environment["intro-grass"], src: servedUrl(manifest.environment["intro-grass"].src) } },
+    fallback: { ...manifest.fallback, src: servedUrl(manifest.fallback.src) },
+  };
 }
 
 /** 网格 sheet 取帧：行优先（integration.md §2） */

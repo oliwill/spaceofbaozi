@@ -1,0 +1,35 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import type { PublicProject } from "@/lib/projects/projects";
+import ProjectImage from "@/components/projects/ProjectImage.astro";
+
+interface Props {
+  projects: readonly PublicProject[];
+}
+const { projects } = Astro.props;
+---
+
+<section class="editorial-page projects-page" data-project-list>
+  <h1 id="project-list-title" class="projects-page__title" tabindex="-1">项目</h1>
+  {projects.length === 0 ? (
+    <p class="projects-empty">项目正在整理。</p>
+  ) : (
+    <ul class="project-list">
+      {projects.map((project) => (
+        <li class:list={["project-item", { "project-item--illustrated": !!project.cover }]}>
+          <div class="project-item__text">
+            <h2><a href={servedUrl(project.href)} data-project-id={project.id}>{project.title}</a></h2>
+            <p class="project-item__intro">{project.intro}</p>
+            <p class="project-item__role">{project.role}</p>
+            <p class="project-meta">
+              <span>{project.kind === "work" ? "工作" : "个人"}</span>
+              {project.periodLabel && <span class="project-meta__period">{project.periodLabel}</span>}
+              {project.status && <span class="project-meta__status">{project.status === "ongoing" ? "进行中" : "已完成"}</span>}
+            </p>
+          </div>
+          {project.cover && <div class="project-item__image"><ProjectImage image={project.cover} /></div>}
+        </li>
+      ))}
+    </ul>
+  )}
+</section>

@@ -12,8 +12,16 @@
     "fonts:subset": "node scripts/subset-fonts.mjs",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
+    "test:e2e:pages": "playwright test --config playwright.pages.config.ts",
+    "pages:fixtures": "bun scripts/pages/prepare-fixtures.ts",
     "publish": "node scripts/subset-fonts.mjs && git add -A && git commit -m \"content: update\" && git push",
-    "deploy:cf": "bun run build && wrangler deploy"
+    "deploy:cf": "bun run build && wrangler deploy",
+    "publishing:check": "bun scripts/publishing/cli.ts check",
+    "publishing:start": "bun scripts/publishing/cli.ts start",
+    "publishing:prepare": "bun scripts/publishing/cli.ts prepare",
+    "publishing:guard": "bun scripts/publishing/cli.ts guard",
+    "publishing:verify": "bun scripts/publishing/cli.ts verify",
+    "publishing:audit": "bun scripts/publishing/cli.ts audit"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.4",
@@ -33,7 +41,15 @@
     "@types/react-dom": "19.1.6",
     "sharp": "^0.35.3",
     "typescript": "^5.8.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "yaml": "2.9.0",
+    "rehype-raw": "7.0.0",
+    "@types/hast": "3.0.5",
+    "@astrojs/markdown-remark": "6.3.11",
+    "hast-util-to-html": "9.0.5",
+    "parse5": "7.3.0",
+    "postcss": "8.5.22",
+    "css-tree": "3.2.1"
   },
   "engines": {
     "node": ">=20"

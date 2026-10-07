@@ -1,0 +1,21 @@
+---
+import { servedUrl } from "@/lib/site/paths";
+import type { PublicProject } from "@/lib/projects/projects";
+
+interface Props {
+  project: PublicProject;
+}
+const { project } = Astro.props;
+---
+
+<header class="project-header">
+  <a class="project-return" href={servedUrl('/projects')} data-project-return>返回项目</a>
+  <h1>{project.title}</h1>
+  <p class="project-header__intro">{project.intro}</p>
+  <p class="project-header__role">{project.role}</p>
+  <p class="project-meta">
+    <span>{project.kind === "work" ? "工作" : "个人"}</span>
+    {project.periodLabel && <span class="project-meta__period">{project.periodLabel}</span>}
+    {project.status && <span class="project-meta__status">{project.status === "ongoing" ? "进行中" : "已完成"}</span>}
+  </p>
+</header>

@@ -1,0 +1,24 @@
+import {expect,it,vi,afterEach} from 'vitest';
+import type {ReaderState} from '@/lib/photos/readerModel';
+let change:(state:ReaderState)=>void;
+vi.mock('@/lib/scroll/lenis',()=>({scrollDocumentTo(){}}));
+vi.mock('@/lib/photos/albumMotion',()=>({animateAlbumOpen(){},animateAlbumClose(){},animateAlbumPage(){}}));
+vi.mock('@/lib/photos/characters',()=>({mountAlbumCharacters(){}}));
+vi.mock('@/lib/photos/albumList',()=>({mountAlbumList(){return()=>{}}}));
+vi.mock('@/lib/photos/albumReader',()=>({mountAlbumReader(_root:HTMLElement,_album:unknown,id:string,onChange:(state:ReaderState)=>void){change=onChange;onChange({photoId:id,mode:'single'});return{getState:()=>({photoId:id,mode:'single'}),restore(photoId:string){onChange({photoId,mode:'single'})},destroy(){}}}}));
+afterEach(()=>vi.unstubAllGlobals());
+it('does not overwrite the Back target while Astro is waiting to swap the old reader',async()=>{
+ vi.resetModules();const album={id:'example',photos:[{id:'a'},{id:'b'},{id:'c'}]};
+ const reader=Object.assign(new EventTarget(),{isConnected:true,querySelector:()=>({textContent:JSON.stringify(album)})});
+ const document=Object.assign(new EventTarget(),{querySelector:(s:string)=>s==='[data-album-reader]'?reader:null,querySelectorAll:()=>[]});
+ const window=Object.assign(new EventTarget(),{sessionStorage:{getItem:()=>null,setItem(){}}});
+ let url=new URL('https://example.com/photos/example#photo-c');
+ const history={state:{index:1,scrollY:0} as Record<string,unknown>,replaceState(state:Record<string,unknown>,_title:string,href?:string){this.state=state;if(href){url=new URL(href,url);vi.stubGlobal('location',url);}}};
+ vi.stubGlobal('document',document);vi.stubGlobal('window',window);vi.stubGlobal('history',history);vi.stubGlobal('location',url);vi.stubGlobal('matchMedia',()=>Object.assign(new EventTarget(),{matches:false}));vi.stubGlobal('cancelAnimationFrame',()=>{});
+ const {initAlbumLifecycle}=await import('@/lib/photos/albumLifecycle');initAlbumLifecycle();
+ url=new URL('https://example.com/photos');vi.stubGlobal('location',url);const destination={index:0,scrollY:55,baoziAlbum:{version:1,listKey:'list'}};history.state=destination;
+ const navigation=new AbortController();document.dispatchEvent(Object.assign(new Event('astro:before-preparation'),{from:new URL('https://example.com/photos/example#photo-c'),to:url,signal:navigation.signal}));
+ window.dispatchEvent(new Event('hashchange'));expect(url.pathname+url.hash).toBe('/photos');expect(history.state).toEqual(destination);
+ change({photoId:'b',mode:'spread'});expect(url.pathname+url.hash).toBe('/photos');expect(history.state).toEqual(destination);
+ url=new URL('https://example.com/photos/example#photo-c');vi.stubGlobal('location',url);history.state={index:1,scrollY:0};navigation.abort();change({photoId:'b',mode:'single'});expect(url.pathname+url.hash).toBe('/photos/example#photo-b');
+});

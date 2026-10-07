@@ -1,43 +1,38 @@
 ---
-import { getCollection, render } from "astro:content";
-import { isPublishable } from "@/lib/content/gates";
+import { servedUrl } from "@/lib/site/paths";
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import { selectPublicProjects, type PublicProject } from "@/lib/projects/projects";
 import type { GetStaticPaths } from "astro";
 import ShellLayout from "@/components/layout/ShellLayout.astro";
+import ProjectHeader from "@/components/projects/ProjectHeader.astro";
+import "@/components/editorial/editorial.css";
+import "@/components/projects/projects.css";
 
 export const getStaticPaths = (async () => {
-  const entries = await getCollection("projects", ({ data }) => isPublishable(data));
-  return entries.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
+  const projects = selectPublicProjects(await getCollection("projects"));
+  return projects.map(({ entry, project }) => ({
+    params: { slug: project.id },
+    props: { entry, project },
   }));
 }) satisfies GetStaticPaths;
 
-const { entry } = Astro.props;
+interface Props {
+  entry: CollectionEntry<"projects">;
+  project: PublicProject;
+}
+const { entry, project } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<ShellLayout title={`${entry.data.title} · 项目 · baozi.space`} description={entry.data.intro}>
-  <article class="section-shell paper-page">
-    <header class="section-header">
-      <span class="section-kicker">Projects · 项目</span>
-      <h1>{entry.data.title}</h1>
-      <p class="entry-meta">
-        <time datetime={entry.data.date.toISOString()}>
-          {entry.data.date.toLocaleDateString("zh-CN")}
-        </time>
-      </p>
-      <p>{entry.data.intro}</p>
-    </header>
-    <div class="prose">
+<ShellLayout title={`${project.title} · 项目 · baozi.space`} description={project.intro}>
+  <article class="editorial-page projects-detail" data-project-detail data-project-id={project.id}>
+    <ProjectHeader project={project} />
+    <div class="editorial-prose">
       <Content />
     </div>
-    {entry.data.link && (
-      <p class="link-out">
-        <a href={entry.data.link} target="_blank" rel="noopener noreferrer">
-          项目链接 ↗
-        </a>
-      </p>
-    )}
-    <a class="back-list" href="/projects">← 全部项目</a>
+    <footer class="project-footer">
+      {project.link && <a class="project-footer__external" href={servedUrl(project.link)} target="_blank" rel="noopener noreferrer">{project.linkLabel}</a>}
+      <a class="project-return" href={servedUrl('/projects')} data-project-return>返回项目</a>
+    </footer>
   </article>
 </ShellLayout>

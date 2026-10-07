@@ -1,17 +1,18 @@
 ---
+import { servedUrl } from "@/lib/site/paths";
 import type { CollectionEntry } from "astro:content";
 import { isPublishable } from "@/lib/content/gates";
 import type { EntrySchemaCollectionKey } from "@/lib/sections";
+import "@/components/editorial/editorial.css";
 
 interface Props {
   entries: CollectionEntry<EntrySchemaCollectionKey>[];
   emptyHint?: string;
-  /** 传入时标签渲染为筛选链接（如 "/blog/tag"，仅 blog 列表传入） */
   tagBaseHref?: string;
 }
 const {
   entries,
-  emptyHint = "这一页还在等待真实内容。你可以用 Markdown 往对应 content 目录里加条目。",
+  emptyHint = "这一栏的内容正在整理。",
   tagBaseHref,
 } = Astro.props;
 
@@ -22,46 +23,45 @@ const sorted = [...entries]
 
 {
   sorted.length === 0 ? (
-    <div class="empty-state">
+    <div class="editorial-empty">
       <p>
-        <strong>手账这一页暂时空白。</strong>
+        <strong>暂无记录。</strong>
       </p>
       <p>{emptyHint}</p>
     </div>
   ) : (
-    <ul class="entry-list">
+    <ul class="editorial-list">
       {sorted.map((entry) => (
-        <li class="entry-card">
+        <li>
           {entry.data.cover && (
-            <figure class="entry-cover-figure">
+            <figure class="archive-cover">
               <img
-                class="entry-cover"
-                src={entry.data.cover}
+                src={servedUrl(entry.data.cover)}
                 alt={entry.data.coverAlt ?? entry.data.title}
                 loading="lazy"
                 decoding="async"
               />
               {entry.data.coverCredit && (
-                <figcaption class="entry-cover-credit">{entry.data.coverCredit}</figcaption>
+                <figcaption>{entry.data.coverCredit}</figcaption>
               )}
             </figure>
           )}
-          <div class="entry-meta">
+          <div class="editorial-meta">
             <time datetime={entry.data.date.toISOString()}>
               {entry.data.date.toLocaleDateString("zh-CN")}
             </time>
             {entry.data.tags?.slice(0, 3).map((tag) =>
               tagBaseHref ? (
-                <a class="tag" href={`${tagBaseHref}/${encodeURIComponent(tag)}`}>
+                <a class="editorial-tag" href={servedUrl(`${tagBaseHref}/${encodeURIComponent(tag)}`)}>
                   #{tag}
                 </a>
               ) : (
-                <span class="tag">#{tag}</span>
+                <span class="editorial-tag">#{tag}</span>
               )
             )}
           </div>
           <h2>
-            <a class="entry-link" href={`/${entry.collection}/${entry.id}`}>
+            <a href={servedUrl(`/${entry.collection}/${entry.id}`)}>
               {entry.data.title}
             </a>
           </h2>
@@ -71,3 +71,9 @@ const sorted = [...entries]
     </ul>
   )
 }
+
+<style>
+  .archive-cover { margin: 0 0 1.5rem; }
+  .archive-cover img { display: block; max-width: 100%; max-height: 360px; width: auto; height: auto; }
+  .archive-cover figcaption { margin-top: 0.5rem; color: var(--ink-light); font-size: 0.8rem; }
+</style>

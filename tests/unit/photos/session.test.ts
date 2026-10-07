@@ -1,0 +1,9 @@
+import {expect,it} from "vitest";
+import {readSession,writeSession,mergeAlbumHistory,canReturnToList} from "@/lib/photos/session";
+const storage=(value:string|null)=>({getItem:()=>value,setItem:()=>{}}) as unknown as Storage;
+const list={key:"k",selectedAlbumId:"a",scrollLeft:500,scrollY:300,focusAlbumId:"a"};
+it("ignores unavailable, corrupt and old storage",()=>{for(const value of [undefined,storage('{'),storage('{"version":0}'),{getItem(){throw Error('denied')}} as unknown as Storage])expect(readSession(value)).toEqual({version:1,readings:{},lists:{}});expect(()=>writeSession({setItem(){throw Error('denied')}} as unknown as Storage,readSession(undefined))).not.toThrow();});
+it("restores bounded snapshots and anchors",()=>{const input={version:1,readings:{a:"b"},lists:{k:list}};expect(readSession(storage(JSON.stringify(input)))).toEqual(input);});
+it("rejects malformed or nonfinite scroll and unknown session data",()=>{const session=readSession(storage(JSON.stringify({version:1,readings:{a:23,b:"bad id"},lists:{k:{...list,scrollLeft:-1}},secret:"not persisted"})));expect(session).toEqual({version:1,readings:{},lists:{}});});
+it("merges its history namespace without removing Astro fields",()=>expect(mergeAlbumHistory({index:7,scrollY:2,__astro:"keep",baoziAlbum:{version:1,listKey:"k"}},{photoId:"b",albumId:"a"})).toEqual({index:7,scrollY:2,__astro:"keep",baoziAlbum:{version:1,listKey:"k",photoId:"b",albumId:"a"}}));
+it("only uses history.back for a verifiable adjacent list entry",()=>{expect(canReturnToList({version:1,listKey:"k",albumId:"a",originIndex:3},4,{version:1,readings:{},lists:{k:list}})).toBe(true);expect(canReturnToList({version:1,listKey:"k",originIndex:3},8,{version:1,readings:{},lists:{k:list}})).toBe(false);expect(canReturnToList({version:1},4,{version:1,readings:{},lists:{}})).toBe(false);});

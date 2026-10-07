@@ -1,0 +1,13 @@
+---
+import {getCollection} from 'astro:content';
+import {isPublishable} from '@/lib/content/gates';
+import {publicBlogHref} from '@/lib/media/presentation';
+import ShellLayout from '@/components/layout/ShellLayout.astro';
+import MediaDetail from '@/components/media/MediaDetail.astro';
+import {readPublicSnapshot} from '@/lib/media/publicSnapshot.server';
+import {listHref,returnLinksById} from '@/lib/media/routes';
+export async function getStaticPaths(){const blogs=(await getCollection('blog')).filter(e=>isPublishable(e.data)).map(e=>`/blog/${e.id}`);const snapshot=readPublicSnapshot();const returns=returnLinksById(snapshot,new Date());return snapshot.entries.map(entry=>({params:{id:entry.id},props:{synthetic:snapshot.coverage.description.startsWith('合成测试记录'),entry:{...entry,blogHref:publicBlogHref(entry.blogHref,blogs)},returnHrefs:returns.get(entry.id)??[]}}));}
+const {entry,returnHrefs,synthetic}=Astro.props;
+const defaultReturnHref=listHref({year:entry.markDate.year??'undated',type:'all',day:null,page:1});
+---
+<ShellLayout title={`${entry.title} · 书影音 · baozi.space`}><MediaDetail synthetic={synthetic} entry={entry} defaultReturnHref={defaultReturnHref} returnHrefs={returnHrefs}/></ShellLayout>
